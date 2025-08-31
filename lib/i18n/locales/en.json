@@ -1,0 +1,188 @@
+{
+  "metadata": {
+    "title": "Linklet - Your Personal Wishlist Manager",
+    "description": "Create, manage, and share your wishlists with ease"
+  },
+  "common": {
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit",
+    "add": "Add",
+    "close": "Close",
+    "loading": "Loading...",
+    "error": "An error occurred"
+  },
+  "navigation": {
+    "home": "Home",
+    "wishlists": "Wishlists",
+    "settings": "Settings",
+    "login": "Login",
+    "logout": "Logout"
+  },
+
+  "login": {
+    "title": "Login",
+    "backToHome": "Back to Home",
+    "subtitle": "Login to manage your wishlists",
+    "GoogleLogin": "Google Login",
+    "signingIn": "Logging in...",
+    "or": "Or",
+    "guestMode": "Guest Mode",
+    "guestInfo1": "Guest mode allows you to manage wishlists without logging in.",
+    "guestInfo2": "Link sharing is only available to logged-in users.",
+    "loginFeatures": {
+      "title": "Login Features",
+      "shareUrl": "Share Link",
+      "permanentStorage": "Permanent Storage",
+      "syncDevices": "Sync",
+      "management": "Management"
+    }
+  },
+  "settings": {
+    "title": "Settings",
+    "profile": {
+      "title": "Profile Settings",
+      "description": "Manage your account information and update your profile",
+      "displayName": "Display Name",
+      "email": "Email",
+      "bio": "Bio",
+      "avatar": "Profile Picture",
+      "uploadPhoto": "Upload Photo",
+      "accountInfo": "Account Information",
+      "userId": "User ID",
+      "userId-description": "Unique account identifier",
+      "joinDate": "Join Date",
+      "joinDate-description": "Account creation date",
+      "wishlistCount": "Wishlist Count",
+      "wishlistCount-description": "Number of wishlists created"
+    },
+    "notifications": {
+      "title": "Notification Settings",
+      "description": "Configure how and what notifications you receive",
+      "email": "Email Notifications",
+      "push": "Push Notifications",
+      "newItems": "New Wishlist Items",
+      "weeklyDigest": "Weekly Digest",
+      "promotions": "Promotions and Discounts",
+      "comments": "Comment Notifications"
+    },
+    "appearance": {
+      "title": "Appearance Settings",
+      "description": "Customize the look and feel of the app",
+      "theme": "Theme",
+      "lightMode": "Light Mode",
+      "darkMode": "Dark Mode",
+      "systemMode": "System Setting",
+      "language": "Language",
+      "fontSize": "Font Size",
+      "compactMode": "Compact Mode"
+    },
+    "customize": {
+      "title": "Wishlist Customization",
+      "description": "Freely customize the look and feel of your shared wishlist pages.",
+      "preview": "Preview",
+      "hidePreview": "Hide",
+      "showPreview": "Show",
+      "saveChanges": "Save Changes",
+      "selectWishlist": "Select a Wishlist",
+      "selectWishlistDesc": "Select a wishlist to customize its theme, layout, colors, and more.",
+      "tabs": {
+        "theme": "Theme",
+        "layout": "Layout",
+        "colors": "Colors",
+        "profile": "Profile",
+        "social": "Social Links"
+      }
+    },
+    "privacy": "Privacy",
+    "apiKeys": "API key management",
+    "dangerZone": "Account deletion and dangerous actions"
+  },
+  "wishlist": {
+    "title": "Wishlist",
+    "subTitle1": "Create and share your wishlists with ease.",
+    "subTitle2": "Organize your desires and share them with friends and family.",
+    "create": "Create New Wishlist",
+    "myWishlists": "My Wishlists",
+    "shared": "Shared Wishlists",
+    "items": "Items",
+    "addItem": "Add Item",
+    "shareLink": "Share Link",
+    "public": "Public",
+    "private": "Private",
+    "created": "Created",
+    "updated": "Updated",
+    "form": {
+      "title": "Title",
+      "description": "Description",
+      "titlePlaceholder": "e.g. Birthday Wishlist",
+      "descriptionPlaceholder": "Brief description of your wishlist"
+    }
+  },
+  "landing": {
+    "hero": {
+      "subtitle": "Manager"
+    },
+    "cta": {
+      "getStarted": "Get Started",
+      "viewDemo": "View Demo"
+    },
+    "features": {
+      "title": "Key Features",
+      "subtitle": "Manage your wishlists with ease using Linklet",
+      "organize": {
+        "title": "Organized Management",
+        "description": "Keep your desired items neatly organized by categories and manage them efficiently"
+      },
+      "share": {
+        "title": "Easy Sharing",
+        "description": "Share your wishlists with friends and family through a simple link"
+      },
+      "gift": {
+        "title": "Gift Recommendations",
+        "description": "Get help finding the perfect gifts for birthdays and special occasions"
+      },
+      "mobile": {
+        "title": "Mobile Optimized",
+        "description": "Access and manage your wishlists anytime, anywhere on your mobile device"
+      }
+    },
+    "useCases": {
+      "title": "Various Use Cases",
+      "subtitle": "From birthday gifts to shopping lists, use it in many different ways",
+      "birthday": {
+        "title": "Birthday Gift List",
+        "description": "Create a list of gifts you'd like to receive and share it with family and friends"
+      },
+      "shopping": {
+        "title": "Shopping Wishlist",
+        "description": "Collect items you want to buy and never miss discount opportunities"
+      },
+      "favorites": {
+        "title": "Favorite Items",
+        "description": "Save products you like and take your time comparing them later"
+      }
+    },
+    "finalCta": {
+      "title": "Start Now",
+      "subtitle": "Create and share your wishlists for free",
+      "button": "Start for Free"
+    }
+  },
+  "item": {
+    "title": "Product Name",
+    "description": "Description",
+    "productUrl": "Product Link",
+    "imageUrl": "Image URL",
+    "price": "Price",
+    "priority": "Priority",
+    "form": {
+      "titlePlaceholder": "e.g. iPhone 15 Pro",
+      "descriptionPlaceholder": "Brief description of the product",
+      "urlPlaceholder": "https://example.com/product",
+      "imagePlaceholder": "https://example.com/image.jpg",
+      "pricePlaceholder": "e.g. $999"
+    }
+  }
+}

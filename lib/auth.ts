@@ -63,7 +63,7 @@ export function logout() {
 }
 
 // 카카오 로그인 URL 생성 (나중에 구현)
-export function getKakaoLoginUrl(): string {
+export function getGoogleLoginUrl(): string {
   // TODO: 카카오 앱 설정 후 구현
   const clientId = process.env.NEXT_PUBLIC_KAKAO_CLIENT_ID
   const redirectUri = process.env.NEXT_PUBLIC_KAKAO_REDIRECT_URI

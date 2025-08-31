@@ -1,17 +1,19 @@
 'use client'
 
 import { useAuth } from '@/components/providers/auth-provider'
+import { useI18n } from '@/lib/i18n/context'
 import { Button } from '@/components/ui/button'
 import { User, LogOut } from 'lucide-react'
 import Link from 'next/link'
 
 export function Header() {
   const { user, isAuthenticated, logout } = useAuth()
+  const { t, locale } = useI18n()
 
   return (
     <header className="border-b border-slate-700/50 bg-slate-900/80 backdrop-blur-sm sticky top-0 z-50">
       <div className="container mx-auto px-4 h-16 flex items-center justify-between">
-        <Link href="/" className="text-2xl font-bold text-blue-400 hover:text-blue-300 transition-colors">
+        <Link href={`/${locale}`} className="text-2xl font-bold text-blue-400 hover:text-blue-300 transition-colors">
           Linklet
         </Link>
         
@@ -43,9 +45,9 @@ export function Header() {
               </Button>
             </div>
           ) : (
-            <Link href="/login">
+            <Link href={`/${locale}/login`}>
               <Button variant="outline" className="border-blue-400 text-blue-400 hover:bg-blue-400 hover:text-white">
-                로그인
+                {t('login.title') || '로그인'}
               </Button>
             </Link>
           )}

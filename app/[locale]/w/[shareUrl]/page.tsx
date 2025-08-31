@@ -4,15 +4,19 @@ import { WishlistItemCard } from '@/components/wishlist/wishlist-item-card'
 import { LoadingSpinner } from '@/components/ui/loading'
 import { notFound } from 'next/navigation'
 import { use } from 'react'
+import { useI18n } from '@/lib/i18n/context'
+import { type Locale } from '@/lib/i18n/config'
 
 interface SharedWishlistPageProps {
   params: Promise<{
+    locale: Locale
     shareUrl: string
   }>
 }
 
 export default function SharedWishlistPage({ params }: SharedWishlistPageProps) {
-  const { shareUrl } = use(params)
+  const { locale, shareUrl } = use(params)
+  const { t } = useI18n()
   const { data: wishlist, isLoading, error } = useSharedWishlist(shareUrl)
 
   if (isLoading) {
@@ -32,9 +36,9 @@ export default function SharedWishlistPage({ params }: SharedWishlistPageProps) 
       return (
         <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-indigo-900 flex items-center justify-center">
           <div className="text-center">
-            <h1 className="text-2xl font-bold mb-2 text-white">비공개 위시리스트</h1>
+            <h1 className="text-2xl font-bold mb-2 text-white">{t('wishlist.shared.private')}</h1>
             <p className="text-slate-300">
-              이 위시리스트는 비공개로 설정되어 있습니다.
+              {t('wishlist.shared.privateMessage')}
             </p>
           </div>
         </div>
@@ -44,7 +48,7 @@ export default function SharedWishlistPage({ params }: SharedWishlistPageProps) 
     return (
       <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-indigo-900 flex items-center justify-center">
         <div className="text-center">
-          <h1 className="text-2xl font-bold mb-2 text-white">오류가 발생했습니다</h1>
+          <h1 className="text-2xl font-bold mb-2 text-white">{t('wishlist.shared.error')}</h1>
           <p className="text-slate-300">{error.message}</p>
         </div>
       </div>
@@ -62,7 +66,7 @@ export default function SharedWishlistPage({ params }: SharedWishlistPageProps) 
           <WishlistCard wishlist={wishlist} isSharedView={true} />
           
           <div className="mt-8">
-            <h2 className="text-2xl font-bold mb-6 text-white">위시리스트 아이템</h2>
+            <h2 className="text-2xl font-bold mb-6 text-white">{t('wishlist.items')}</h2>
           {wishlist.items && wishlist.items.length > 0 ? (
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
               {wishlist.items.map((item) => (
@@ -76,7 +80,7 @@ export default function SharedWishlistPage({ params }: SharedWishlistPageProps) 
           ) : (
             <div className="text-center py-12">
               <p className="text-slate-400">
-                아직 추가된 아이템이 없습니다.
+                {t('wishlist.noItems')}
               </p>
             </div>
           )}

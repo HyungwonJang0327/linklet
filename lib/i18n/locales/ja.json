@@ -1,0 +1,187 @@
+{
+  "metadata": {
+    "title": "Linklet - 個人 ウィッシュリスト マネージャー",
+    "description": "ウィッシュリストを簡単に作成して共有してください"
+  },
+  "common": {
+    "save": "保存",
+    "cancel": "キャンセル",
+    "delete": "削除",
+    "edit": "編集",
+    "add": "追加",
+    "close": "閉じる",
+    "loading": "読み込み中...",
+    "error": "エラーが発生しました"
+  },
+  "navigation": {
+    "home": "ホーム",
+    "wishlists": "ウィッシュリスト",
+    "settings": "設定",
+    "login": "ログイン",
+    "logout": "ログアウト"
+  },
+  "login": {
+    "title": "ログイン",
+    "backToHome": "ホームに戻る",
+    "subtitle": "ログインしてウィッシュリストを管理してください",
+    "GoogleLogin": "Google ログイン",
+    "signingIn": "ログイン中...",
+    "or": "または",
+    "guestMode": "ゲスト モード",
+    "guestInfo1": "ゲスト モードはログインなしでウィッシュリストを管理できます。",
+    "guestInfo2": "リンク共有はログインユーザーのみ可能です。",
+    "loginFeatures": {
+      "title": "ログイン 機能",
+      "shareUrl": "共有リンク",
+      "permanentStorage": "永続保存",
+      "syncDevices": "同期",
+      "management": "管理"
+    }
+  },
+  "settings": {
+    "title": "設定",
+    "profile": {
+      "title": "プロフィール設定",
+      "description": "アカウント情報を管理し、プロフィールを更新してください",
+      "displayName": "表示名",
+      "email": "メール",
+      "bio": "自己紹介",
+      "avatar": "プロフィール画像",
+      "uploadPhoto": "写真をアップロード",
+      "accountInfo": "アカウント情報",
+      "userId": "ユーザーID",
+      "userId-description": "アカウントの固有ID",
+      "joinDate": "登録日",
+      "joinDate-description": "アカウントの登録日",
+      "wishlistCount": "ウィッシュリスト数",
+      "wishlistCount-description": "作成したウィッシュリスト数"
+    },
+    "notifications": {
+      "title": "通知設定",
+      "description": "通知の方法と内容を設定してください",
+      "email": "メール通知",
+      "push": "プッシュ通知",
+      "newItems": "新しいウィッシュリストアイテム",
+      "weeklyDigest": "週間サマリー",
+      "promotions": "プロモーションと割引情報",
+      "comments": "コメント通知"
+    },
+    "appearance": {
+      "title": "テーマ設定",
+      "description": "アプリの外観をお好みに合わせて設定してください",
+      "theme": "テーマ",
+      "lightMode": "ライトモード",
+      "darkMode": "ダークモード",
+      "systemMode": "システム設定",
+      "language": "言語",
+      "fontSize": "フォントサイズ",
+      "compactMode": "コンパクトモード"
+    },
+    "customize": {
+      "title": "ウィッシュリストカスタマイズ",
+      "description": "共有ウィッシュリストページの外観を自由にカスタマイズします。",
+      "preview": "プレビュー",
+      "hidePreview": "隠す",
+      "showPreview": "表示",
+      "saveChanges": "変更を保存",
+      "selectWishlist": "ウィッシュリストを選択",
+      "selectWishlistDesc": "カスタマイズするウィッシュリストを選択すると、テーマ、レイアウト、色などを設定できます。",
+      "tabs": {
+        "theme": "テーマ",
+        "layout": "レイアウト",
+        "colors": "色",
+        "profile": "プロフィール",
+        "social": "ソーシャルリンク"
+      }
+    },
+    "privacy": "プライバシー",
+    "apiKeys": "APIキー管理",
+    "dangerZone": "アカウント削除と危険な操作"
+  },
+  "wishlist": {
+    "title": "ウィッシュリスト",
+    "subTitle1": "ウィッシュリストを簡単に作成して共有してください",
+    "subTitle2": "欲しい商品をまとめてウィッシュリストを作成してください",
+    "create": "新しいウィッシュリストを作成",
+    "myWishlists": "マイウィッシュリスト",
+    "shared": "共有されたウィッシュリスト",
+    "items": "アイテム",
+    "addItem": "アイテムを追加",
+    "shareLink": "共有リンク",
+    "public": "公開",
+    "private": "非公開",
+    "created": "作成日",
+    "updated": "更新日",
+    "form": {
+      "title": "タイトル",
+      "description": "説明",
+      "titlePlaceholder": "例：誕生日ウィッシュリスト",
+      "descriptionPlaceholder": "ウィッシュリストの簡単な説明"
+    }
+  },
+  "landing": {
+    "hero": {
+      "subtitle": "マネージャー"
+    },
+    "cta": {
+      "getStarted": "始める",
+      "viewDemo": "デモを見る"
+    },
+    "features": {
+      "title": "主な機能",
+      "subtitle": "Linkletでウィッシュリスト管理がこんなに簡単になります",
+      "organize": {
+        "title": "体系的な整理",
+        "description": "欲しいアイテムをカテゴリー別にきちんと整理して管理できます"
+      },
+      "share": {
+        "title": "簡単な共有",
+        "description": "一つのリンクで友人や家族にウィッシュリストを簡単に共有できます"
+      },
+      "gift": {
+        "title": "ギフト提案",
+        "description": "誕生日や記念日に最適なプレゼントを見つけるのを手助けします"
+      },
+      "mobile": {
+        "title": "モバイル最適化",
+        "description": "いつでもどこでもモバイルでウィッシュリストを確認・管理できます"
+      }
+    },
+    "useCases": {
+      "title": "様々な活用法",
+      "subtitle": "誕生日プレゼントからショッピングリストまで、様々に活用してください",
+      "birthday": {
+        "title": "誕生日プレゼントリスト",
+        "description": "欲しい誕生日プレゼントを事前に整理して家族や友人と共有しましょう"
+      },
+      "shopping": {
+        "title": "ショッピングウィッシュリスト",
+        "description": "普段買いたかった商品を集めて割引情報も見逃さないようにしましょう"
+      },
+      "favorites": {
+        "title": "お気に入り商品コレクション",
+        "description": "気に入った商品を保存してゆっくりと後で比較検討できます"
+      }
+    },
+    "finalCta": {
+      "title": "今すぐ始めましょう",
+      "subtitle": "無料でウィッシュリストを作成して友人と共有してみてください",
+      "button": "無料で始める"
+    }
+  },
+  "item": {
+    "title": "商品名",
+    "description": "説明",
+    "productUrl": "商品リンク",
+    "imageUrl": "画像URL",
+    "price": "価格",
+    "priority": "優先度",
+    "form": {
+      "titlePlaceholder": "例：iPhone 15 Pro",
+      "descriptionPlaceholder": "商品の簡単な説明",
+      "urlPlaceholder": "https://example.com/product",
+      "imagePlaceholder": "https://example.com/image.jpg",
+      "pricePlaceholder": "例：99,900円"
+    }
+  }
+}
