@@ -25,6 +25,24 @@ interface SettingsSidebarProps {
   onToggleCollapse?: () => void
 }
 
+interface MenuListType {
+  nameKey: string
+  icon: React.ElementType
+  descriptionKey: string
+  expandable?: boolean
+  menuId: string
+  submenu?: SubMenuListType[]
+  disabled?: boolean
+  href?: string
+}
+interface SubMenuListType {
+  nameKey: string
+  icon: React.ElementType
+  descriptionKey: string
+  href: string
+  disabled?: boolean
+}
+
 export function SettingsSidebar({ onItemClick, collapsed = false, onToggleCollapse }: SettingsSidebarProps) {
   const pathname = usePathname()
   const { t, locale } = useI18n()
@@ -33,7 +51,7 @@ export function SettingsSidebar({ onItemClick, collapsed = false, onToggleCollap
     wishlists: true
   })
 
-  const navigationItems = [
+  const navigationItems:MenuListType[] = [
     {
       nameKey: 'settings.wishlists.title',
       icon: RectangleStackIcon,
@@ -51,7 +69,8 @@ export function SettingsSidebar({ onItemClick, collapsed = false, onToggleCollap
           nameKey: 'settings.customize.title',
           href: `/${locale}/settings/customize`,
           icon: SwatchIcon,
-          descriptionKey: 'settings.wishlists.customizeDesc'
+          descriptionKey: 'settings.wishlists.customizeDesc',
+          disabled: true
         }
       ]
     },
@@ -59,18 +78,21 @@ export function SettingsSidebar({ onItemClick, collapsed = false, onToggleCollap
       nameKey: 'settings.appearance.title',
       href: `/${locale}/settings/appearance`,
       icon: PaintBrushIcon,
+      menuId: 'appearance',
       descriptionKey: 'settings.appearance.description'
     },
     {
       nameKey: 'settings.notifications.title',
       href: `/${locale}/settings/notifications`,
       icon: BellIcon,
+      menuId: 'notifications',
       descriptionKey: 'settings.notifications.description'
     },
     {
       nameKey: 'settings.profile.title',
       href: `/${locale}/settings/profile`,
       icon: UserIcon,
+      menuId: 'profile',
       descriptionKey: 'settings.profile.description'
     },
   ]
@@ -127,13 +149,15 @@ export function SettingsSidebar({ onItemClick, collapsed = false, onToggleCollap
                   <button
                     onClick={() => toggleMenu(item.menuId!)}
                     className={`
-                      w-full flex items-start gap-3 p-3 rounded-lg transition-colors duration-200 relative group
+                      flex items-start gap-3 p-3 rounded-lg transition-colors duration-200 relative group
                       ${isActive 
                         ? 'bg-blue-600/20 border border-blue-500/30 text-blue-300' 
                         : 'text-slate-300 hover:bg-slate-700/50 hover:text-white'
                       }
                       ${collapsed ? 'justify-center' : ''}
+                      ${item.disabled ? 'opacity-50 cursor-not-allowed' : ''}
                     `}
+                    disabled={item.disabled}
                     title={collapsed ? t(item.nameKey) : undefined}
                   >
                     <item.icon className={`w-5 h-5 ${collapsed ? '' : 'mt-0.5'} flex-shrink-0 ${
@@ -142,23 +166,23 @@ export function SettingsSidebar({ onItemClick, collapsed = false, onToggleCollap
                     
                     {!collapsed && (
                       <>
-                        <div className="flex-1 min-w-0">
+                        <div className="flex-1 flex items-start flex-col min-w-0 w-full">
                           <div className={`font-medium ${
                             isActive ? 'text-blue-300' : 'text-slate-200'
-                          }`}>
+                          } ${item.disabled ? 'opacity-50' : ''}`}>
                             {t(item.nameKey)}
                           </div>
-                          <div className={`text-sm mt-0.5 ${
+                          <div className={`text-sm mt-0.5 text-start ${
                             isActive ? 'text-blue-400/80' : 'text-slate-400'
-                          }`}>
+                          } ${item.disabled ? 'opacity-50' : ''}`}>
                             {t(item.descriptionKey) || item.descriptionKey}
                           </div>
                         </div>
                         <div className="flex-shrink-0 mt-0.5">
                           {isExpanded ? (
-                            <ChevronUpIcon className="w-4 h-4 text-slate-400" />
+                            <ChevronUpIcon className={`w-4 h-4 text-slate-400 ${item.disabled ? 'opacity-50' : ''}`} />
                           ) : (
-                            <ChevronDownIcon className="w-4 h-4 text-slate-400" />
+                            <ChevronDownIcon className={`w-4 h-4 text-slate-400 ${item.disabled ? 'opacity-50' : ''}`} />
                           )}
                         </div>
                       </>
@@ -182,28 +206,33 @@ export function SettingsSidebar({ onItemClick, collapsed = false, onToggleCollap
                           <Link
                             key={subItem.nameKey}
                             href={subItem.href}
-                            onClick={onItemClick}
+                            onClick={e => {
+                              if (subItem.disabled) {
+                                e.preventDefault()
+                              }
+                            }}
                             className={`
                               flex items-start gap-3 p-2 rounded-lg transition-colors duration-200
                               ${isSubActive 
                                 ? 'bg-blue-600/20 border border-blue-500/30 text-blue-300' 
                                 : 'text-slate-300 hover:bg-slate-700/50 hover:text-white'
                               }
+                              ${subItem.disabled ? 'opacity-50 cursor-not-allowed' : ''}
                             `}
                           >
                             <subItem.icon className={`w-4 h-4 mt-0.5 flex-shrink-0 ${
                               isSubActive ? 'text-blue-400' : 'text-slate-400'
-                            }`} />
+                            } ${subItem.disabled ? 'opacity-50' : ''}`} />
                             
                             <div className="flex-1 min-w-0">
                               <div className={`font-medium text-sm ${
                                 isSubActive ? 'text-blue-300' : 'text-slate-200'
-                              }`}>
+                              } ${subItem.disabled ? 'opacity-50' : ''}`}>
                                 {t(subItem.nameKey)}
                               </div>
                               <div className={`text-xs mt-0.5 ${
                                 isSubActive ? 'text-blue-400/80' : 'text-slate-400'
-                              }`}>
+                              } ${subItem.disabled ? 'opacity-50' : ''}`}>
                                 {t(subItem.descriptionKey)}
                               </div>
                             </div>
@@ -222,7 +251,11 @@ export function SettingsSidebar({ onItemClick, collapsed = false, onToggleCollap
                 <Link
                   key={item.nameKey}
                   href={item.href!}
-                  onClick={onItemClick}
+                  onClick={e => {
+                    if (item.disabled) {
+                      e.preventDefault()
+                    }
+                  }}
                   className={`
                     flex items-start gap-3 p-3 rounded-lg transition-colors duration-200 relative group
                     ${isActive 
@@ -230,6 +263,7 @@ export function SettingsSidebar({ onItemClick, collapsed = false, onToggleCollap
                       : 'text-slate-300 hover:bg-slate-700/50 hover:text-white'
                     }
                     ${collapsed ? 'justify-center' : ''}
+                    ${item.disabled ? 'opacity-50 cursor-not-allowed' : ''}
                   `}
                   title={collapsed ? t(item.nameKey) : undefined}
                 >
@@ -241,12 +275,12 @@ export function SettingsSidebar({ onItemClick, collapsed = false, onToggleCollap
                     <div className="flex-1 min-w-0">
                       <div className={`font-medium ${
                         isActive ? 'text-blue-300' : 'text-slate-200'
-                      }`}>
+                      } ${item.disabled ? 'opacity-50' : ''}`}>
                         {t(item.nameKey)}
                       </div>
                       <div className={`text-sm mt-0.5 ${
                         isActive ? 'text-blue-400/80' : 'text-slate-400'
-                      }`}>
+                      } ${item.disabled ? 'opacity-50' : ''}`}>
                         {t(item.descriptionKey) || item.descriptionKey}
                       </div>
                     </div>
