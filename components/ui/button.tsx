@@ -25,6 +25,7 @@ export function Button({
   onClick,
   type = 'button',
   className,
+  fullWidth = false,
   ...props
 }: ButtonProps & React.ButtonHTMLAttributes<HTMLButtonElement>) {
   return (
@@ -33,12 +34,13 @@ export function Button({
       onClick={onClick}
       disabled={disabled || loading}
       className={cn(
-        'inline-flex items-center justify-center rounded-lg font-medium transition-colors',
+        'inline-flex items-center justify-center rounded-lg font-medium transition-colors cursor-pointer',
         'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2',
         'disabled:opacity-50 disabled:cursor-not-allowed',
         buttonVariants[variant],
         buttonSizes[size],
-        className
+        className,
+        fullWidth ? 'w-full' : '',
       )}
       {...props}
     >

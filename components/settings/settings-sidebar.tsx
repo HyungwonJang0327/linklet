@@ -18,6 +18,7 @@ import {
   RectangleStackIcon
 } from '@heroicons/react/24/outline'
 import { LogOut } from 'lucide-react'
+import { Button } from '../ui'
 
 interface SettingsSidebarProps {
   onItemClick?: () => void
@@ -301,38 +302,17 @@ export function SettingsSidebar({ onItemClick, collapsed = false, onToggleCollap
 
       {/* Logout Button */}
       <div className={`${collapsed ? 'p-3' : 'p-6'} pt-0 transition-all duration-300`}>
-        <button
+        <Button 
+          size="md"
+          fullWidth
           onClick={() => {
             logout()
             if (onItemClick) onItemClick()
           }}
-          className={`
-            w-full flex items-center gap-3 p-3 rounded-lg transition-colors duration-200 relative group
-            text-slate-300 hover:bg-red-500/10 hover:text-red-400 border border-transparent hover:border-red-500/30
-            ${collapsed ? 'justify-center' : ''}
-          `}
-          title={collapsed ? t('navigation.logout') : undefined}
         >
-          <LogOut className={`w-5 h-5 ${collapsed ? '' : 'mt-0.5'} flex-shrink-0`} />
-          
-          {!collapsed && (
-            <div className="flex-1 min-w-0">
-              <div className="font-medium">
-                {t('navigation.logout')}
-              </div>
-              <div className="text-sm mt-0.5 text-slate-400">
-                {t('navigation.logoutDesc')}
-              </div>
-            </div>
-          )}
-
-          {/* Tooltip for collapsed state */}
-          {collapsed && (
-            <div className="absolute left-full ml-2 px-2 py-1 bg-slate-800 text-sm text-white rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap z-50 border border-slate-600">
-              {t('navigation.logout')}
-            </div>
-          )}
-        </button>
+          <LogOut className={`w-5 h-5 mr-2 ${collapsed ? '' : 'mt-0.5'} flex-shrink-0`} />
+          {t('navigation.logout')}
+          </Button>
       </div>
     </div>
   )

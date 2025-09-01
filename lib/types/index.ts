@@ -63,6 +63,7 @@ export interface ButtonProps {
   onClick?: () => void
   type?: 'button' | 'submit' | 'reset'
   className?: string
+  fullWidth?: boolean
 }
 
 export interface InputProps {
