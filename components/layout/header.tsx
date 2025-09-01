@@ -5,6 +5,7 @@ import { useI18n } from '@/lib/i18n/context'
 import { Button } from '@/components/ui/button'
 import { User, LogOut } from 'lucide-react'
 import Link from 'next/link'
+import Image from 'next/image'
 
 export function Header() {
   const { user, isAuthenticated, logout } = useAuth()
@@ -22,10 +23,12 @@ export function Header() {
             <div className="flex items-center gap-3">
               <div className="flex items-center gap-2">
                 {user.profileImage ? (
-                  <img 
+                  <Image 
                     src={user.profileImage} 
                     alt={user.name}
                     className="w-8 h-8 rounded-full"
+                    width={32}
+                    height={32}
                   />
                 ) : (
                   <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
