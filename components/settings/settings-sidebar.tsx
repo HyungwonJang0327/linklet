@@ -75,20 +75,20 @@ export function SettingsSidebar({ onItemClick, collapsed = false, onToggleCollap
         }
       ]
     },
-    {
-      nameKey: 'settings.appearance.title',
-      href: `/${locale}/settings/appearance`,
-      icon: PaintBrushIcon,
-      menuId: 'appearance',
-      descriptionKey: 'settings.appearance.description'
-    },
-    {
-      nameKey: 'settings.notifications.title',
-      href: `/${locale}/settings/notifications`,
-      icon: BellIcon,
-      menuId: 'notifications',
-      descriptionKey: 'settings.notifications.description'
-    },
+    // {
+    //   nameKey: 'settings.appearance.title',
+    //   href: `/${locale}/settings/appearance`,
+    //   icon: PaintBrushIcon,
+    //   menuId: 'appearance',
+    //   descriptionKey: 'settings.appearance.description'
+    // },
+    // {
+    //   nameKey: 'settings.notifications.title',
+    //   href: `/${locale}/settings/notifications`,
+    //   icon: BellIcon,
+    //   menuId: 'notifications',
+    //   descriptionKey: 'settings.notifications.description'
+    // },
     {
       nameKey: 'settings.profile.title',
       href: `/${locale}/settings/profile`,

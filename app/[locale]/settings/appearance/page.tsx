@@ -97,7 +97,7 @@ export default function AppearancePage() {
       </div>
 
       {/* Theme Selection */}
-      <Card className="bg-slate-800/50 border-slate-700/50 backdrop-blur-sm">
+      {/* <Card className="bg-slate-800/50 border-slate-700/50 backdrop-blur-sm">
         <div className="p-6">
           <h2 className="text-xl font-semibold text-white mb-6">{t('settings.appearance.theme')}</h2>
           
@@ -122,7 +122,7 @@ export default function AppearancePage() {
             />
           </div>
         </div>
-      </Card>
+      </Card> */}
 
       {/* Display Settings */}
       <Card className="bg-slate-800/50 border-slate-700/50 backdrop-blur-sm">
