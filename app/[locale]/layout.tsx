@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Inter, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
-import { Header } from "@/components/layout/header";
+import { ConditionalHeader } from "@/components/layout/conditional-header";
 import { QueryProvider } from "@/components/providers/query-provider";
 import { AuthProvider } from "@/components/providers/auth-provider";
 import { I18nProvider } from "@/lib/i18n/context";
@@ -23,7 +23,7 @@ const jetbrainsMono = JetBrains_Mono({
 //   description: "Create, manage, and share your wishlists with ease",
 // };
 
-export async function generateMetadata({ params }: { params: Promise<{ locale: 'ko' | 'en' | 'ja' }> }) {
+export async function generateMetadata({ params }: { params: Promise<{ locale: 'kr' | 'en' | 'jp' }> }) {
   const { locale } = await params;
   const dictionary = await getDictionary(locale);
   return {
@@ -65,7 +65,7 @@ export default async function RootLayout({
         <QueryProvider>
           <AuthProvider>
             <I18nProvider locale={locale} dictionary={dictionary}>
-              <Header />
+              <ConditionalHeader />
               {children}
             </I18nProvider>
           </AuthProvider>

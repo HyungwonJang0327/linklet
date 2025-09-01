@@ -11,14 +11,16 @@
     "add": "Add",
     "close": "Close",
     "loading": "Loading...",
-    "error": "An error occurred"
+    "error": "An error occurred",
+    "select": "Please select"
   },
   "navigation": {
     "home": "Home",
     "wishlists": "Wishlists",
     "settings": "Settings",
     "login": "Login",
-    "logout": "Logout"
+    "logout": "Logout",
+    "logoutDesc": "Logout and go to home"
   },
 
   "login": {
@@ -184,6 +186,8 @@
     "imageUrl": "Image URL",
     "price": "Price",
     "priority": "Priority",
+    "addFromUrl": "Add from Product Link",
+    "addFromUrlDesc": "Enter a product page URL to add it directly to your wishlist",
     "form": {
       "titlePlaceholder": "e.g. iPhone 15 Pro",
       "descriptionPlaceholder": "Brief description of the product",

@@ -134,9 +134,9 @@ export default function AppearancePage() {
               value={settings.language}
               label={t('settings.appearance.language')}
               options={[
-                { value: 'ko', label: '한국어' },
+                { value: 'kr', label: '한국어' },
                 { value: 'en', label: 'English' },
-                { value: 'ja', label: '日本語' }
+                { value: 'jp', label: '日本語' }
               ]}
               onChange={(language) => setSettings(prev => ({ ...prev, language }))}
             />
