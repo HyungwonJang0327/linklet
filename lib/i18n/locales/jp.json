@@ -121,11 +121,17 @@
     "private": "非公開",
     "created": "作成日",
     "updated": "更新日",
+    "noItems": "このウィッシュリストにアイテムがありません",
     "form": {
       "title": "タイトル",
       "description": "説明",
       "titlePlaceholder": "例：誕生日ウィッシュリスト",
       "descriptionPlaceholder": "ウィッシュリストの簡単な説明"
+    },
+    "shared": {
+      "private": "非公開ウィッシュリスト",
+      "privateMessage": "このウィッシュリストは非公開で表示できません。",
+      "error": "エラー"
     }
   },
   "landing": {

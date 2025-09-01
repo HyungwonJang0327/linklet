@@ -122,11 +122,17 @@
     "private": "Private",
     "created": "Created",
     "updated": "Updated",
+    "noItems": "No items in this wishlist",
     "form": {
       "title": "Title",
       "description": "Description",
       "titlePlaceholder": "e.g. Birthday Wishlist",
       "descriptionPlaceholder": "Brief description of your wishlist"
+    },
+    "shared": {
+      "private": "Private Wishlist",
+      "privateMessage": "This wishlist is private and cannot be viewed.",
+      "error": "Error"
     }
   },
   "landing": {
