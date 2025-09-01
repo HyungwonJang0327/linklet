@@ -60,7 +60,7 @@ export default async function RootLayout({
   return (
     <html lang={locale}>
       <body
-        className={`${inter.variable} ${jetbrainsMono.variable} antialiased`}
+        // className={`${inter.variable} ${jetbrainsMono.variable} antialiased`}
       >
         <QueryProvider>
           <AuthProvider>

@@ -1,6 +1,7 @@
 import { type Locale } from "@/lib/i18n/config";
 import { getDictionary } from "@/lib/i18n/dictionary";
 import { Heart, Share2, Gift, Smartphone, ShoppingBag, Star } from "lucide-react";
+import Link from "next/link";
 
 interface HomePageProps {
   params: Promise<{ locale: Locale }>;
@@ -77,12 +78,12 @@ export default async function HomePage({ params }: HomePageProps) {
             >
               {dictionary.landing?.cta?.getStarted || "Get Started"}
             </a>
-            <a
-              href={`/${locale}/w/demo`}
+            <Link
+              href="/w/demo"
               className="border-2 border-slate-500 hover:border-slate-400 text-slate-300 hover:text-white hover:bg-slate-800/30 px-10 py-4 rounded-xl font-semibold text-lg transition-all"
             >
               {dictionary.landing?.cta?.viewDemo || "View Demo"}
-            </a>
+            </Link>
           </div>
         </div>
       </section>
