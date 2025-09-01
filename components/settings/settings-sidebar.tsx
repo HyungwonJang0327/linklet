@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { usePathname } from 'next/navigation'
+import { usePathname, useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { useI18n } from '@/lib/i18n/context'
 import { useAuth } from '@/components/providers/auth-provider'
@@ -46,6 +46,7 @@ interface SubMenuListType {
 
 export function SettingsSidebar({ onItemClick, collapsed = false, onToggleCollapse }: SettingsSidebarProps) {
   const pathname = usePathname()
+  const router = useRouter()
   const { t, locale } = useI18n()
   const { logout } = useAuth()
   const [expandedMenus, setExpandedMenus] = useState<Record<string, boolean>>({
@@ -307,7 +308,8 @@ export function SettingsSidebar({ onItemClick, collapsed = false, onToggleCollap
           fullWidth
           onClick={() => {
             logout()
-            if (onItemClick) onItemClick()
+            // if (onItemClick) onItemClick()
+            router.push(`/${locale}`)
           }}
         >
           <LogOut className={`w-5 h-5 mr-2 ${collapsed ? '' : 'mt-0.5'} flex-shrink-0`} />
