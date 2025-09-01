@@ -41,6 +41,13 @@
   },
   "settings": {
     "title": "Settings",
+    "wishlists": {
+      "title": "Wishlists",
+      "description": "Manage content and customize appearance",
+      "manage": "Manage Content",
+      "manageDesc": "Add, edit, and reorder wishlist items",
+      "customizeDesc": "Customize shared page appearance and themes"
+    },
     "profile": {
       "title": "Profile Settings",
       "description": "Manage your account information and update your profile",

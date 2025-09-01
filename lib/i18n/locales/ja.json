@@ -40,6 +40,13 @@
   },
   "settings": {
     "title": "設定",
+    "wishlists": {
+      "title": "ウィッシュリスト",
+      "description": "コンテンツ管理と外観のカスタマイズ",
+      "manage": "コンテンツ管理",
+      "manageDesc": "ウィッシュリストアイテムの追加、編集、並び替え",
+      "customizeDesc": "共有ページの外観とテーマの設定"
+    },
     "profile": {
       "title": "プロフィール設定",
       "description": "アカウント情報を管理し、プロフィールを更新してください",

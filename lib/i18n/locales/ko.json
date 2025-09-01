@@ -40,6 +40,13 @@
   },
   "settings": {
     "title": "설정",
+    "wishlists": {
+      "title": "위시리스트",
+      "description": "콘텐츠 관리 및 모양 커스터마이징",
+      "manage": "콘텐츠 관리",
+      "manageDesc": "위시리스트 아이템 추가, 편집, 순서 변경",
+      "customizeDesc": "공유 페이지 모양과 테마 설정"
+    },
     "profile": {
       "title": "프로필 설정",
       "description": "계정 정보를 관리하고 프로필을 업데이트하세요",
