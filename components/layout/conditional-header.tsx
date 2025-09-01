@@ -7,7 +7,8 @@ export function ConditionalHeader() {
   const pathname = usePathname()
   
   // Hide header on settings pages
-  const hideOnPaths = ['/settings']
+  const hideOnPaths = ['/settings', '/w/']
+  console.log(hideOnPaths, pathname)
   const shouldHideHeader = hideOnPaths.some(path => 
     pathname.includes(path)
   )
