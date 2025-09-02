@@ -146,14 +146,14 @@ export default function CreateWishlistPage() {
           className="text-slate-300 hover:text-white hover:bg-slate-700/50 p-2"
         >
           <ArrowLeftIcon className="w-5 h-5" />
+          <h2 className="text-slate-300 text-md font-bold ml-2">돌아가기</h2>
         </Button>
-
-        <div>
-          <h1 className="text-3xl font-bold text-white">{t('wishlist.create')}</h1>
-          <p className="text-slate-300 mt-1">
-            새로운 위시리스트를 만들어 원하는 상품들을 정리해보세요
-          </p>
-        </div>
+      </div>
+      <div className="flex items-center gap-4">
+        <h1 className="text-3xl font-bold text-white">{t('wishlist.create')}</h1>
+        <p className="text-slate-300 mt-1">
+          새로운 위시리스트를 만들어 원하는 상품들을 정리해보세요
+        </p>
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-6">
@@ -315,8 +315,8 @@ export default function CreateWishlistPage() {
             <div className="space-y-4">
               <div
                 className={`border rounded-lg p-4 cursor-pointer transition-colors ${formData.isPublic
-                    ? 'border-blue-500 bg-blue-500/10'
-                    : 'border-slate-600 hover:border-slate-500'
+                  ? 'border-blue-500 bg-blue-500/10'
+                  : 'border-slate-600 hover:border-slate-500'
                   }`}
                 onClick={() => setFormData(prev => ({ ...prev, isPublic: true }))}
               >
@@ -337,8 +337,8 @@ export default function CreateWishlistPage() {
 
               <div
                 className={`border rounded-lg p-4 cursor-pointer transition-colors ${!formData.isPublic
-                    ? 'border-blue-500 bg-blue-500/10'
-                    : 'border-slate-600 hover:border-slate-500'
+                  ? 'border-blue-500 bg-blue-500/10'
+                  : 'border-slate-600 hover:border-slate-500'
                   }`}
                 onClick={() => setFormData(prev => ({ ...prev, isPublic: false }))}
               >
