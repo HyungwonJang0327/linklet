@@ -25,10 +25,10 @@ export default function ProfileForm({ formData, setFormData }: ProfileFormProps)
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setLoading(true)
-    
+
     // TODO: API 호출로 프로필 업데이트
     await new Promise(resolve => setTimeout(resolve, 1000)) // 임시 딜레이
-    
+
     setLoading(false)
   }
 
@@ -39,7 +39,7 @@ export default function ProfileForm({ formData, setFormData }: ProfileFormProps)
           label={t('settings.profile.displayName')}
           value={formData.name}
           onChange={(value: string) => setFormData(prev => ({ ...prev, name: value }))}
-          placeholder="홍길동"
+          placeholder={t('settings.profile.displayNamePlaceholder')}
           disabled={loading}
           className="bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400"
         />
@@ -62,7 +62,7 @@ export default function ProfileForm({ formData, setFormData }: ProfileFormProps)
         <textarea
           value={formData.bio}
           onChange={(e) => setFormData(prev => ({ ...prev, bio: e.target.value }))}
-          placeholder="자신을 간단히 소개해주세요..."
+          placeholder={t('settings.profile.bioPlaceholder')}
           disabled={loading}
           rows={4}
           className="w-full px-3 py-2 bg-slate-900/50 border border-slate-600 rounded-lg text-white placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
@@ -70,8 +70,8 @@ export default function ProfileForm({ formData, setFormData }: ProfileFormProps)
       </div>
 
       <div className="flex justify-end">
-        <Button 
-          type="submit" 
+        <Button
+          type="submit"
           loading={loading}
           className="bg-blue-600 hover:bg-blue-700 text-white"
         >
