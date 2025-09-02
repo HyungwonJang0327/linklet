@@ -5,9 +5,9 @@ import { usePathname, useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { useI18n } from '@/lib/i18n/context'
 import { useAuth } from '@/components/providers/auth-provider'
-import { 
-  UserIcon, 
-  BellIcon, 
+import {
+  UserIcon,
+  BellIcon,
   PaintBrushIcon,
   SwatchIcon,
   ChevronLeftIcon,
@@ -53,7 +53,7 @@ export function SettingsSidebar({ onItemClick, collapsed = false, onToggleCollap
     wishlists: true
   })
 
-  const navigationItems:MenuListType[] = [
+  const navigationItems: MenuListType[] = [
     {
       nameKey: 'settings.wishlists.title',
       icon: RectangleStackIcon,
@@ -132,19 +132,19 @@ export function SettingsSidebar({ onItemClick, collapsed = false, onToggleCollap
           )}
         </button>
       )}
-      
+
       <div className={`${collapsed ? 'p-3' : 'p-6'} transition-all duration-300 flex-1`}>
         {!collapsed && (
           <h2 className="text-xl font-semibold text-white mb-6">{t('settings.title')}</h2>
         )}
-        
+
         <nav className="space-y-2">
           {navigationItems.map((item) => {
             if (item.expandable) {
               // Expandable Menu Item
               const isExpanded = expandedMenus[item.menuId!]
               const isActive = isMenuActive(item)
-              
+
               return (
                 <div key={item.nameKey}>
                   {/* Main Menu Item */}
@@ -152,8 +152,8 @@ export function SettingsSidebar({ onItemClick, collapsed = false, onToggleCollap
                     onClick={() => toggleMenu(item.menuId!)}
                     className={`
                       flex items-start gap-3 p-3 rounded-lg transition-colors duration-200 relative group
-                      ${isActive 
-                        ? 'bg-blue-600/20 border border-blue-500/30 text-blue-300' 
+                      ${isActive
+                        ? 'bg-blue-600/20 border border-blue-500/30 text-blue-300'
                         : 'text-slate-300 hover:bg-slate-700/50 hover:text-white'
                       }
                       ${collapsed ? 'justify-center' : ''}
@@ -162,21 +162,18 @@ export function SettingsSidebar({ onItemClick, collapsed = false, onToggleCollap
                     disabled={item.disabled}
                     title={collapsed ? t(item.nameKey) : undefined}
                   >
-                    <item.icon className={`w-5 h-5 ${collapsed ? '' : 'mt-0.5'} flex-shrink-0 ${
-                      isActive ? 'text-blue-400' : 'text-slate-400'
-                    }`} />
-                    
+                    <item.icon className={`w-5 h-5 ${collapsed ? '' : 'mt-0.5'} flex-shrink-0 ${isActive ? 'text-blue-400' : 'text-slate-400'
+                      }`} />
+
                     {!collapsed && (
                       <>
                         <div className="flex-1 flex items-start flex-col min-w-0 w-full">
-                          <div className={`font-medium ${
-                            isActive ? 'text-blue-300' : 'text-slate-200'
-                          } ${item.disabled ? 'opacity-50' : ''}`}>
+                          <div className={`font-medium ${isActive ? 'text-blue-300' : 'text-slate-200'
+                            } ${item.disabled ? 'opacity-50' : ''}`}>
                             {t(item.nameKey)}
                           </div>
-                          <div className={`text-sm mt-0.5 text-start ${
-                            isActive ? 'text-blue-400/80' : 'text-slate-400'
-                          } ${item.disabled ? 'opacity-50' : ''}`}>
+                          <div className={`text-sm mt-0.5 text-start ${isActive ? 'text-blue-400/80' : 'text-slate-400'
+                            } ${item.disabled ? 'opacity-50' : ''}`}>
                             {t(item.descriptionKey) || item.descriptionKey}
                           </div>
                         </div>
@@ -203,7 +200,7 @@ export function SettingsSidebar({ onItemClick, collapsed = false, onToggleCollap
                     <div className="ml-6 mt-2 space-y-1">
                       {item.submenu.map((subItem: any) => {
                         const isSubActive = pathname === subItem.href
-                        
+
                         return (
                           <Link
                             key={subItem.nameKey}
@@ -215,26 +212,23 @@ export function SettingsSidebar({ onItemClick, collapsed = false, onToggleCollap
                             }}
                             className={`
                               flex items-start gap-3 p-2 rounded-lg transition-colors duration-200
-                              ${isSubActive 
-                                ? 'bg-blue-600/20 border border-blue-500/30 text-blue-300' 
+                              ${isSubActive
+                                ? 'bg-blue-600/20 border border-blue-500/30 text-blue-300'
                                 : 'text-slate-300 hover:bg-slate-700/50 hover:text-white'
                               }
                               ${subItem.disabled ? 'opacity-50 cursor-not-allowed' : ''}
                             `}
                           >
-                            <subItem.icon className={`w-4 h-4 mt-0.5 flex-shrink-0 ${
-                              isSubActive ? 'text-blue-400' : 'text-slate-400'
-                            } ${subItem.disabled ? 'opacity-50' : ''}`} />
-                            
+                            <subItem.icon className={`w-4 h-4 mt-0.5 flex-shrink-0 ${isSubActive ? 'text-blue-400' : 'text-slate-400'
+                              } ${subItem.disabled ? 'opacity-50' : ''}`} />
+
                             <div className="flex-1 min-w-0">
-                              <div className={`font-medium text-sm ${
-                                isSubActive ? 'text-blue-300' : 'text-slate-200'
-                              } ${subItem.disabled ? 'opacity-50' : ''}`}>
+                              <div className={`font-medium text-sm ${isSubActive ? 'text-blue-300' : 'text-slate-200'
+                                } ${subItem.disabled ? 'opacity-50' : ''}`}>
                                 {t(subItem.nameKey)}
                               </div>
-                              <div className={`text-xs mt-0.5 ${
-                                isSubActive ? 'text-blue-400/80' : 'text-slate-400'
-                              } ${subItem.disabled ? 'opacity-50' : ''}`}>
+                              <div className={`text-xs mt-0.5 ${isSubActive ? 'text-blue-400/80' : 'text-slate-400'
+                                } ${subItem.disabled ? 'opacity-50' : ''}`}>
                                 {t(subItem.descriptionKey)}
                               </div>
                             </div>
@@ -248,7 +242,7 @@ export function SettingsSidebar({ onItemClick, collapsed = false, onToggleCollap
             } else {
               // Regular Menu Item
               const isActive = isMenuActive(item)
-              
+
               return (
                 <Link
                   key={item.nameKey}
@@ -260,8 +254,8 @@ export function SettingsSidebar({ onItemClick, collapsed = false, onToggleCollap
                   }}
                   className={`
                     flex items-start gap-3 p-3 rounded-lg transition-colors duration-200 relative group
-                    ${isActive 
-                      ? 'bg-blue-600/20 border border-blue-500/30 text-blue-300' 
+                    ${isActive
+                      ? 'bg-blue-600/20 border border-blue-500/30 text-blue-300'
                       : 'text-slate-300 hover:bg-slate-700/50 hover:text-white'
                     }
                     ${collapsed ? 'justify-center' : ''}
@@ -269,20 +263,17 @@ export function SettingsSidebar({ onItemClick, collapsed = false, onToggleCollap
                   `}
                   title={collapsed ? t(item.nameKey) : undefined}
                 >
-                  <item.icon className={`w-5 h-5 ${collapsed ? '' : 'mt-0.5'} flex-shrink-0 ${
-                    isActive ? 'text-blue-400' : 'text-slate-400'
-                  }`} />
-                  
+                  <item.icon className={`w-5 h-5 ${collapsed ? '' : 'mt-0.5'} flex-shrink-0 ${isActive ? 'text-blue-400' : 'text-slate-400'
+                    }`} />
+
                   {!collapsed && (
                     <div className="flex-1 min-w-0">
-                      <div className={`font-medium ${
-                        isActive ? 'text-blue-300' : 'text-slate-200'
-                      } ${item.disabled ? 'opacity-50' : ''}`}>
+                      <div className={`font-medium ${isActive ? 'text-blue-300' : 'text-slate-200'
+                        } ${item.disabled ? 'opacity-50' : ''}`}>
                         {t(item.nameKey)}
                       </div>
-                      <div className={`text-sm mt-0.5 ${
-                        isActive ? 'text-blue-400/80' : 'text-slate-400'
-                      } ${item.disabled ? 'opacity-50' : ''}`}>
+                      <div className={`text-sm mt-0.5 ${isActive ? 'text-blue-400/80' : 'text-slate-400'
+                        } ${item.disabled ? 'opacity-50' : ''}`}>
                         {t(item.descriptionKey) || item.descriptionKey}
                       </div>
                     </div>
@@ -303,7 +294,7 @@ export function SettingsSidebar({ onItemClick, collapsed = false, onToggleCollap
 
       {/* Logout Button */}
       <div className={`${collapsed ? 'p-3' : 'p-6'} pt-0 transition-all duration-300`}>
-        <Button 
+        <Button
           size="md"
           fullWidth
           onClick={() => {
@@ -313,8 +304,11 @@ export function SettingsSidebar({ onItemClick, collapsed = false, onToggleCollap
           }}
         >
           <LogOut className={`w-5 h-5 mr-2 ${collapsed ? '' : 'mt-0.5'} flex-shrink-0`} />
-          {t('navigation.logout')}
-          </Button>
+          {!collapsed && (
+            t('navigation.logout')
+          )}
+          {/* {t('navigation.logout')} */}
+        </Button>
       </div>
     </div>
   )
