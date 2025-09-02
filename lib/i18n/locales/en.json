@@ -107,6 +107,14 @@
         "social": "Social Links"
       }
     },
+    "analytics": {
+      "title": "Analytics",
+      "description": "Analyze your wishlist data and insights"
+    },
+    "pricing": {
+      "title": "Pricing",
+      "description": "Choose the plan that fits your needs and start managing your wishlists"
+    },
     "privacy": "Privacy",
     "apiKeys": "API key management",
     "dangerZone": "Account deletion and dangerous actions"

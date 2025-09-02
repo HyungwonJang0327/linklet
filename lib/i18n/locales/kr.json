@@ -107,6 +107,14 @@
         "social": "소셜링크"
       }
     },
+    "analytics": {
+      "title": "분석",
+      "description": "위시리스트 데이터와 인사이트를 분석합니다"
+    },
+    "pricing": {
+      "title": "요금제",
+      "description": "필요에 맞는 요금제를 선택하고 위시리스트 관리를 시작하세요"
+    },
     "privacy": "개인정보 보호",
     "apiKeys": "API 키 관리",
     "dangerZone": "계정 삭제 및 위험한 작업"

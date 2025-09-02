@@ -107,6 +107,14 @@
         "social": "ソーシャルリンク"
       }
     },
+    "analytics": {
+      "title": "分析",
+      "description": "ウィッシュリストデータとインサイトを分析します"
+    },
+    "pricing": {
+      "title": "料金",
+      "description": "ニーズに合ったプランを選択してウィッシュリスト管理を始めましょう"
+    },
     "privacy": "プライバシー",
     "apiKeys": "APIキー管理",
     "dangerZone": "アカウント削除と危険な操作"

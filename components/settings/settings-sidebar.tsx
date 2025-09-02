@@ -15,7 +15,9 @@ import {
   ChevronDownIcon,
   ChevronUpIcon,
   ListBulletIcon,
-  RectangleStackIcon
+  RectangleStackIcon,
+  ChartBarIcon,
+  CreditCardIcon
 } from '@heroicons/react/24/outline'
 import { LogOut } from 'lucide-react'
 import { Button } from '../ui'
@@ -73,8 +75,23 @@ export function SettingsSidebar({ onItemClick, collapsed = false, onToggleCollap
           icon: SwatchIcon,
           descriptionKey: 'settings.wishlists.customizeDesc',
           disabled: true
+        },
+        {
+          nameKey: 'settings.analytics.title',
+          href: `/${locale}/settings/analytics`,
+          icon: ChartBarIcon,
+          descriptionKey: 'settings.analytics.description',
+          disabled: true
         }
       ]
+    },
+    {
+      nameKey: 'settings.pricing.title',
+      href: `/${locale}/settings/pricing`,
+      icon: CreditCardIcon,
+      descriptionKey: 'settings.pricing.description',
+      menuId: 'pricing',
+      disabled: true
     },
     // {
     //   nameKey: 'settings.appearance.title',
