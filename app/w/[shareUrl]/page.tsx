@@ -3,6 +3,9 @@ import { type Locale } from '@/lib/i18n/config'
 import { getDictionary } from '@/lib/i18n/dictionary'
 import SharedWishlistClient from './shared-wishlist-client'
 
+// Enable ISR with 10 minute revalidation
+export const revalidate = 600
+
 interface SharedWishlistPageProps {
   params: Promise<{
     shareUrl: string

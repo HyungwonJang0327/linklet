@@ -9,20 +9,6 @@ import { getDictionary } from "@/lib/i18n/dictionary";
 import { type Locale, locales } from "@/lib/i18n/config";
 import { notFound } from "next/navigation";
 
-const inter = Inter({
-  subsets: ["latin"],
-  variable: "--font-geist-sans",
-});
-const jetbrainsMono = JetBrains_Mono({
-  subsets: ["latin"],
-  variable: "--font-geist-mono",
-});
-
-// export const metadata: Metadata = {
-//   title: "Linklet - Your Personal Wishlist Manager",
-//   description: "Create, manage, and share your wishlists with ease",
-// };
-
 export async function generateMetadata({ params }: { params: Promise<{ locale: 'kr' | 'en' | 'jp' }> }) {
   const { locale } = await params;
   const dictionary = await getDictionary(locale);

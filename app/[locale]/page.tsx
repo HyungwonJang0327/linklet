@@ -1,14 +1,19 @@
-import { type Locale } from "@/lib/i18n/config";
+import { type Locale, locales } from "@/lib/i18n/config";
 import { getDictionary } from "@/lib/i18n/dictionary";
 import { Heart, Share2, Gift, Smartphone, ShoppingBag, Star } from "lucide-react";
 import Link from "next/link";
 
 interface HomePageProps {
-  params: Promise<{ locale: Locale }>;
+  params: { locale: Locale };
+}
+
+// Enable SSG for all supported locales
+export async function generateStaticParams() {
+  return locales.map((locale) => ({ locale }));
 }
 
 export default async function HomePage({ params }: HomePageProps) {
-  const { locale } = await params;
+  const { locale } = params;
   const dictionary = await getDictionary(locale);
 
   const features = [
