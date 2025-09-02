@@ -283,6 +283,7 @@
       "description": "Advanced features for power users",
       "badge": "Most Popular",
       "cta": "Upgrade to Pro",
+      "currentPlan": "Current Plan",
       "features": {
         "wishlists": "Unlimited wishlists",
         "items": "Unlimited items per wishlist",

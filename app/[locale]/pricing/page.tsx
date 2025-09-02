@@ -6,11 +6,18 @@ import { Card } from '@/components/ui/card'
 import { CheckIcon, XMarkIcon } from '@heroicons/react/24/outline'
 import { useI18n } from '@/lib/i18n/context'
 import { useParams } from 'next/navigation'
+import { useAuth } from '@/components/providers/auth-provider'
 
 export default function PricingPage() {
   const { t } = useI18n()
   const { locale = 'kr' } = useParams()
+  const { user, isAuthenticated } = useAuth()
   const [isAnnual, setIsAnnual] = useState(false)
+
+  // TODO: Replace with actual subscription status when subscription system is implemented
+  // For now, we'll use a placeholder logic
+  const userPlan = user ? 'pro' : 'free' // This would come from user.subscription?.plan or similar
+  const isUserOnProPlan = userPlan === 'pro'
 
   const freePlan = {
     name: t('pricing.free.name') || 'Free',
@@ -153,8 +160,18 @@ export default function PricingPage() {
               </div>
             </div>
 
-            <Button className="w-full mt-8 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white">
-              {t('pricing.pro.cta') || 'Pro로 업그레이드'}
+            <Button 
+              className={`w-full mt-8 ${
+                isAuthenticated && isUserOnProPlan
+                  ? 'bg-green-600 hover:bg-green-700 cursor-default'
+                  : 'bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700'
+              } text-white`}
+              disabled={isAuthenticated && isUserOnProPlan}
+            >
+              {isAuthenticated && isUserOnProPlan
+                ? (t('pricing.pro.currentPlan') || '현재 이용 중인 요금제')
+                : (t('pricing.pro.cta') || 'Pro로 업그레이드')
+              }
             </Button>
           </Card>
         </div>

@@ -283,6 +283,7 @@
       "description": "パワーユーザー向け高度機能",
       "badge": "人気",
       "cta": "Proにアップグレード",
+      "currentPlan": "現在のプラン",
       "features": {
         "wishlists": "無制限ウィッシュリスト",
         "items": "ウィッシュリスト当たり無制限アイテム",
