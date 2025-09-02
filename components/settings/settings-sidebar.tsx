@@ -118,7 +118,7 @@ export function SettingsSidebar({ onItemClick, collapsed = false, onToggleCollap
   }
 
   return (
-    <div className={`${collapsed ? 'w-20' : 'w-72'} bg-slate-800/50 backdrop-blur-sm border-r border-slate-700/50 min-h-screen transition-all duration-300 relative flex flex-col`}>
+    <div className={`${collapsed ? 'w-20' : 'w-72'} bg-slate-800/50 backdrop-blur-sm border-r border-slate-700/50 h-screen transition-all duration-300 relative flex flex-col`}>
       {/* Collapse Toggle Button */}
       {onToggleCollapse && (
         <button

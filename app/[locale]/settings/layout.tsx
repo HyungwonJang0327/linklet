@@ -13,7 +13,7 @@ export default function SettingsLayout({ children }: SettingsLayoutProps) {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false)
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-indigo-900">
+    <div className="h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-indigo-900 overflow-hidden">
       {/* Mobile Header */}
       <div className="lg:hidden">
         <MobileSettingsHeader 
@@ -22,9 +22,9 @@ export default function SettingsLayout({ children }: SettingsLayoutProps) {
         />
       </div>
 
-      <div className="flex">
-        {/* Desktop Sidebar */}
-        <div className="hidden lg:block">
+      <div className="flex h-full lg:h-screen">
+        {/* Desktop Sidebar - Fixed */}
+        <div className="hidden lg:block lg:fixed lg:inset-y-0 lg:left-0 lg:z-50">
           <SettingsSidebar 
             collapsed={sidebarCollapsed}
             onToggleCollapse={() => setSidebarCollapsed(!sidebarCollapsed)}
@@ -44,9 +44,11 @@ export default function SettingsLayout({ children }: SettingsLayoutProps) {
           </div>
         )}
 
-        {/* Main Content */}
-        <div className="flex-1 lg:pl-0">
-          <main className="px-4 py-6 lg:px-8 lg:py-8">
+        {/* Main Content - Scrollable */}
+        <div className={`flex-1 transition-all duration-200 ${
+          sidebarCollapsed ? 'lg:ml-20' : 'lg:ml-72'
+        }`}>
+          <main className="h-full overflow-y-auto px-4 py-6 lg:px-8 lg:py-8">
             {children}
           </main>
         </div>

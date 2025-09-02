@@ -41,7 +41,7 @@ export default function CreateWishlistPage() {
 
   const validateForm = () => {
     const newErrors: Record<string, string> = {}
-    
+
     if (!formData.title.trim()) {
       newErrors.title = '위시리스트 제목을 입력해주세요'
     } else if (formData.title.trim().length < 2) {
@@ -55,7 +55,7 @@ export default function CreateWishlistPage() {
     }
 
     setErrors(newErrors)
-    
+
     // Validate product links
     const linkValidationErrors: Record<number, string> = {}
     productLinks.forEach((link, index) => {
@@ -64,25 +64,25 @@ export default function CreateWishlistPage() {
       }
     })
     setLinkErrors(linkValidationErrors)
-    
+
     return Object.keys(newErrors).length === 0 && Object.keys(linkValidationErrors).length === 0
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    
+
     if (!validateForm()) return
 
     setLoading(true)
-    
+
     try {
       // TODO: API call to create wishlist
       const validLinks = productLinks.filter(link => link.trim() !== '')
       console.log('Creating wishlist:', { ...formData, productLinks: validLinks })
-      
+
       // Simulate API call
       await new Promise(resolve => setTimeout(resolve, 1500))
-      
+
       // Redirect back to wishlists page
       router.push(`/${locale}/settings/wishlists`)
     } catch (error) {
@@ -115,7 +115,7 @@ export default function CreateWishlistPage() {
     if (productLinks.length > 1) {
       const newLinks = productLinks.filter((_, i) => i !== index)
       setProductLinks(newLinks)
-      
+
       // Remove error for removed link
       const newErrors = { ...linkErrors }
       delete newErrors[index]
@@ -127,7 +127,7 @@ export default function CreateWishlistPage() {
     const newLinks = [...productLinks]
     newLinks[index] = value
     setProductLinks(newLinks)
-    
+
     // Clear error when user starts typing
     if (linkErrors[index]) {
       const newErrors = { ...linkErrors }
@@ -147,7 +147,7 @@ export default function CreateWishlistPage() {
         >
           <ArrowLeftIcon className="w-5 h-5" />
         </Button>
-        
+
         <div>
           <h1 className="text-3xl font-bold text-white">{t('wishlist.create')}</h1>
           <p className="text-slate-300 mt-1">
@@ -174,9 +174,8 @@ export default function CreateWishlistPage() {
                   value={formData.title}
                   onChange={(value) => setFormData(prev => ({ ...prev, title: value }))}
                   placeholder="예: 2024년 생일 선물"
-                  className={`bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 ${
-                    errors.title ? 'border-red-500' : ''
-                  }`}
+                  className={`bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 ${errors.title ? 'border-red-500' : ''
+                    }`}
                   disabled={loading}
                 />
                 {errors.title && (
@@ -194,9 +193,8 @@ export default function CreateWishlistPage() {
                   placeholder="이 위시리스트에 대한 간단한 설명을 작성해주세요..."
                   disabled={loading}
                   rows={4}
-                  className={`w-full px-3 py-2 bg-slate-900/50 border border-slate-600 rounded-lg text-white placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors resize-none ${
-                    errors.description ? 'border-red-500' : ''
-                  }`}
+                  className={`w-full px-3 py-2 bg-slate-900/50 border border-slate-600 rounded-lg text-white placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors resize-none ${errors.description ? 'border-red-500' : ''
+                    }`}
                 />
                 <div className="flex items-center justify-between mt-1">
                   {errors.description && (
@@ -248,16 +246,15 @@ export default function CreateWishlistPage() {
                       value={link}
                       onChange={(value) => updateProductLink(index, value)}
                       placeholder={`상품 링크 ${index + 1} (예: https://example.com/product)`}
-                      className={`bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 ${
-                        linkErrors[index] ? 'border-red-500' : ''
-                      }`}
+                      className={`bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 ${linkErrors[index] ? 'border-red-500' : ''
+                        }`}
                       disabled={loading}
                     />
                     {linkErrors[index] && (
                       <p className="text-red-400 text-xs mt-1">{linkErrors[index]}</p>
                     )}
                   </div>
-                  
+
                   <div className="flex items-start gap-2">
                     {productLinks.length > 1 && (
                       <Button
@@ -271,7 +268,7 @@ export default function CreateWishlistPage() {
                         <TrashIcon className="w-4 h-4" />
                       </Button>
                     )}
-                    
+
                     {index === productLinks.length - 1 && productLinks.length < 10 && (
                       <Button
                         type="button"
@@ -287,12 +284,12 @@ export default function CreateWishlistPage() {
                   </div>
                 </div>
               ))}
-              
+
               <div className="flex items-center justify-between text-xs text-slate-400 pt-2">
                 <span>최대 10개의 상품 링크를 추가할 수 있습니다</span>
                 <span>{productLinks.filter(link => link.trim()).length}/10</span>
               </div>
-              
+
               {productLinks.length < 10 && productLinks.length > 1 && (
                 <Button
                   type="button"
@@ -316,22 +313,19 @@ export default function CreateWishlistPage() {
             <h2 className="text-xl font-semibold text-white mb-6">공개 설정</h2>
 
             <div className="space-y-4">
-              <div 
-                className={`border rounded-lg p-4 cursor-pointer transition-colors ${
-                  formData.isPublic 
-                    ? 'border-blue-500 bg-blue-500/10' 
+              <div
+                className={`border rounded-lg p-4 cursor-pointer transition-colors ${formData.isPublic
+                    ? 'border-blue-500 bg-blue-500/10'
                     : 'border-slate-600 hover:border-slate-500'
-                }`}
+                  }`}
                 onClick={() => setFormData(prev => ({ ...prev, isPublic: true }))}
               >
                 <div className="flex items-start gap-3">
-                  <EyeIcon className={`w-5 h-5 mt-0.5 ${
-                    formData.isPublic ? 'text-blue-400' : 'text-slate-400'
-                  }`} />
+                  <EyeIcon className={`w-5 h-5 mt-0.5 ${formData.isPublic ? 'text-blue-400' : 'text-slate-400'
+                    }`} />
                   <div>
-                    <div className={`font-medium ${
-                      formData.isPublic ? 'text-blue-300' : 'text-slate-200'
-                    }`}>
+                    <div className={`font-medium ${formData.isPublic ? 'text-blue-300' : 'text-slate-200'
+                      }`}>
                       공개 위시리스트
                     </div>
                     <div className="text-sm text-slate-400 mt-1">
@@ -341,22 +335,19 @@ export default function CreateWishlistPage() {
                 </div>
               </div>
 
-              <div 
-                className={`border rounded-lg p-4 cursor-pointer transition-colors ${
-                  !formData.isPublic 
-                    ? 'border-blue-500 bg-blue-500/10' 
+              <div
+                className={`border rounded-lg p-4 cursor-pointer transition-colors ${!formData.isPublic
+                    ? 'border-blue-500 bg-blue-500/10'
                     : 'border-slate-600 hover:border-slate-500'
-                }`}
+                  }`}
                 onClick={() => setFormData(prev => ({ ...prev, isPublic: false }))}
               >
                 <div className="flex items-start gap-3">
-                  <EyeSlashIcon className={`w-5 h-5 mt-0.5 ${
-                    !formData.isPublic ? 'text-blue-400' : 'text-slate-400'
-                  }`} />
+                  <EyeSlashIcon className={`w-5 h-5 mt-0.5 ${!formData.isPublic ? 'text-blue-400' : 'text-slate-400'
+                    }`} />
                   <div>
-                    <div className={`font-medium ${
-                      !formData.isPublic ? 'text-blue-300' : 'text-slate-200'
-                    }`}>
+                    <div className={`font-medium ${!formData.isPublic ? 'text-blue-300' : 'text-slate-200'
+                      }`}>
                       비공개 위시리스트
                     </div>
                     <div className="text-sm text-slate-400 mt-1">
