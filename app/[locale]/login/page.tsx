@@ -76,7 +76,7 @@ export default function LoginPage({ params }: LoginPageProps) {
             <h3 className="font-medium mb-3 text-sm text-white">{t('login.loginFeatures.title')}</h3>
             <ul className="text-xs text-slate-300 space-y-1">
               <li>• {t('login.loginFeatures.shareUrl')}</li>
-              <li>• {t('login.loginFeatures.permanentStorage')}</li>
+              {/* <li>• {t('login.loginFeatures.permanentStorage')}</li> */}
               <li>• {t('login.loginFeatures.syncDevices')}</li>
               <li>• {t('login.loginFeatures.management')}</li>
             </ul>
