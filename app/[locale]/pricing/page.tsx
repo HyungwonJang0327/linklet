@@ -73,24 +73,20 @@ export default function PricingPage() {
             </span>
             <button
               onClick={() => setIsAnnual(!isAnnual)}
-              className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-                isAnnual ? 'bg-blue-600' : 'bg-slate-600'
-              }`}
+              className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${isAnnual ? 'bg-blue-600' : 'bg-slate-600'}`}
             >
               <span
-                className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
-                  isAnnual ? 'translate-x-6' : 'translate-x-1'
-                }`}
+                className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${isAnnual ? 'translate-x-6' : 'translate-x-1'}`}
               />
             </button>
-            <span className={`text-sm ${isAnnual ? 'text-white' : 'text-slate-400'}`}>
-              {t('pricing.annual') || '연간'}
-            </span>
-            {isAnnual && (
-              <span className="bg-green-500 text-white text-xs px-2 py-1 rounded-full ml-2">
+            <div className='flex flex-col'>
+              <span className={`text-sm ${isAnnual ? 'text-white' : 'text-slate-400'}`}>
+                {t('pricing.annual') || '연간'}
+              </span>
+              <span className={`${isAnnual ? 'bg-green-500' : 'bg-slate-400'} text-white text-xs px-2 py-1 rounded-full`}>
                 {t('pricing.save') || '17% 절약'}
               </span>
-            )}
+            </div>
           </div>
         </div>
 
