@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server'
-import { prisma } from '@/lib/db'
+import { getWishlistByShareUrl } from '@/lib/db/wishlist'
 
 export async function GET(
   request: Request,
@@ -7,17 +7,7 @@ export async function GET(
 ) {
   try {
     const { shareUrl } = await params
-    const wishlist = await prisma.wishlist.findUnique({
-      where: { shareUrl },
-      include: {
-        items: {
-          orderBy: { createdAt: 'desc' }
-        },
-        _count: {
-          select: { items: true }
-        }
-      }
-    })
+    const wishlist = await getWishlistByShareUrl(shareUrl)
     
     if (!wishlist) {
       return NextResponse.json(

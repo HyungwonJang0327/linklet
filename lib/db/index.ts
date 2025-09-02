@@ -1,11 +1,6 @@
-import { PrismaClient } from '@prisma/client'
+// Re-export the database client
+export { db, prisma } from './client'
 
-declare global {
-  var prisma: PrismaClient | undefined
-}
-
-export const db = global.prisma || new PrismaClient()
-
-if (process.env.NODE_ENV !== 'production') {
-  global.prisma = db
-}
+// Re-export everything from wishlist and user modules for convenience
+export * from './wishlist'
+export * from './user'

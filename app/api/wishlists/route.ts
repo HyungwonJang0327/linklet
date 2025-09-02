@@ -1,16 +1,34 @@
 import { NextResponse } from 'next/server'
+import { getUserWishlists, createWishlist } from '@/lib/db/wishlist'
 import { prisma } from '@/lib/db'
 
-export async function GET() {
+export async function GET(request: Request) {
   try {
+    const { searchParams } = new URL(request.url)
+    const userId = searchParams.get('userId')
+    
+    if (userId) {
+      // Get user's wishlists using the enhanced function
+      const wishlists = await getUserWishlists(userId)
+      return NextResponse.json(wishlists)
+    }
+    
+    // Get public wishlists (for guest users or public browsing)
     const wishlists = await prisma.wishlist.findMany({
+      where: { isPublic: true },
       include: {
-        items: true,
+        user: {
+          select: {
+            id: true,
+            name: true
+          }
+        },
         _count: {
           select: { items: true }
         }
       },
-      orderBy: { createdAt: 'desc' }
+      orderBy: { createdAt: 'desc' },
+      take: 20 // Limit for performance
     })
     
     return NextResponse.json(wishlists)
@@ -25,7 +43,7 @@ export async function GET() {
 
 export async function POST(request: Request) {
   try {
-    const { title, description, userId } = await request.json()
+    const { title, description, isPublic, category, userId, productLinks } = await request.json()
     
     if (!title) {
       return NextResponse.json(
@@ -34,26 +52,13 @@ export async function POST(request: Request) {
       )
     }
 
-    const wishlistData: any = {
+    const wishlist = await createWishlist({
       title,
       description,
-      userId: userId || null
-    }
-
-    // 회원일 때만 shareUrl 생성
-    if (userId) {
-      const { createId } = await import('@paralleldrive/cuid2')
-      wishlistData.shareUrl = createId()
-    }
-
-    const wishlist = await prisma.wishlist.create({
-      data: wishlistData,
-      include: {
-        items: true,
-        _count: {
-          select: { items: true }
-        }
-      }
+      isPublic: isPublic ?? false,
+      category,
+      userId: userId || undefined,
+      productLinks: productLinks || []
     })
     
     return NextResponse.json(wishlist, { status: 201 })

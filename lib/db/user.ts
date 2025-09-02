@@ -1,4 +1,4 @@
-import { db } from './index'
+import { db } from './client'
 
 export interface CreateUserData {
   email?: string

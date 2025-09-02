@@ -1,9 +1,9 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import type { 
-  Wishlist, 
-  CreateWishlistRequest, 
+import type {
+  Wishlist,
+  CreateWishlistRequest,
   CreateWishlistItemRequest,
-  ApiResponse 
+  ApiResponse
 } from '@/lib/types'
 
 // Query Keys
@@ -58,12 +58,12 @@ async function createWishlist(data: CreateWishlistRequest): Promise<Wishlist> {
     },
     body: JSON.stringify(data),
   })
-  
+
   if (!response.ok) {
     const error = await response.json()
     throw new Error(error.error || 'Failed to create wishlist')
   }
-  
+
   return response.json()
 }
 
@@ -75,12 +75,12 @@ async function createWishlistItem(wishlistId: string, data: CreateWishlistItemRe
     },
     body: JSON.stringify(data),
   })
-  
+
   if (!response.ok) {
     const error = await response.json()
     throw new Error(error.error || 'Failed to create wishlist item')
   }
-  
+
   return response.json()
 }
 
@@ -88,7 +88,7 @@ async function deleteWishlist(id: string): Promise<void> {
   const response = await fetch(`/api/wishlists/${id}`, {
     method: 'DELETE',
   })
-  
+
   if (!response.ok) {
     const error = await response.json()
     throw new Error(error.error || 'Failed to delete wishlist')
@@ -99,7 +99,7 @@ async function deleteWishlistItem(itemId: string): Promise<void> {
   const response = await fetch(`/api/items/${itemId}`, {
     method: 'DELETE',
   })
-  
+
   if (!response.ok) {
     const error = await response.json()
     throw new Error(error.error || 'Failed to delete wishlist item')
@@ -141,7 +141,7 @@ export function useSharedWishlist(shareUrl: string) {
 
 export function useCreateWishlist() {
   const queryClient = useQueryClient()
-  
+
   return useMutation({
     mutationFn: createWishlist,
     onSuccess: () => {
@@ -153,7 +153,7 @@ export function useCreateWishlist() {
 
 export function useCreateWishlistItem(wishlistId: string) {
   const queryClient = useQueryClient()
-  
+
   return useMutation({
     mutationFn: (data: CreateWishlistItemRequest) => createWishlistItem(wishlistId, data),
     onSuccess: () => {
@@ -167,7 +167,7 @@ export function useCreateWishlistItem(wishlistId: string) {
 
 export function useDeleteWishlist() {
   const queryClient = useQueryClient()
-  
+
   return useMutation({
     mutationFn: deleteWishlist,
     onSuccess: () => {
@@ -178,7 +178,7 @@ export function useDeleteWishlist() {
 
 export function useDeleteWishlistItem() {
   const queryClient = useQueryClient()
-  
+
   return useMutation({
     mutationFn: deleteWishlistItem,
     onSuccess: () => {

@@ -1,4 +1,4 @@
-import { db } from './index'
+import { db } from './client'
 import { WishlistCategory } from '@prisma/client'
 import { createId } from '@paralleldrive/cuid2'
 
@@ -40,10 +40,10 @@ export interface UpdateWishlistItemData {
 // Wishlist Operations
 export async function createWishlist(data: CreateWishlistData) {
   const { productLinks, ...wishlistData } = data
-  
+
   // Generate unique share URL
   const shareUrl = `w/${createId()}`
-  
+
   const wishlist = await db.wishlist.create({
     data: {
       ...wishlistData,
@@ -78,7 +78,7 @@ export async function createWishlist(data: CreateWishlistData) {
           })
         })
     )
-    
+
     return {
       ...wishlist,
       items
@@ -233,7 +233,7 @@ export async function reorderWishlistItems(wishlistId: string, itemIds: string[]
       data: { priority: index }
     })
   )
-  
+
   return db.$transaction(updates)
 }
 

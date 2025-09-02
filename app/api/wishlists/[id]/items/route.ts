@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server'
+import { addWishlistItem } from '@/lib/db/wishlist'
 import { prisma } from '@/lib/db'
 import { revalidateSharedWishlist } from '@/lib/revalidation'
 
@@ -38,16 +39,13 @@ export async function POST(
       )
     }
 
-    const item = await prisma.wishlistItem.create({
-      data: {
-        title,
-        description,
-        productUrl,
-        imageUrl,
-        price,
-        priority: priority || 0,
-        wishlistId: id
-      }
+    const item = await addWishlistItem(id, {
+      title,
+      description,
+      productUrl,
+      imageUrl,
+      price,
+      priority: priority || 0
     })
 
     // 공유 위시리스트인 경우 ISR 재검증

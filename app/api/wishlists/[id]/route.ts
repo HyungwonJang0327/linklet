@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server'
-import { prisma } from '@/lib/db'
+import { getWishlistById, updateWishlist, deleteWishlist } from '@/lib/db/wishlist'
 
 export async function GET(
   request: Request,
@@ -7,17 +7,7 @@ export async function GET(
 ) {
   try {
     const { id } = await params
-    const wishlist = await prisma.wishlist.findUnique({
-      where: { id },
-      include: {
-        items: {
-          orderBy: { createdAt: 'desc' }
-        },
-        _count: {
-          select: { items: true }
-        }
-      }
-    })
+    const wishlist = await getWishlistById(id)
     
     if (!wishlist) {
       return NextResponse.json(
@@ -42,20 +32,13 @@ export async function PUT(
 ) {
   try {
     const { id } = await params
-    const { title, description } = await request.json()
+    const { title, description, isPublic, category } = await request.json()
     
-    const wishlist = await prisma.wishlist.update({
-      where: { id },
-      data: {
-        title,
-        description
-      },
-      include: {
-        items: true,
-        _count: {
-          select: { items: true }
-        }
-      }
+    const wishlist = await updateWishlist(id, {
+      title,
+      description,
+      isPublic,
+      category
     })
     
     return NextResponse.json(wishlist)
@@ -74,9 +57,7 @@ export async function DELETE(
 ) {
   try {
     const { id } = await params
-    await prisma.wishlist.delete({
-      where: { id }
-    })
+    await deleteWishlist(id)
     
     return NextResponse.json({ message: 'Wishlist deleted successfully' })
   } catch (error) {

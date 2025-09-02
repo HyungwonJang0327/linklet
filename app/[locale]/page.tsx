@@ -4,7 +4,7 @@ import { Heart, Share2, Gift, Smartphone, ShoppingBag, Star } from "lucide-react
 import Link from "next/link";
 
 interface HomePageProps {
-  params: { locale: Locale };
+  params: Promise<{ locale: Locale }>;
 }
 
 // Enable SSG for all supported locales
@@ -13,7 +13,7 @@ export async function generateStaticParams() {
 }
 
 export default async function HomePage({ params }: HomePageProps) {
-  const { locale } = params;
+  const { locale } = await params;
   const dictionary = await getDictionary(locale);
 
   const features = [
