@@ -1,14 +1,16 @@
 'use client'
 
 import { useI18n } from '@/lib/i18n/context'
+import { formatDate } from '@/lib/utils'
+import { useParams } from 'next/navigation'
 
 export default function AccountInfo() {
   const { t } = useI18n()
-
+  const { locale = 'kr' } = useParams() as { locale: string }
   return (
     <>
       <h2 className="text-xl font-semibold text-white mb-4">{t('settings.profile.accountInfo')}</h2>
-      
+
       <div className="space-y-4">
         <div className="flex items-center justify-between py-3 border-b border-slate-700/50">
           <div>
@@ -25,7 +27,8 @@ export default function AccountInfo() {
             <div className="text-slate-300 font-medium">{t('settings.profile.joinDate')}</div>
             <div className="text-slate-400 text-sm">{t('settings.profile.joinDate-description')}</div>
           </div>
-          <div className="text-slate-300">2024년 8월 30일</div>
+          {/* <div className="text-slate-300">2024년 8월 30일</div> */}
+          <div className="text-slate-300">{formatDate(new Date('2024-08-30').toISOString(), locale)}</div>
         </div>
 
         <div className="flex items-center justify-between py-3">
@@ -33,7 +36,7 @@ export default function AccountInfo() {
             <div className="text-slate-300 font-medium">{t('settings.profile.wishlistCount')}</div>
             <div className="text-slate-400 text-sm">{t('settings.profile.wishlistCount-description')}</div>
           </div>
-          <div className="text-slate-300">3개</div>
+          <div className="text-slate-300">3</div>
         </div>
       </div>
     </>

@@ -7,9 +7,18 @@ export function cn(...inputs: ClassValue[]) {
 }
 
 // Format date utility
-export function formatDate(date: Date | string): string {
+export function formatDate(date: Date | string, locale: string = 'kr'): string {
+  if (locale === 'kr') {
+    locale = 'ko-KR'
+  } else if (locale === 'jp') {
+    locale = 'ja-JP'
+  } else if (locale === 'en') {
+    locale = 'en-US'
+  } else {
+    locale = 'ko-KR'
+  }
   const dateObj = typeof date === 'string' ? new Date(date) : date
-  return dateObj.toLocaleDateString('ko-KR', {
+  return dateObj.toLocaleDateString(locale, {
     year: 'numeric',
     month: 'long',
     day: 'numeric'
@@ -21,12 +30,12 @@ export function formatRelativeTime(date: Date | string): string {
   const dateObj = typeof date === 'string' ? new Date(date) : date
   const now = new Date()
   const diff = now.getTime() - dateObj.getTime()
-  
+
   const seconds = Math.floor(diff / 1000)
   const minutes = Math.floor(seconds / 60)
   const hours = Math.floor(minutes / 60)
   const days = Math.floor(hours / 24)
-  
+
   if (days > 0) return `${days}일 전`
   if (hours > 0) return `${hours}시간 전`
   if (minutes > 0) return `${minutes}분 전`
@@ -36,13 +45,13 @@ export function formatRelativeTime(date: Date | string): string {
 // Price formatter
 export function formatPrice(price: string | null): string {
   if (!price) return '가격 정보 없음'
-  
+
   // Remove non-numeric characters except for dots and commas
   const numericPrice = price.replace(/[^\d.,]/g, '')
   const numberValue = parseFloat(numericPrice.replace(/,/g, ''))
-  
+
   if (isNaN(numberValue)) return price
-  
+
   return numberValue.toLocaleString('ko-KR') + '원'
 }
 
@@ -103,7 +112,7 @@ export const storage = {
       return null
     }
   },
-  
+
   set: (key: string, value: any) => {
     if (typeof window === 'undefined') return
     try {
@@ -112,7 +121,7 @@ export const storage = {
       // Handle storage errors silently
     }
   },
-  
+
   remove: (key: string) => {
     if (typeof window === 'undefined') return
     try {
@@ -128,19 +137,19 @@ export const guestWishlists = {
   get: (): string[] => {
     return storage.get('guestWishlists') || []
   },
-  
+
   add: (wishlistId: string) => {
     const current = guestWishlists.get()
     if (!current.includes(wishlistId)) {
       storage.set('guestWishlists', [...current, wishlistId])
     }
   },
-  
+
   remove: (wishlistId: string) => {
     const current = guestWishlists.get()
     storage.set('guestWishlists', current.filter(id => id !== wishlistId))
   },
-  
+
   clear: () => {
     storage.remove('guestWishlists')
   }
