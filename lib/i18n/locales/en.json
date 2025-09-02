@@ -256,17 +256,17 @@
     "save": "Save 17%",
     "included": "Included Features",
     "limitations": "Limitations",
-    "everything": "Everything Included",
+    "everything": "Everything free function included",
     "free": {
       "name": "Free",
       "price": "$0",
       "description": "Basic features for personal use",
       "cta": "Get Started Free",
       "features": {
-        "wishlists": "Up to 3 wishlists",
-        "items": "Unlimited items per wishlist",
+        "wishlists": "Up to 1 wishlists",
+        "items": "10 items per wishlist",
         "sharing": "Link sharing",
-        "categories": "10 categories",
+        "categories": "5 categories",
         "mobile": "Mobile optimized"
       },
       "limitations": {
@@ -293,7 +293,8 @@
         "customization": "🎨 Full theme customization",
         "analytics": "📊 Wishlist analytics & insights",
         "priority": "⚡ Priority support",
-        "export": "📤 Data export"
+        "export": "📤 Data export",
+        "customLogo": "Customize bottom logo"
       }
     },
     "faq": {

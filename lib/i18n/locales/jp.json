@@ -256,17 +256,17 @@
     "save": "17%お得",
     "included": "含まれる機能",
     "limitations": "制限事項",
-    "everything": "全機能含む",
+    "everything": "全無料機能含む",
     "free": {
       "name": "無料",
       "price": "¥0",
       "description": "個人利用の基本機能",
       "cta": "無料で始める",
       "features": {
-        "wishlists": "最大3つのウィッシュリスト",
-        "items": "ウィッシュリスト当たり無制限アイテム",
+        "wishlists": "最大1つのウィッシュリスト",
+        "items": "ウィッシュリスト当たり10個アイテム",
         "sharing": "リンク共有",
-        "categories": "10カテゴリー",
+        "categories": "5カテゴリー",
         "mobile": "モバイル最適化"
       },
       "limitations": {
@@ -293,7 +293,8 @@
         "customization": "🎨 完全テーマカスタマイズ",
         "analytics": "📊 ウィッシュリスト分析・洞察",
         "priority": "⚡ 優先サポート",
-        "export": "📤 データエクスポート"
+        "export": "📤 データエクスポート",
+        "customLogo": "下部ロゴカスタマイズ"
       }
     },
     "faq": {

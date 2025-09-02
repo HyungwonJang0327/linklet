@@ -17,16 +17,11 @@ export default function PricingPage() {
     price: t('pricing.free.price') || '₩0',
     description: t('pricing.free.description') || '개인 사용자를 위한 기본 기능',
     features: [
-      t('pricing.free.features.wishlists') || '최대 3개 위시리스트',
-      t('pricing.free.features.items') || '위시리스트당 무제한 아이템',
+      t('pricing.free.features.wishlists') || '최대 1개 위시리스트',
+      t('pricing.free.features.items') || '위시리스트당 10개 아이템',
       t('pricing.free.features.sharing') || '링크 공유',
       t('pricing.free.features.categories') || '10개 카테고리',
       t('pricing.free.features.mobile') || '모바일 최적화'
-    ],
-    limitations: [
-      t('pricing.free.limitations.recommendations') || 'AI 추천 기능 제한',
-      t('pricing.free.limitations.customization') || '테마 커스터마이징 제한',
-      t('pricing.free.limitations.analytics') || '분석 기능 없음'
     ]
   }
 
@@ -39,17 +34,15 @@ export default function PricingPage() {
     badge: t('pricing.pro.badge') || 'Most Popular',
     features: [
       t('pricing.pro.features.wishlists') || '무제한 위시리스트',
-      t('pricing.pro.features.items') || '위시리스트당 무제한 아이템',
-      t('pricing.pro.features.sharing') || '고급 공유 옵션',
+      // t('pricing.pro.features.sharing') || '고급 공유 옵션',
       t('pricing.pro.features.categories') || '무제한 카테고리',
-      t('pricing.pro.features.mobile') || '모바일 최적화',
+      t('pricing.pro.features.customLogo') || '하단 로고 커스텀',
       t('pricing.pro.features.recommendations') || '🤖 AI 기반 선물 추천',
       t('pricing.pro.features.customization') || '🎨 완전한 테마 커스터마이징',
       t('pricing.pro.features.analytics') || '📊 위시리스트 분석 및 인사이트',
       t('pricing.pro.features.priority') || '⚡ 우선 지원',
-      t('pricing.pro.features.export') || '📤 데이터 내보내기'
-    ],
-    limitations: []
+      // t('pricing.pro.features.export') || '📤 데이터 내보내기'
+    ]
   }
 
   const currentProPrice = isAnnual ? proPlan.annualPrice : proPlan.monthlyPrice
@@ -93,41 +86,25 @@ export default function PricingPage() {
         {/* Pricing Cards */}
         <div className="grid lg:grid-cols-2 gap-8 max-w-5xl mx-auto">
           {/* Free Plan */}
-          <Card className="bg-slate-800/50 border-slate-700/50 backdrop-blur-sm p-8 relative">
+          <Card className="bg-slate-800/50 border-slate-700/50 backdrop-blur-sm p-8 relative flex flex-col">
             <div className="text-center mb-8">
               <h3 className="text-2xl font-bold text-white mb-2">{freePlan.name}</h3>
               <div className="text-4xl font-bold text-white mb-2">{freePlan.price}</div>
               <p className="text-slate-400">{freePlan.description}</p>
             </div>
 
-            <div className="space-y-6">
-              <div>
-                <h4 className="text-white font-medium mb-4">
-                  {t('pricing.included') || '포함된 기능'}
-                </h4>
-                <ul className="space-y-3">
-                  {freePlan.features.map((feature, index) => (
-                    <li key={index} className="flex items-center gap-3">
-                      <CheckIcon className="w-5 h-5 text-green-400 flex-shrink-0" />
-                      <span className="text-slate-300">{feature}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-
-              <div>
-                <h4 className="text-white font-medium mb-4">
-                  {t('pricing.limitations') || '제한 사항'}
-                </h4>
-                <ul className="space-y-3">
-                  {freePlan.limitations.map((limitation, index) => (
-                    <li key={index} className="flex items-center gap-3">
-                      <XMarkIcon className="w-5 h-5 text-red-400 flex-shrink-0" />
-                      <span className="text-slate-400">{limitation}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
+            <div className="flex-1">
+              <h4 className="text-white font-medium mb-4">
+                {t('pricing.included') || '포함된 기능'}
+              </h4>
+              <ul className="space-y-3">
+                {freePlan.features.map((feature, index) => (
+                  <li key={index} className="flex items-center gap-3">
+                    <CheckIcon className="w-5 h-5 text-green-400 flex-shrink-0" />
+                    <span className="text-slate-300">{feature}</span>
+                  </li>
+                ))}
+              </ul>
             </div>
 
             <Button className="w-full mt-8 bg-slate-700 hover:bg-slate-600 text-white">
@@ -136,7 +113,7 @@ export default function PricingPage() {
           </Card>
 
           {/* Pro Plan */}
-          <Card className="bg-gradient-to-br from-blue-900/50 to-purple-900/50 border-blue-500/50 backdrop-blur-sm p-8 relative">
+          <Card className="bg-gradient-to-br from-blue-900/50 to-purple-900/50 border-blue-500/50 backdrop-blur-sm p-8 relative flex flex-col">
             {/* Popular Badge */}
             <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
               <span className="bg-gradient-to-r from-blue-500 to-purple-500 text-white px-6 py-2 rounded-full text-sm font-medium">
@@ -160,7 +137,7 @@ export default function PricingPage() {
               <p className="text-slate-300">{proPlan.description}</p>
             </div>
 
-            <div className="space-y-6">
+            <div className="flex-1">
               <div>
                 <h4 className="text-white font-medium mb-4">
                   {t('pricing.everything') || '모든 기능 포함'}

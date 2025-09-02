@@ -256,17 +256,17 @@
     "save": "17% 절약",
     "included": "포함된 기능",
     "limitations": "제한 사항",
-    "everything": "모든 기능 포함",
+    "everything": "모든 무료 기능 포함",
     "free": {
       "name": "무료",
       "price": "₩0",
       "description": "개인 사용자를 위한 기본 기능",
       "cta": "무료로 시작하기",
       "features": {
-        "wishlists": "최대 3개 위시리스트",
-        "items": "위시리스트당 무제한 아이템",
+        "wishlists": "최대 1개 위시리스트",
+        "items": "위시리스트당 10개 아이템",
         "sharing": "링크 공유",
-        "categories": "10개 카테고리",
+        "categories": "5개 카테고리",
         "mobile": "모바일 최적화"
       },
       "limitations": {
@@ -293,7 +293,8 @@
         "customization": "🎨 완전한 테마 커스터마이징",
         "analytics": "📊 위시리스트 분석 및 인사이트",
         "priority": "⚡ 우선 지원",
-        "export": "📤 데이터 내보내기"
+        "export": "📤 데이터 내보내기",
+        "customLogo": "하단 로고 커스텀"
       }
     },
     "faq": {
