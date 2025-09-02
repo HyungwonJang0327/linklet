@@ -1,7 +1,6 @@
 'use client'
 
 import { useState } from 'react'
-import { Card } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { CustomizationPreview } from '@/components/customize/customization-preview'
 import { ThemeSelector } from '@/components/customize/theme-selector'
@@ -11,14 +10,10 @@ import { ProfileCustomizer } from '@/components/customize/profile-customizer'
 import { SocialLinksManager } from '@/components/customize/social-links-manager'
 import { WishlistSelector } from '@/components/customize/wishlist-selector'
 import { useI18n } from '@/lib/i18n/context'
-import { 
-  PaintBrushIcon, 
-  RectangleStackIcon, 
-  UserCircleIcon, 
-  LinkIcon,
-  SwatchIcon,
-  EyeIcon
-} from '@heroicons/react/24/outline'
+import { EyeIcon } from '@heroicons/react/24/outline'
+import CustomizeHeader from './components/customize-header'
+import CustomizeTabs from './components/customize-tabs'
+import EmptyState from './components/empty-state'
 
 // 기본 커스터마이징 템플릿
 const getDefaultCustomization = (wishlistTitle: string = '위시리스트') => ({
@@ -57,13 +52,6 @@ export default function CustomizePage() {
     ? (wishlistCustomizations[selectedWishlist.id] || getDefaultCustomization(selectedWishlist.title))
     : getDefaultCustomization()
 
-  const tabs = [
-    { id: 'theme', name: t('settings.customize.tabs.theme'), icon: PaintBrushIcon },
-    { id: 'layout', name: t('settings.customize.tabs.layout'), icon: RectangleStackIcon },
-    { id: 'colors', name: t('settings.customize.tabs.colors'), icon: SwatchIcon },
-    { id: 'profile', name: t('settings.customize.tabs.profile'), icon: UserCircleIcon },
-    { id: 'social', name: t('settings.customize.tabs.social'), icon: LinkIcon }
-  ]
 
   // 위시리스트 선택 핸들러
   const handleWishlistSelect = (wishlist: any) => {
@@ -123,37 +111,13 @@ export default function CustomizePage() {
   return (
     <div className="max-w-7xl mx-auto">
       {/* Header */}
-      <div className="mb-8">
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-3xl font-bold text-white mb-2">{t('settings.customize.title')}</h1>
-            <p className="text-slate-300">
-              {t('settings.customize.description')}
-            </p>
-          </div>
-          
-          <div className="flex items-center gap-3">
-            <Button
-              variant={showPreview ? 'primary' : 'outline'}
-              size="sm"
-              onClick={() => setShowPreview(!showPreview)}
-              className="hidden lg:flex"
-            >
-              <EyeIcon className="w-4 h-4 mr-2" />
-{t('settings.customize.preview')} {showPreview ? t('settings.customize.hidePreview') : t('settings.customize.showPreview')}
-            </Button>
-            
-            <Button 
-              onClick={handleSave}
-              loading={loading}
-              disabled={!selectedWishlist}
-              className="bg-blue-600 hover:bg-blue-700 text-white disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-{selectedWishlist ? t('settings.customize.saveChanges') : t('settings.customize.selectWishlist')}
-            </Button>
-          </div>
-        </div>
-      </div>
+      <CustomizeHeader 
+        showPreview={showPreview}
+        onTogglePreview={() => setShowPreview(!showPreview)}
+        onSave={handleSave}
+        loading={loading}
+        selectedWishlist={selectedWishlist}
+      />
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Left Panel - Customization Options */}
@@ -165,39 +129,9 @@ export default function CustomizePage() {
           />
 
           {selectedWishlist ? (
-            <>
-              {/* Tab Navigation */}
-              <Card className="bg-slate-800/50 border-slate-700/50 backdrop-blur-sm p-1">
-                <div className="flex flex-wrap gap-1">
-                  {tabs.map((tab) => (
-                    <button
-                      key={tab.id}
-                      onClick={() => setActiveTab(tab.id as any)}
-                      className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-                        activeTab === tab.id
-                          ? 'bg-blue-600 text-white'
-                          : 'text-slate-300 hover:text-white hover:bg-slate-700/50'
-                      }`}
-                    >
-                      <tab.icon className="w-4 h-4" />
-                      {tab.name}
-                    </button>
-                  ))}
-                </div>
-              </Card>
-            </>
+            <CustomizeTabs activeTab={activeTab} onTabChange={setActiveTab} />
           ) : (
-            <Card className="bg-slate-800/50 border-slate-700/50 backdrop-blur-sm">
-              <div className="p-8 text-center">
-                <div className="w-16 h-16 mx-auto mb-4 bg-slate-700/50 rounded-full flex items-center justify-center">
-                  <SwatchIcon className="w-8 h-8 text-slate-400" />
-                </div>
-                <h3 className="text-lg font-medium text-white mb-2">{t('settings.customize.selectWishlist')}</h3>
-                <p className="text-slate-400">
-                  {t('settings.customize.selectWishlistDesc')}
-                </p>
-              </div>
-            </Card>
+            <EmptyState />
           )}
 
           {/* Tab Content - Only show when wishlist is selected */}
