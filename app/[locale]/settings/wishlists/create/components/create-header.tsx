@@ -21,13 +21,13 @@ export default function CreateHeader({ onBack }: CreateHeaderProps) {
           className="text-slate-300 hover:text-white hover:bg-slate-700/50 p-2"
         >
           <ArrowLeftIcon className="w-5 h-5" />
-          <h2 className="text-slate-300 text-md font-bold ml-2">돌아가기</h2>
+{t('common.back') || '돌아가기'}
         </Button>
       </div>
       <div className="flex items-center gap-4">
-        <h1 className="text-3xl font-bold text-white">{t('wishlist.create')}</h1>
+<h1 className="text-3xl font-bold text-white">{t('wishlist.createButton')}</h1>
         <p className="text-slate-300 mt-1">
-          새로운 위시리스트를 만들어 원하는 상품들을 정리해보세요
+{t('wishlist.create.subtitle') || '새로운 위시리스트를 만들어 원하는 상품들을 정리해보세요'}
         </p>
       </div>
     </>

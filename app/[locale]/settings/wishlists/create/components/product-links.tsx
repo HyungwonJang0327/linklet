@@ -4,6 +4,7 @@ import { Card } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { GlobeAltIcon, PlusIcon, TrashIcon } from '@heroicons/react/24/outline'
+import { useI18n } from '@/lib/i18n/context'
 
 interface ProductLinksProps {
   productLinks: string[]
@@ -22,6 +23,8 @@ export default function ProductLinks({
   loading, 
   isValidUrl 
 }: ProductLinksProps) {
+  const { t } = useI18n()
+  
   const addProductLink = () => {
     if (productLinks.length < 10) {
       setProductLinks([...productLinks, ''])
@@ -59,8 +62,8 @@ export default function ProductLinks({
         <div className="flex items-center gap-3 mb-6">
           <GlobeAltIcon className="w-6 h-6 text-green-400" />
           <div>
-            <h2 className="text-xl font-semibold text-white">상품 링크 추가 (선택사항)</h2>
-            <p className="text-sm text-slate-400 mt-1">위시리스트 생성과 함께 원하는 상품들을 바로 추가해보세요</p>
+            <h2 className="text-xl font-semibold text-white">{t('wishlist.create.productLinks') || '상품 링크 추가 (선택사항)'}</h2>
+            <p className="text-sm text-slate-400 mt-1">{t('wishlist.create.productLinksDesc') || '위시리스트 생성과 함께 원하는 상품들을 바로 추가해보세요'}</p>
           </div>
         </div>
 
@@ -71,7 +74,7 @@ export default function ProductLinks({
                 <Input
                   value={link}
                   onChange={(value) => updateProductLink(index, value)}
-                  placeholder={`상품 링크 ${index + 1} (예: https://example.com/product)`}
+                  placeholder={`${t('wishlist.create.productLink')} ${index + 1} (${t('common.example')}: https://example.com/product)` || `상품 링크 ${index + 1} (예: https://example.com/product)`}
                   className={`bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 ${
                     linkErrors[index] ? 'border-red-500' : ''
                   }`}
@@ -113,7 +116,7 @@ export default function ProductLinks({
           ))}
           
           <div className="flex items-center justify-between text-xs text-slate-400 pt-2">
-            <span>최대 10개의 상품 링크를 추가할 수 있습니다</span>
+            <span>{t('wishlist.create.maxLinks') || '최대 10개의 상품 링크를 추가할 수 있습니다'}</span>
             <span>{productLinks.filter(link => link.trim()).length}/10</span>
           </div>
           
@@ -127,7 +130,7 @@ export default function ProductLinks({
               disabled={loading}
             >
               <PlusIcon className="w-4 h-4 mr-2" />
-              링크 추가
+              {t('wishlist.create.addLink') || '링크 추가'}
             </Button>
           )}
         </div>

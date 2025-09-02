@@ -2,6 +2,7 @@
 
 import { Card } from '@/components/ui/card'
 import { EyeIcon, EyeSlashIcon } from '@heroicons/react/24/outline'
+import { useI18n } from '@/lib/i18n/context'
 
 interface PrivacySettingsProps {
   formData: {
@@ -16,10 +17,12 @@ interface PrivacySettingsProps {
 }
 
 export default function PrivacySettings({ formData, setFormData }: PrivacySettingsProps) {
+  const { t } = useI18n()
+
   return (
     <Card className="bg-slate-800/50 border-slate-700/50 backdrop-blur-sm">
       <div className="p-6">
-        <h2 className="text-xl font-semibold text-white mb-6">공개 설정</h2>
+        <h2 className="text-xl font-semibold text-white mb-6">{t('wishlist.create.privacySettings') || '공개 설정'}</h2>
 
         <div className="space-y-4">
           <div 
@@ -38,10 +41,10 @@ export default function PrivacySettings({ formData, setFormData }: PrivacySettin
                 <div className={`font-medium ${
                   formData.isPublic ? 'text-blue-300' : 'text-slate-200'
                 }`}>
-                  공개 위시리스트
+                  {t('wishlist.public') || '공개 위시리스트'}
                 </div>
                 <div className="text-sm text-slate-400 mt-1">
-                  링크를 아는 사람이면 누구나 볼 수 있습니다
+                  {t('wishlist.create.publicDesc') || '링크를 아는 사람이면 누구나 볼 수 있습니다'}
                 </div>
               </div>
             </div>
@@ -63,10 +66,10 @@ export default function PrivacySettings({ formData, setFormData }: PrivacySettin
                 <div className={`font-medium ${
                   !formData.isPublic ? 'text-blue-300' : 'text-slate-200'
                 }`}>
-                  비공개 위시리스트
+{t('wishlist.private') || '비공개 위시리스트'}
                 </div>
                 <div className="text-sm text-slate-400 mt-1">
-                  나만 볼 수 있습니다
+{t('wishlist.create.privateDesc') || '나만 볼 수 있습니다'}
                 </div>
               </div>
             </div>

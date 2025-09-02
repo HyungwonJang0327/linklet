@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { useParams, useRouter } from 'next/navigation'
+import { useI18n } from '@/lib/i18n/context'
 import CreateHeader from './components/create-header'
 import BasicInformation from './components/basic-information'
 import ProductLinks from './components/product-links'
@@ -11,6 +12,7 @@ import FormActions from './components/form-actions'
 export default function CreateWishlistPage() {
   const router = useRouter()
   const { locale = 'kr' } = useParams()
+  const { t } = useI18n()
 
   const [formData, setFormData] = useState({
     title: '',
@@ -29,15 +31,15 @@ export default function CreateWishlistPage() {
     const newErrors: Record<string, string> = {}
 
     if (!formData.title.trim()) {
-      newErrors.title = '위시리스트 제목을 입력해주세요'
+      newErrors.title = t('wishlist.create.errors.titleRequired') || '위시리스트 제목을 입력해주세요'
     } else if (formData.title.trim().length < 2) {
-      newErrors.title = '제목은 2글자 이상 입력해주세요'
+      newErrors.title = t('wishlist.create.errors.titleTooShort') || '제목은 2글자 이상 입력해주세요'
     } else if (formData.title.trim().length > 50) {
-      newErrors.title = '제목은 50글자 이하로 입력해주세요'
+      newErrors.title = t('wishlist.create.errors.titleTooLong') || '제목은 50글자 이하로 입력해주세요'
     }
 
     if (formData.description && formData.description.length > 200) {
-      newErrors.description = '설명은 200글자 이하로 입력해주세요'
+      newErrors.description = t('wishlist.create.errors.descriptionTooLong') || '설명은 200글자 이하로 입력해주세요'
     }
 
     setErrors(newErrors)
@@ -46,7 +48,7 @@ export default function CreateWishlistPage() {
     const linkValidationErrors: Record<number, string> = {}
     productLinks.forEach((link, index) => {
       if (link && !isValidUrl(link)) {
-        linkValidationErrors[index] = '유효한 URL을 입력해주세요'
+        linkValidationErrors[index] = t('wishlist.create.errors.invalidUrl') || '유효한 URL을 입력해주세요'
       }
     })
     setLinkErrors(linkValidationErrors)

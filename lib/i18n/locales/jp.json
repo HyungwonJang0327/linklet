@@ -12,7 +12,9 @@
     "close": "閉じる",
     "loading": "読み込み中...",
     "error": "エラーが発生しました",
-    "select": "選択してください"
+    "select": "選択してください",
+    "back": "戻る",
+    "example": "例"
   },
   "navigation": {
     "home": "ホーム",
@@ -111,14 +113,14 @@
     "title": "ウィッシュリスト",
     "subTitle1": "ウィッシュリストを簡単に作成して共有してください",
     "subTitle2": "欲しい商品をまとめてウィッシュリストを作成してください",
-    "create": "新しいウィッシュリストを作成",
+    "createButton": "新しいウィッシュリストを作成",
     "myWishlists": "マイウィッシュリスト",
     "shared": "共有されたウィッシュリスト",
     "items": "アイテム",
     "addItem": "アイテムを追加",
     "shareLink": "共有リンク",
-    "public": "公開",
-    "private": "非公開",
+    "public": "公開ウィッシュリスト",
+    "private": "非公開ウィッシュリスト",
     "created": "作成日",
     "updated": "更新日",
     "noItems": "このウィッシュリストにアイテムがありません",
@@ -127,6 +129,43 @@
       "description": "説明",
       "titlePlaceholder": "例：誕生日ウィッシュリスト",
       "descriptionPlaceholder": "ウィッシュリストの簡単な説明"
+    },
+    "categories": {
+      "general": "一般",
+      "birthday": "誕生日プレゼント",
+      "christmas": "クリスマス",
+      "wedding": "結婚祝い",
+      "baby": "ベビー用品",
+      "electronics": "電子機器",
+      "fashion": "ファッション",
+      "books": "本",
+      "travel": "旅行",
+      "home": "ホームデコ"
+    },
+    "create": {
+      "basicInfo": "基本情報",
+      "title": "ウィッシュリストのタイトル",
+      "titlePlaceholder": "例：2024年誕生日プレゼント",
+      "description": "説明（オプション）",
+      "descriptionPlaceholder": "このウィッシュリストの簡単な説明を書いてください...",
+      "category": "カテゴリー",
+      "productLinks": "商品リンクを追加（オプション）",
+      "productLinksDesc": "ウィッシュリスト作成と同時に欲しい商品を直接追加してみてください",
+      "productLink": "商品リンク",
+      "addLink": "リンク追加",
+      "maxLinks": "最大10個の商品リンクを追加できます",
+      "privacySettings": "プライバシー設定",
+      "publicDesc": "リンクを知っている人なら誰でも見ることができます",
+      "privateDesc": "自分だけが見ることができます",
+      "subtitle": "新しいウィッシュリストを作成して欲しい商品を整理してみてください",
+      "submit": "ウィッシュリストを作成",
+      "errors": {
+        "titleRequired": "ウィッシュリストのタイトルを入力してください",
+        "titleTooShort": "タイトルは2文字以上入力してください",
+        "titleTooLong": "タイトルは50文字以下で入力してください",
+        "descriptionTooLong": "説明は200文字以下で入力してください",
+        "invalidUrl": "有効なURLを入力してください"
+      }
     },
     "shared": {
       "private": "非公開ウィッシュリスト",

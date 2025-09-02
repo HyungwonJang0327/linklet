@@ -12,7 +12,9 @@
     "close": "Close",
     "loading": "Loading...",
     "error": "An error occurred",
-    "select": "Please select"
+    "select": "Please select",
+    "back": "Back",
+    "example": "e.g."
   },
   "navigation": {
     "home": "Home",
@@ -22,7 +24,6 @@
     "logout": "Logout",
     "logoutDesc": "Logout and go to home"
   },
-
   "login": {
     "title": "Login",
     "backToHome": "Back to Home",
@@ -112,14 +113,14 @@
     "title": "Wishlist",
     "subTitle1": "Create and share your wishlists with ease.",
     "subTitle2": "Organize your desires and share them with friends and family.",
-    "create": "Create New Wishlist",
+    "createButton": "Create New Wishlist",
     "myWishlists": "My Wishlists",
     "shared": "Shared Wishlists",
     "items": "Items",
     "addItem": "Add Item",
     "shareLink": "Share Link",
-    "public": "Public",
-    "private": "Private",
+    "public": "Public Wishlist",
+    "private": "Private Wishlist",
     "created": "Created",
     "updated": "Updated",
     "noItems": "No items in this wishlist",
@@ -128,6 +129,43 @@
       "description": "Description",
       "titlePlaceholder": "e.g. Birthday Wishlist",
       "descriptionPlaceholder": "Brief description of your wishlist"
+    },
+    "categories": {
+      "general": "General",
+      "birthday": "Birthday Gifts",
+      "christmas": "Christmas",
+      "wedding": "Wedding Gifts",
+      "baby": "Baby Items",
+      "electronics": "Electronics",
+      "fashion": "Fashion",
+      "books": "Books",
+      "travel": "Travel",
+      "home": "Home Decor"
+    },
+    "create": {
+      "basicInfo": "Basic Information",
+      "title": "Wishlist Title",
+      "titlePlaceholder": "e.g. 2024 Birthday Gifts",
+      "description": "Description (Optional)",
+      "descriptionPlaceholder": "Write a brief description of this wishlist...",
+      "category": "Category",
+      "productLinks": "Add Product Links (Optional)",
+      "productLinksDesc": "Add your desired products directly while creating the wishlist",
+      "productLink": "Product Link",
+      "addLink": "Add Link",
+      "maxLinks": "You can add up to 10 product links",
+      "privacySettings": "Privacy Settings",
+      "publicDesc": "Anyone with the link can view this",
+      "privateDesc": "Only you can view this",
+      "subtitle": "Create a new wishlist to organize your desired products",
+      "submit": "Create",
+      "errors": {
+        "titleRequired": "Please enter a wishlist title",
+        "titleTooShort": "Title must be at least 2 characters long",
+        "titleTooLong": "Title must be 50 characters or less",
+        "descriptionTooLong": "Description must be 200 characters or less",
+        "invalidUrl": "Please enter a valid URL"
+      }
     },
     "shared": {
       "private": "Private Wishlist",

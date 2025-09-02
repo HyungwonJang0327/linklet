@@ -15,7 +15,7 @@ export default function CreateWishlistCard() {
           <PlusIcon className="w-6 h-6 text-blue-400" />
         </div>
         <h3 className="text-lg font-medium text-white mb-2">
-          {t('wishlist.create')}
+{t('wishlist.createButton')}
         </h3>
         <p className="text-sm text-slate-400 mb-4">
           새로운 위시리스트를 만들어보세요

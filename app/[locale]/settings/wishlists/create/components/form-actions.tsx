@@ -20,14 +20,14 @@ export default function FormActions({ onBack, loading }: FormActionsProps) {
         disabled={loading}
         className="text-slate-300 border-slate-600 hover:bg-slate-700"
       >
-        취소
+{t('common.cancel') || '취소'}
       </Button>
       <Button
         type="submit"
         loading={loading}
         className="bg-blue-600 hover:bg-blue-700 text-white"
       >
-        {t('wishlist.create')}
+{t('wishlist.create.submit') || t('wishlist.createButton')}
       </Button>
     </div>
   )

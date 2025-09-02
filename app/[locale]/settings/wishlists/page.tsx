@@ -63,7 +63,7 @@ export default function WishlistsManagePage() {
           onClick={() => router.push(`/${locale}/settings/wishlists/create`)}
         >
           <PlusIcon className="w-4 h-4 mr-2" />
-          {t('wishlist.create')}
+{t('wishlist.createButton')}
         </Button>
       </div>
 
