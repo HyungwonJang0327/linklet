@@ -1,5 +1,53 @@
 {
+  "editor.formatOnSave": true,
+  "editor.formatOnType": true,
+  // "editor.defaultFormatter": "esbenp.prettier-vscode",
+  // "editor.defaultFormatter": "",
+  "editor.formatOnPaste": true,
+  "html.format.enable": true,
+  "json.format.enable": true,
+  "javascript.format.enable": true,
+  "typescript.format.enable": true,
+  "css.format.enable": true,
+  "scss.format.enable": true,
+  "explorer.compactFolders": false,
+  "files.autoSave": "afterDelay",
+  "editor.fontSize": 14,
+  "editor.renderWhitespace": "boundary",
+  // "editor.wordWrap": "on",
+  "editor.autoClosingBrackets": "always",
+  "editor.autoClosingDelete": "always",
+  "editor.minimap.enabled": true,
+  "typescript.tsdk": "node_modules/typescript/lib",
+  "editor.accessibilitySupport": "on",
+  "editor.wordWrapColumn": 70,
+  "diffEditor.wordWrap": "on",
+  "editor.fontWeight": "500",
+  "editor.suggest.preview": true,
+  "editor.tabSize": 4,
+  "editor.occurrencesHighlight": "singleFile",
+  "editor.guides.highlightActiveBracketPair": true,
+  "editor.copyWithSyntaxHighlighting": true,
+  "editor.foldingHighlight": true,
+  "material-icon-theme.activeIconPack": "angular",
+  "workbench.iconTheme": "material-icon-theme",
+  // "workbench.colorTheme": "Dracula",
+  "editor.fontFamily": "Fira Code, Menlo, Monaco, 'Courier New', monospace",
+  "editor.fontLigatures": true,
   "cSpell.words": [
-    "Linklet"
-  ]
+      "datepicker",
+      "fullcalendar",
+      "lazymall",
+      "Logined",
+      "mypage",
+      "spacehome",
+      "vento",
+      "Linklet"
+  ],
+  "accessibility.signals.lineHasError": {
+      "sound": "off"
+  },
+  // "editor.codeActionsOnSave": {
+  //     "source.organizeImports": "always"
+  // }
 }

@@ -7,10 +7,13 @@ import { useI18n } from '@/lib/i18n/context'
 import QuickAddProduct from './components/quick-add-product'
 import WishlistCard from './components/wishlist-card'
 import CreateWishlistCard from './components/create-wishlist-card'
+import { useParams, useRouter } from 'next/navigation'
 
 export default function WishlistsManagePage() {
   const { t } = useI18n()
-  
+  const router = useRouter()
+  const { locale = 'kr' } = useParams()
+
   const [wishlists, setWishlists] = useState([
     {
       id: 1,
@@ -33,13 +36,13 @@ export default function WishlistsManagePage() {
   const handleAddProductFromUrl = async (productUrl: string, selectedWishlist: string) => {
     // TODO: API call to extract product info from URL and add to wishlist
     console.log('Adding product from URL:', productUrl, 'to wishlist:', selectedWishlist)
-    
+
     // Simulate API call
     await new Promise(resolve => setTimeout(resolve, 1500))
-    
+
     // Update wishlist item count (mock behavior)
-    setWishlists(prev => prev.map(wishlist => 
-      wishlist.id.toString() === selectedWishlist 
+    setWishlists(prev => prev.map(wishlist =>
+      wishlist.id.toString() === selectedWishlist
         ? { ...wishlist, itemCount: wishlist.itemCount + 1 }
         : wishlist
     ))
@@ -54,8 +57,11 @@ export default function WishlistsManagePage() {
             {t('settings.wishlists.manageDesc')}
           </p>
         </div>
-        
-        <Button className="bg-blue-600 hover:bg-blue-700 text-white">
+
+        <Button
+          className="bg-blue-600 hover:bg-blue-700 text-white"
+          onClick={() => router.push(`/${locale}/settings/wishlists/create`)}
+        >
           <PlusIcon className="w-4 h-4 mr-2" />
           {t('wishlist.create')}
         </Button>
