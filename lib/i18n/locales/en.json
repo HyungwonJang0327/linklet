@@ -240,5 +240,71 @@
       "imagePlaceholder": "https://example.com/image.jpg",
       "pricePlaceholder": "e.g. $999"
     }
+  },
+  "pricing": {
+    "title": "Pricing",
+    "subtitle": "Choose the plan that fits your needs and start managing your wishlists",
+    "monthly": "Monthly",
+    "annual": "Annual",
+    "year": "year",
+    "month": "month",
+    "save": "Save 17%",
+    "included": "Included Features",
+    "limitations": "Limitations",
+    "everything": "Everything Included",
+    "free": {
+      "name": "Free",
+      "price": "$0",
+      "description": "Basic features for personal use",
+      "cta": "Get Started Free",
+      "features": {
+        "wishlists": "Up to 3 wishlists",
+        "items": "Unlimited items per wishlist",
+        "sharing": "Link sharing",
+        "categories": "10 categories",
+        "mobile": "Mobile optimized"
+      },
+      "limitations": {
+        "recommendations": "Limited AI recommendations",
+        "customization": "Limited theme customization",
+        "analytics": "No analytics"
+      }
+    },
+    "pro": {
+      "name": "Pro",
+      "monthlyPrice": "$9",
+      "annualPrice": "$89",
+      "originalAnnualPrice": "$108",
+      "description": "Advanced features for power users",
+      "badge": "Most Popular",
+      "cta": "Upgrade to Pro",
+      "features": {
+        "wishlists": "Unlimited wishlists",
+        "items": "Unlimited items per wishlist",
+        "sharing": "Advanced sharing options",
+        "categories": "Unlimited categories",
+        "mobile": "Mobile optimized",
+        "recommendations": "🤖 AI-powered gift recommendations",
+        "customization": "🎨 Full theme customization",
+        "analytics": "📊 Wishlist analytics & insights",
+        "priority": "⚡ Priority support",
+        "export": "📤 Data export"
+      }
+    },
+    "faq": {
+      "title": "Frequently Asked Questions",
+      "q1": {
+        "question": "Can I upgrade from Free to Pro?",
+        "answer": "Yes, you can upgrade to Pro at any time. All your existing data will be preserved."
+      },
+      "q2": {
+        "question": "How does AI gift recommendation work?",
+        "answer": "AI analyzes your wishlist patterns and preferences to suggest personalized gifts. It helps you find perfect presents for birthdays, anniversaries, and special occasions."
+      },
+      "q3": {
+        "question": "Can I cancel my subscription anytime?",
+        "answer": "Yes, you can cancel your subscription at any time. You'll automatically switch to the free plan after your billing period ends."
+      }
+    }
   }
 }

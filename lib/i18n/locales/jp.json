@@ -240,5 +240,71 @@
       "imagePlaceholder": "https://example.com/image.jpg",
       "pricePlaceholder": "例：99,900円"
     }
+  },
+  "pricing": {
+    "title": "料金プラン",
+    "subtitle": "ニーズに合ったプランを選択してウィッシュリスト管理を始めましょう",
+    "monthly": "月額",
+    "annual": "年額",
+    "year": "年",
+    "month": "月",
+    "save": "17%お得",
+    "included": "含まれる機能",
+    "limitations": "制限事項",
+    "everything": "全機能含む",
+    "free": {
+      "name": "無料",
+      "price": "¥0",
+      "description": "個人利用の基本機能",
+      "cta": "無料で始める",
+      "features": {
+        "wishlists": "最大3つのウィッシュリスト",
+        "items": "ウィッシュリスト当たり無制限アイテム",
+        "sharing": "リンク共有",
+        "categories": "10カテゴリー",
+        "mobile": "モバイル最適化"
+      },
+      "limitations": {
+        "recommendations": "AI推薦機能制限",
+        "customization": "テーマカスタマイズ制限",
+        "analytics": "分析機能なし"
+      }
+    },
+    "pro": {
+      "name": "プロ",
+      "monthlyPrice": "¥990",
+      "annualPrice": "¥9,900",
+      "originalAnnualPrice": "¥11,880",
+      "description": "パワーユーザー向け高度機能",
+      "badge": "人気",
+      "cta": "Proにアップグレード",
+      "features": {
+        "wishlists": "無制限ウィッシュリスト",
+        "items": "ウィッシュリスト当たり無制限アイテム",
+        "sharing": "高度共有オプション",
+        "categories": "無制限カテゴリー",
+        "mobile": "モバイル最適化",
+        "recommendations": "🤖 AI基盤ギフト推薦",
+        "customization": "🎨 完全テーマカスタマイズ",
+        "analytics": "📊 ウィッシュリスト分析・洞察",
+        "priority": "⚡ 優先サポート",
+        "export": "📤 データエクスポート"
+      }
+    },
+    "faq": {
+      "title": "よくある質問",
+      "q1": {
+        "question": "無料版からProにアップグレードできますか？",
+        "answer": "はい、いつでもProバージョンにアップグレードできます。既存のデータはすべて保持されます。"
+      },
+      "q2": {
+        "question": "AIギフト推薦機能はどのように動作しますか？",
+        "answer": "AIがウィッシュリストのパターンと好みを分析して、個人化されたギフトを推薦します。誕生日、記念日などの特別な日に最適なプレゼントを見つけるお手伝いをします。"
+      },
+      "q3": {
+        "question": "いつでも購読をキャンセルできますか？",
+        "answer": "はい、いつでも購読をキャンセルできます。請求期間終了後、自動的に無料プランに切り替わります。"
+      }
+    }
   }
 }
