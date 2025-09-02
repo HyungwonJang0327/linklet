@@ -31,9 +31,6 @@
     "GoogleLogin": "Google 로그인",
     "signingIn": "로그인 중...",
     "or": "또는",
-    "guestMode": "게스트 모드",
-    "guestInfo1": "게스트 모드는 로그인 없이 위시리스트를 관리할 수 있습니다.",
-    "guestInfo2": "링크 공유는 로그인 유저만 가능합니다.",
     "loginFeatures": {
       "title": "로그인 기능",
       "shareUrl": "공유 링크",

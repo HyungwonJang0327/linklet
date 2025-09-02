@@ -6,7 +6,6 @@ import { Card } from '@/components/ui/card'
 import { MessageSquare, ArrowLeft } from 'lucide-react'
 import Link from 'next/link'
 import { useI18n } from '@/lib/i18n/context'
-import { type Locale } from '@/lib/i18n/config'
 
 interface LoginPageProps {
   params: Promise<{ locale: string }>
@@ -70,17 +69,6 @@ export default function LoginPage({ params }: LoginPageProps) {
               </div>
             </div>
 
-            {/* 게스트로 시작하기 */}
-            <Link href={`/${locale}`}>
-              <Button variant="outline" className="w-full py-3 text-base border-slate-600 text-slate-300 hover:bg-slate-700 hover:text-white">
-                {t('login.guestMode')}
-              </Button>
-            </Link>
-          </div>
-
-          <div className="mt-8 text-center text-sm text-slate-400">
-            <p className="mb-2">{t('login.guestInfo1')}</p>
-            <p>{t('login.guestInfo2')}</p>
           </div>
 
           {/* 기능 차이 안내 */}

@@ -13,7 +13,7 @@ export async function GET(request: Request) {
       return NextResponse.json(wishlists)
     }
     
-    // Get public wishlists (for guest users or public browsing)
+    // Get public wishlists for browsing
     const wishlists = await prisma.wishlist.findMany({
       where: { isPublic: true },
       include: {

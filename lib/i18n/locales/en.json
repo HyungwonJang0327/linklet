@@ -31,9 +31,6 @@
     "GoogleLogin": "Google Login",
     "signingIn": "Logging in...",
     "or": "Or",
-    "guestMode": "Guest Mode",
-    "guestInfo1": "Guest mode allows you to manage wishlists without logging in.",
-    "guestInfo2": "Link sharing is only available to logged-in users.",
     "loginFeatures": {
       "title": "Login Features",
       "shareUrl": "Share Link",

@@ -132,25 +132,3 @@ export const storage = {
   }
 }
 
-// Guest wishlist management
-export const guestWishlists = {
-  get: (): string[] => {
-    return storage.get('guestWishlists') || []
-  },
-
-  add: (wishlistId: string) => {
-    const current = guestWishlists.get()
-    if (!current.includes(wishlistId)) {
-      storage.set('guestWishlists', [...current, wishlistId])
-    }
-  },
-
-  remove: (wishlistId: string) => {
-    const current = guestWishlists.get()
-    storage.set('guestWishlists', current.filter(id => id !== wishlistId))
-  },
-
-  clear: () => {
-    storage.remove('guestWishlists')
-  }
-}

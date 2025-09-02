@@ -31,9 +31,6 @@
     "GoogleLogin": "Google ログイン",
     "signingIn": "ログイン中...",
     "or": "または",
-    "guestMode": "ゲスト モード",
-    "guestInfo1": "ゲスト モードはログインなしでウィッシュリストを管理できます。",
-    "guestInfo2": "リンク共有はログインユーザーのみ可能です。",
     "loginFeatures": {
       "title": "ログイン 機能",
       "shareUrl": "共有リンク",
