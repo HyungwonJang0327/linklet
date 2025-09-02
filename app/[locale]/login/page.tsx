@@ -19,7 +19,7 @@ export default function LoginPage({ params }: LoginPageProps) {
     setIsLoading(true)
     // TODO: 카카오 로그인 연동 구현
     console.log('카카오 로그인 시작')
-    
+
     // 임시로 로딩 상태만 표시
     setTimeout(() => {
       setIsLoading(false)
@@ -28,7 +28,7 @@ export default function LoginPage({ params }: LoginPageProps) {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-indigo-900 flex items-center justify-center p-4">
+    <div className="flex-1 bg-gradient-to-br from-slate-900 via-blue-900 to-indigo-900 flex items-center justify-center p-4">
       <div className="w-full max-w-md">
         {/* 뒤로가기 버튼 */}
         <div className="mb-6">
@@ -50,7 +50,7 @@ export default function LoginPage({ params }: LoginPageProps) {
 
           <div className="space-y-4">
             {/* 카카오 로그인 버튼 */}
-            <Button 
+            <Button
               onClick={handleGoogleLogin}
               disabled={isLoading}
               className="w-full bg-yellow-500 hover:bg-yellow-600 text-black font-semibold py-3 text-base"
@@ -60,14 +60,14 @@ export default function LoginPage({ params }: LoginPageProps) {
             </Button>
 
             {/* 구분선 */}
-            <div className="relative my-6">
+            {/* <div className="relative my-6">
               <div className="absolute inset-0 flex items-center">
                 <div className="w-full border-t border-muted" />
               </div>
               <div className="relative flex justify-center text-sm">
                 <span className="px-4 bg-slate-800 text-slate-400">{t('login.or')}</span>
               </div>
-            </div>
+            </div> */}
 
           </div>
 

@@ -37,7 +37,7 @@ export default async function RootLayout({
   if (!locales.includes(localeParam as Locale)) {
     notFound();
   }
-  
+
   const locale = localeParam as Locale;
 
   // Get dictionary for the current locale
@@ -45,14 +45,14 @@ export default async function RootLayout({
 
   return (
     <html lang={locale}>
-      <body
-        // className={`${inter.variable} ${jetbrainsMono.variable} antialiased`}
-      >
+      <body>
         <QueryProvider>
           <AuthProvider>
             <I18nProvider locale={locale} dictionary={dictionary}>
-              <ConditionalHeader />
-              {children}
+              <div className='min-h-screen relative flex flex-col flex-1'>
+                <ConditionalHeader />
+                {children}
+              </div>
             </I18nProvider>
           </AuthProvider>
         </QueryProvider>
