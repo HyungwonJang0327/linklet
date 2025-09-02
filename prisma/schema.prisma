@@ -11,22 +11,27 @@ model User {
   id        String   @id @default(uuid())
   email     String?  @unique
   name      String?
+  bio       String?
+  avatar    String?
+  locale    String   @default("kr")
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
   wishlists Wishlist[]
+  sessions  Session[]
 
   @@map("users")
 }
 
 model Wishlist {
-  id          String   @id @default(cuid())
+  id          String            @id @default(cuid())
   title       String
   description String?
-  shareUrl    String?  @unique
-  isPublic    Boolean  @default(true)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  shareUrl    String?           @unique
+  isPublic    Boolean           @default(true)
+  category    WishlistCategory  @default(GENERAL)
+  createdAt   DateTime          @default(now())
+  updatedAt   DateTime          @updatedAt
 
   userId String?
   user   User?   @relation(fields: [userId], references: [id], onDelete: SetNull)
@@ -44,6 +49,7 @@ model WishlistItem {
   imageUrl    String?
   price       String?
   priority    Int      @default(0)
+  isCompleted Boolean  @default(false)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
@@ -51,4 +57,32 @@ model WishlistItem {
   wishlist   Wishlist @relation(fields: [wishlistId], references: [id], onDelete: Cascade)
 
   @@map("wishlist_items")
+}
+
+model Session {
+  id        String   @id @default(cuid())
+  sessionToken String @unique
+  userId    String
+  expires   DateTime
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("sessions")
+}
+
+enum WishlistCategory {
+  GENERAL
+  BIRTHDAY
+  CHRISTMAS
+  WEDDING
+  BABY
+  ELECTRONICS
+  FASHION
+  BOOKS
+  TRAVEL
+  HOME
+
+  @@map("wishlist_category")
 }
