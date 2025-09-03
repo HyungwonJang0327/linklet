@@ -5,6 +5,7 @@ import { ConditionalHeader } from "@/components/layout/conditional-header";
 import { QueryProvider } from "@/components/providers/query-provider";
 import { AuthProvider } from "@/components/providers/auth-provider";
 import { I18nProvider } from "@/lib/i18n/context";
+import { DialogProvider } from "@/components/ui/dialog-provider";
 import { getDictionary } from "@/lib/i18n/dictionary";
 import { type Locale, locales } from "@/lib/i18n/config";
 import { notFound } from "next/navigation";
@@ -48,12 +49,14 @@ export default async function RootLayout({
       <body>
         <QueryProvider>
           <AuthProvider>
-            <I18nProvider locale={locale} dictionary={dictionary}>
-              <div className='min-h-screen relative flex flex-col flex-1'>
-                <ConditionalHeader />
-                {children}
-              </div>
-            </I18nProvider>
+            <DialogProvider>
+              <I18nProvider locale={locale} dictionary={dictionary}>
+                <div className='min-h-screen relative flex flex-col flex-1'>
+                  <ConditionalHeader />
+                  {children}
+                </div>
+              </I18nProvider>
+            </DialogProvider>
           </AuthProvider>
         </QueryProvider>
       </body>
