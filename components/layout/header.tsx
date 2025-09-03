@@ -17,15 +17,15 @@ export function Header() {
         <Link href={`/${locale}`} className="text-2xl font-bold text-blue-400 hover:text-blue-300 transition-colors">
           Linklet
         </Link>
-        
+
         <div className="flex items-center gap-4">
           {isAuthenticated && user ? (
             <div className="flex items-center gap-3">
               <div className="flex items-center gap-2">
-                {user.profileImage ? (
-                  <Image 
-                    src={user.profileImage} 
-                    alt={user.name}
+                {user.image ? (
+                  <Image
+                    src={user.image}
+                    alt={user.name || 'User'}
                     className="w-8 h-8 rounded-full"
                     width={32}
                     height={32}
@@ -37,7 +37,7 @@ export function Header() {
                 )}
                 <span className="text-sm font-medium text-white">{user.name}</span>
               </div>
-              
+
               <Button
                 variant="ghost"
                 size="sm"

@@ -1,65 +1,59 @@
 'use client'
 
-import React, { createContext, useContext, useEffect, useState } from 'react'
-import { AuthState, User, getStoredAuth, setStoredAuth } from '@/lib/auth'
+import { SessionProvider, useSession, signOut } from 'next-auth/react'
+import React, { createContext, useContext } from 'react'
 
-interface AuthContextType extends AuthState {
-  login: (user: User) => void
+interface User {
+  id: string
+  name?: string | null
+  email?: string | null
+  image?: string | null
+}
+
+interface AuthContextType {
+  user: User | null
+  isLoading: boolean
+  isAuthenticated: boolean
   logout: () => void
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined)
 
-export function AuthProvider({ children }: { children: React.ReactNode }) {
-  const [authState, setAuthState] = useState<AuthState>({
-    user: null,
-    isLoading: true,
-    isAuthenticated: false
-  })
+function AuthContextProvider({ children }: { children: React.ReactNode }) {
+  const { data: session, status } = useSession()
+  
+  const user = session?.user ? {
+    id: (session.user as any).id || '',
+    name: session.user.name,
+    email: session.user.email,
+    image: session.user.image,
+  } : null
 
-  useEffect(() => {
-    // 컴포넌트 마운트 시 로컬 스토리지에서 인증 정보 로드
-    try {
-      const stored = getStoredAuth()
-      setAuthState(stored)
-    } catch (error) {
-      console.error('Failed to load auth state:', error)
-      setAuthState({
-        user: null,
-        isLoading: false,
-        isAuthenticated: false
-      })
-    }
-  }, [])
-
-  const login = (user: User) => {
-    const newState = {
-      user,
-      isLoading: false,
-      isAuthenticated: true
-    }
-    setAuthState(newState)
-    setStoredAuth(user)
+  const logout = async () => {
+    await signOut({ callbackUrl: '/' })
   }
 
-  const logout = () => {
-    const newState = {
-      user: null,
-      isLoading: false,
-      isAuthenticated: false
-    }
-    setAuthState(newState)
-    setStoredAuth(null)
+  const contextValue: AuthContextType = {
+    user,
+    isLoading: status === 'loading',
+    isAuthenticated: !!session?.user,
+    logout
   }
 
   return (
-    <AuthContext.Provider value={{
-      ...authState,
-      login,
-      logout
-    }}>
+    <AuthContext.Provider value={contextValue}>
       {children}
     </AuthContext.Provider>
+  )
+}
+
+export function AuthProvider({ children }: { children: React.ReactNode }) {
+  return (
+    <SessionProvider>
+      <AuthContextProvider>
+        {children}
+      </AuthContextProvider>
+    </SessionProvider>
   )
 }
 
