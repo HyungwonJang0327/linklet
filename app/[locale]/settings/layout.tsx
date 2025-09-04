@@ -3,6 +3,8 @@
 import { useState } from 'react'
 import { SettingsSidebar } from '@/components/settings/settings-sidebar'
 import { MobileSettingsHeader } from '@/components/settings/mobile-settings-header'
+import { AuthGuard } from '@/components/auth/auth-guard'
+import { useI18n } from '@/lib/i18n/context'
 
 interface SettingsLayoutProps {
   children: React.ReactNode
@@ -11,6 +13,7 @@ interface SettingsLayoutProps {
 export default function SettingsLayout({ children }: SettingsLayoutProps) {
   const [sidebarOpen, setSidebarOpen] = useState(false)
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false)
+  const { t } = useI18n()
 
   return (
     <div className="h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-indigo-900 overflow-hidden">
@@ -49,7 +52,12 @@ export default function SettingsLayout({ children }: SettingsLayoutProps) {
           sidebarCollapsed ? 'lg:ml-20' : 'lg:ml-72'
         }`}>
           <main className="h-full overflow-y-auto px-4 py-6 lg:px-8 lg:py-8">
-            {children}
+            <AuthGuard 
+              title={t('auth.settingsAccess.title')}
+              description={t('auth.settingsAccess.description')}
+            >
+              {children}
+            </AuthGuard>
           </main>
         </div>
       </div>

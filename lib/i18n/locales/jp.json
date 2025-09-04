@@ -313,5 +313,59 @@
         "answer": "はい、いつでも購読をキャンセルできます。請求期間終了後、自動的に無料プランに切り替わります。"
       }
     }
+  },
+  "auth": {
+    "guard": {
+      "checkingAuth": "認証を確認中..."
+    },
+    "unauthorized": {
+      "title": "アクセス権限が必要です",
+      "description": "このページにアクセスするにはログインが必要です。ログイン後再度お試しください。",
+      "signInButton": "ログイン",
+      "homeButton": "ホームに戻る",
+      "restrictedFeatures": "制限された機能:",
+      "features": {
+        "wishlistManagement": "ウィッシュリスト管理",
+        "personalSettings": "個人情報設定",
+        "accountManagement": "アカウント管理",
+        "personalization": "パーソナライゼーション機能"
+      }
+    },
+    "settingsAccess": {
+      "title": "設定ページアクセス権限が必要",
+      "description": "設定ページにアクセスするにはログインが必要です。ログイン後、ウィッシュリスト管理、プロフィール設定などの機能をご利用いただけます。"
+    },
+    "testPage": {
+      "title": "認証テスト",
+      "subtitle": "認証保護機能をテストするページです。",
+      "currentStatus": "現在の認証状態",
+      "loginStatus": "ログイン状態:",
+      "loggedIn": "ログイン済み",
+      "notLoggedIn": "ログインしていません",
+      "username": "ユーザー名:",
+      "email": "メール:",
+      "userId": "ユーザーID:",
+      "logoutButton": "ログアウト",
+      "protectedContentTest": "保護されたコンテンツテスト",
+      "protectedContentDesc": "以下のセクションはログインしたユーザーのみ表示されます:",
+      "contentRequiresLogin": "このコンテンツはログインが必要です",
+      "pleaseLogin": "このセクションを表示するにはログインしてください。",
+      "protectedContentTitle": "🎉 保護されたコンテンツ",
+      "congratulations": "おめでとうございます！このコンテンツは認証されたユーザーのみ表示されます。",
+      "availableFeatures": {
+        "wishlistManagement": "ウィッシュリスト管理機能利用可能",
+        "personalSettings": "個人設定アクセス可能",
+        "personalizedExperience": "パーソナライズされた体験を提供"
+      },
+      "settingsPageTest": "設定ページテスト",
+      "authRequiredPages": "以下のリンクはすべて認証が必要なページです:",
+      "settingsHome": "設定ホーム",
+      "settingsHomeDesc": "メイン設定ページ",
+      "profileSettings": "プロフィール設定",
+      "profileSettingsDesc": "個人情報とプロフィール管理",
+      "wishlistManagement": "ウィッシュリスト管理",
+      "wishlistManagementDesc": "ウィッシュリストの作成と管理",
+      "unauthorizedNote": "💡 ログインしていない状態で上記のリンクをクリックすると、サイドバーは表示されますがコンテンツエリアに401エラーが表示されます。"
+    }
   }
 }

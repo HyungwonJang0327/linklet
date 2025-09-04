@@ -313,5 +313,59 @@
         "answer": "Yes, you can cancel your subscription at any time. You'll automatically switch to the free plan after your billing period ends."
       }
     }
+  },
+  "auth": {
+    "guard": {
+      "checkingAuth": "Checking authentication..."
+    },
+    "unauthorized": {
+      "title": "Access Permission Required",
+      "description": "You need to log in to access this page. Please log in and try again.",
+      "signInButton": "Sign In",
+      "homeButton": "Go to Home",
+      "restrictedFeatures": "Restricted features:",
+      "features": {
+        "wishlistManagement": "Wishlist management",
+        "personalSettings": "Personal information settings",
+        "accountManagement": "Account management",
+        "personalization": "Personalization features"
+      }
+    },
+    "settingsAccess": {
+      "title": "Settings Page Access Required",
+      "description": "You need to log in to access the settings page. After logging in, you can use features such as wishlist management, profile settings, and more."
+    },
+    "testPage": {
+      "title": "Authentication Test",
+      "subtitle": "This is a page to test authentication protection features.",
+      "currentStatus": "Current Authentication Status",
+      "loginStatus": "Login Status:",
+      "loggedIn": "Logged In",
+      "notLoggedIn": "Not Logged In",
+      "username": "Username:",
+      "email": "Email:",
+      "userId": "User ID:",
+      "logoutButton": "Logout",
+      "protectedContentTest": "Protected Content Test",
+      "protectedContentDesc": "The section below is only visible to logged-in users:",
+      "contentRequiresLogin": "This content requires login",
+      "pleaseLogin": "Please log in to view this section.",
+      "protectedContentTitle": "🎉 Protected Content",
+      "congratulations": "Congratulations! This content is only visible to authenticated users.",
+      "availableFeatures": {
+        "wishlistManagement": "Wishlist management features available",
+        "personalSettings": "Personal settings access available",
+        "personalizedExperience": "Personalized experience provided"
+      },
+      "settingsPageTest": "Settings Page Test",
+      "authRequiredPages": "All the links below are pages that require authentication:",
+      "settingsHome": "Settings Home",
+      "settingsHomeDesc": "Main settings page",
+      "profileSettings": "Profile Settings",
+      "profileSettingsDesc": "Personal information and profile management",
+      "wishlistManagement": "Wishlist Management",
+      "wishlistManagementDesc": "Create and manage wishlists",
+      "unauthorizedNote": "💡 If you click the links above while not logged in, the sidebar will be visible but a 401 error will be displayed in the content area."
+    }
   }
 }

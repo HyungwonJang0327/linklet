@@ -313,5 +313,59 @@
         "answer": "네, 언제든지 구독을 취소할 수 있습니다. 구독 기간 종료 후 무료 버전으로 자동 전환됩니다."
       }
     }
+  },
+  "auth": {
+    "guard": {
+      "checkingAuth": "인증 정보를 확인하는 중..."
+    },
+    "unauthorized": {
+      "title": "접근 권한이 필요합니다",
+      "description": "이 페이지에 접근하려면 로그인이 필요합니다. 로그인 후 다시 시도해주세요.",
+      "signInButton": "로그인하기",
+      "homeButton": "홈으로 이동",
+      "restrictedFeatures": "접근이 제한된 기능:",
+      "features": {
+        "wishlistManagement": "위시리스트 관리",
+        "personalSettings": "개인정보 설정",
+        "accountManagement": "계정 관리",
+        "personalization": "개인화 기능"
+      }
+    },
+    "settingsAccess": {
+      "title": "설정 페이지 접근 권한 필요",
+      "description": "설정 페이지에 접근하려면 로그인이 필요합니다. 로그인 후 위시리스트 관리, 프로필 설정 등의 기능을 사용하실 수 있습니다."
+    },
+    "testPage": {
+      "title": "Authentication Test",
+      "subtitle": "인증 보호 기능을 테스트해보는 페이지입니다.",
+      "currentStatus": "현재 인증 상태",
+      "loginStatus": "로그인 상태:",
+      "loggedIn": "로그인됨",
+      "notLoggedIn": "로그인 안됨",
+      "username": "사용자 이름:",
+      "email": "이메일:",
+      "userId": "사용자 ID:",
+      "logoutButton": "로그아웃",
+      "protectedContentTest": "보호된 컨텐츠 테스트",
+      "protectedContentDesc": "아래 섹션은 로그인한 사용자만 볼 수 있습니다:",
+      "contentRequiresLogin": "이 컨텐츠는 로그인이 필요합니다",
+      "pleaseLogin": "이 섹션을 보려면 로그인해주세요.",
+      "protectedContentTitle": "🎉 보호된 컨텐츠",
+      "congratulations": "축하합니다! 이 컨텐츠는 인증된 사용자만 볼 수 있습니다.",
+      "availableFeatures": {
+        "wishlistManagement": "위시리스트 관리 기능 사용 가능",
+        "personalSettings": "개인 설정 접근 가능",
+        "personalizedExperience": "개인화된 경험 제공"
+      },
+      "settingsPageTest": "설정 페이지 테스트",
+      "authRequiredPages": "아래 링크들은 모두 인증이 필요한 페이지들입니다:",
+      "settingsHome": "설정 홈",
+      "settingsHomeDesc": "메인 설정 페이지",
+      "profileSettings": "프로필 설정",
+      "profileSettingsDesc": "개인정보 및 프로필 관리",
+      "wishlistManagement": "위시리스트 관리",
+      "wishlistManagementDesc": "위시리스트 생성 및 관리",
+      "unauthorizedNote": "💡 로그인하지 않은 상태에서 위 링크를 클릭하면 사이드바는 보이지만 내용 영역에 401 에러가 표시됩니다."
+    }
   }
 }

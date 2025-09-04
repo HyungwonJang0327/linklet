@@ -1,7 +1,7 @@
 'use client'
 
 import { SessionProvider, useSession, signOut } from 'next-auth/react'
-import React, { createContext, useContext } from 'react'
+import React, { createContext, useContext, useEffect } from 'react'
 
 interface User {
   id: string
@@ -21,7 +21,7 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined)
 
 function AuthContextProvider({ children }: { children: React.ReactNode }) {
   const { data: session, status } = useSession()
-  
+
   const user = session?.user ? {
     id: (session.user as any).id || '',
     name: session.user.name,
@@ -33,10 +33,13 @@ function AuthContextProvider({ children }: { children: React.ReactNode }) {
     await signOut({ callbackUrl: '/' })
   }
 
+  const isAuthenticated = status !== 'loading' && !!session?.user
+  const isLoading = status === 'loading'
+
   const contextValue: AuthContextType = {
     user,
-    isLoading: status === 'loading',
-    isAuthenticated: !!session?.user,
+    isLoading,
+    isAuthenticated,
     logout
   }
 
@@ -49,7 +52,10 @@ function AuthContextProvider({ children }: { children: React.ReactNode }) {
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   return (
-    <SessionProvider>
+    <SessionProvider
+      refetchInterval={5 * 60} // Refetch session every 5 minutes
+      refetchOnWindowFocus={true} // Refetch when window gains focus
+    >
       <AuthContextProvider>
         {children}
       </AuthContextProvider>
