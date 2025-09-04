@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import { useI18n } from '@/lib/i18n/context'
+import type { ProductMetadata } from '@/lib/services/url-metadata'
 import CreateHeader from './components/create-header'
 import BasicInformation from './components/basic-information'
 import ProductLinks from './components/product-links'
@@ -23,6 +24,7 @@ export default function CreateWishlistPage() {
 
   const [productLinks, setProductLinks] = useState<string[]>([''])
   const [linkErrors, setLinkErrors] = useState<Record<number, string>>({})
+  const [productMetadata, setProductMetadata] = useState<Record<number, ProductMetadata>>({})
 
   const [loading, setLoading] = useState(false)
   const [errors, setErrors] = useState<Record<string, string>>({})
@@ -64,10 +66,19 @@ export default function CreateWishlistPage() {
     setLoading(true)
 
     try {
-      // TODO: API call to create wishlist
+      // Prepare wishlist data with extracted metadata
       const validLinks = productLinks.filter(link => link.trim() !== '')
-      console.log('Creating wishlist:', { ...formData, productLinks: validLinks })
+      const wishlistData = {
+        ...formData,
+        productLinks: validLinks.map((link, index) => ({
+          url: link,
+          metadata: productMetadata[index] || null
+        }))
+      }
+      
+      console.log('Creating wishlist:', wishlistData)
 
+      // TODO: API call to create wishlist with metadata
       // Simulate API call
       await new Promise(resolve => setTimeout(resolve, 1500))
 
@@ -82,6 +93,13 @@ export default function CreateWishlistPage() {
 
   const handleBack = () => {
     router.push(`/${locale}/settings/wishlists`)
+  }
+
+  const handleMetadataExtracted = (index: number, metadata: ProductMetadata) => {
+    setProductMetadata(prev => ({
+      ...prev,
+      [index]: metadata
+    }))
   }
 
   const isValidUrl = (string: string) => {
@@ -115,6 +133,7 @@ export default function CreateWishlistPage() {
           setLinkErrors={setLinkErrors}
           loading={loading}
           isValidUrl={isValidUrl}
+          onMetadataExtracted={handleMetadataExtracted}
         />
 
         {/* Privacy Settings */}

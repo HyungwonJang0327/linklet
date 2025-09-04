@@ -135,3 +135,24 @@ Dynamic locale-based routing with:
 - TanStack Query for server state caching and synchronization
 - React Context for i18n and authentication state
 - No global client state - prefer server state patterns
+
+## Conversation History Guidelines
+
+When working on this project, record conversation history in structured markdown files:
+
+### Directory Structure
+Create a `/conversation-history` folder in the project root to store all conversation records.
+
+### File Organization
+- **Planning Phase**: Save as `YYYY-MM-DD-planning.md`
+- **Development Phase**: Save as `YYYY-MM-DD-development.md`
+
+### Content Structure
+Each conversation record should include:
+- Date and time of conversation
+- Summary of topics discussed
+- Key decisions made
+- Action items or next steps
+- Code changes or implementations discussed
+
+This helps maintain project continuity and provides context for future development sessions.
