@@ -77,12 +77,12 @@ export default async function HomePage({ params }: HomePageProps) {
           </p>
           
           <div className="flex flex-col sm:flex-row gap-6 justify-center mb-16">
-            <a
-              href={`/${locale}/login`}
+            <Link
+              href={`/${locale}/settings`}
               className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-10 py-4 rounded-xl font-semibold text-lg transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-1"
             >
               {dictionary.landing?.cta?.getStarted || "Get Started"}
-            </a>
+            </Link>
             <Link
               href="/w/demo"
               className="border-2 border-slate-500 hover:border-slate-400 text-slate-300 hover:text-white hover:bg-slate-800/30 px-10 py-4 rounded-xl font-semibold text-lg transition-all"

@@ -332,7 +332,7 @@
       }
     },
     "settingsAccess": {
-      "title": "Settings Page Access Required",
+      "title": "This page requires login",
       "description": "You need to log in to access the settings page. After logging in, you can use features such as wishlist management, profile settings, and more."
     },
     "testPage": {
