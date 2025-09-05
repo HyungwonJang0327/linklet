@@ -76,25 +76,26 @@ export default function CreateWishlistPage() {
       const validLinks = productLinks.filter(link => link.trim() !== '')
       const wishlistData = {
         ...formData,
+        category: formData.category.toUpperCase(),
         userId: user.id,
         productLinks: validLinks.map((link, index) => ({
           url: link,
           metadata: productMetadata[index] || null
         }))
       }
-      
+
       console.log('Creating wishlist:', wishlistData)
 
       const result = await createWishlistMutation.mutateAsync(wishlistData)
-      
+
       console.log('Wishlist created successfully:', result)
 
       // Redirect back to wishlists page
       router.push(`/${locale}/settings/wishlists`)
     } catch (error) {
       console.error('Failed to create wishlist:', error)
-      setErrors({ 
-        submit: error instanceof Error ? error.message : 'Failed to create wishlist' 
+      setErrors({
+        submit: error instanceof Error ? error.message : 'Failed to create wishlist'
       })
     }
   }

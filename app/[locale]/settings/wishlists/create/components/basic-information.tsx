@@ -54,9 +54,8 @@ export default function BasicInformation({ formData, setFormData, errors, loadin
               value={formData.title}
               onChange={(value) => setFormData(prev => ({ ...prev, title: value }))}
               placeholder={t('wishlist.create.titlePlaceholder') || '예: 2024년 생일 선물'}
-              className={`bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 ${
-                errors.title ? 'border-red-500' : ''
-              }`}
+              className={`bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 ${errors.title ? 'border-red-500' : ''
+                }`}
               disabled={loading}
             />
             {errors.title && (
@@ -74,9 +73,8 @@ export default function BasicInformation({ formData, setFormData, errors, loadin
               placeholder={t('wishlist.create.descriptionPlaceholder') || '이 위시리스트에 대한 간단한 설명을 작성해주세요...'}
               disabled={loading}
               rows={4}
-              className={`w-full px-3 py-2 bg-slate-900/50 border border-slate-600 rounded-lg text-white placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors resize-none ${
-                errors.description ? 'border-red-500' : ''
-              }`}
+              className={`w-full px-3 py-2 bg-slate-900/50 border border-slate-600 rounded-lg text-white placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors resize-none ${errors.description ? 'border-red-500' : ''
+                }`}
             />
             <div className="flex items-center justify-between mt-1">
               {errors.description && (
