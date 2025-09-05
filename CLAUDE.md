@@ -27,7 +27,7 @@ npx prisma db push          # Push schema changes to database
 npx prisma studio          # Open Prisma Studio for database inspection
 ```
 
-The development server runs on http://localhost:3000.
+The development server runs on http://localhost:3000 (or next available port if 3000 is occupied).
 
 ## Architecture Overview
 
@@ -37,6 +37,8 @@ The development server runs on http://localhost:3000.
 - **Database**: PostgreSQL with Prisma ORM
 - **Styling**: Tailwind CSS v4 with inline theme configuration
 - **State Management**: TanStack Query for server state
+- **Authentication**: NextAuth.js with Google OAuth
+- **Icons**: Heroicons and Lucide React
 - **Internationalization**: Custom i18n system supporting Korean (kr), English (en), Japanese (jp)
 
 ### Database Architecture
@@ -75,6 +77,7 @@ RESTful API routes following Next.js 15 conventions:
 - **`/api/wishlists/share/[shareUrl]`**: Public wishlist access via shareable URLs
 - **`/api/items/[id]`**: Individual item operations with ISR revalidation
 - **`/api/users`**: User account management with GET, POST, PUT operations
+- **`/api/metadata`**: URL metadata extraction for product links
 
 All API routes include proper error handling, validation, and support for ISR revalidation.
 
@@ -97,6 +100,14 @@ Organized by functionality:
 - **`forms/`**: Form components with validation
 - **`customize/`**: Wishlist customization components
 - **`settings/`**: User settings interface
+
+### Custom Hooks (`/hooks/`)
+
+TanStack Query-based hooks for data management:
+
+- **`use-user.ts`**: User profile operations with optimistic updates
+- **`use-url-metadata.ts`**: URL metadata extraction (single and batch processing)
+- All hooks include proper loading states, error handling, and cache management
 
 ### Validation & Data Sanitization (`/lib/validations/`)
 
@@ -126,6 +137,20 @@ Dynamic locale-based routing with:
 - All database functions include proper TypeScript types and error handling
 - Use transaction support for multi-step operations (e.g., `reorderWishlistItems`)
 
+### Authentication & Authorization
+- Google OAuth integration via NextAuth.js
+- Database-backed sessions with Prisma adapter
+- Login barriers protect settings pages
+- User profile management with bio, avatar, and locale preferences
+
+### URL Metadata Extraction
+- `/api/metadata` endpoint extracts title, description, images, and prices from URLs
+- Rate limiting (10 requests per minute per IP) and security measures against SSRF attacks
+- `useUrlMetadata` and `useBatchUrlMetadata` hooks for client-side metadata fetching
+- `/lib/services/url-metadata.ts` service handles HTML parsing and Open Graph/Twitter Card extraction
+- Product links on wishlist creation page automatically enhanced with metadata display
+- Supports bulk extraction and individual URL processing with loading states
+
 ### ISR and Revalidation
 - Shared wishlists use ISR with `revalidateSharedWishlist()` function
 - API routes automatically revalidate when items are modified
@@ -135,13 +160,36 @@ Dynamic locale-based routing with:
 - TanStack Query for server state caching and synchronization
 - React Context for i18n and authentication state
 - No global client state - prefer server state patterns
+- Custom hooks pattern for reusable data operations with optimistic updates
+
+### Environment Variables Required
+```bash
+DATABASE_URL="postgresql://..."
+NEXTAUTH_SECRET="your-secret-key"
+GOOGLE_CLIENT_ID="your-google-client-id"
+GOOGLE_CLIENT_SECRET="your-google-client-secret"
+NEXT_PUBLIC_APP_URL="http://localhost:3000"
+```
+
+## Development Patterns
+
+### File Creation Guidelines
+- ALWAYS prefer editing existing files over creating new ones
+- NEVER create files unless absolutely necessary for achieving the goal
+- NEVER proactively create documentation files (*.md) or README files unless explicitly requested
+
+### Code Conventions
+- Follow existing patterns when making changes to files
+- Check neighboring files and package.json for library usage before assuming availability
+- Use existing utilities and maintain consistent code style across components
+- Import database functions from `@/lib/db` or specific modules to avoid circular dependencies
 
 ## Conversation History Guidelines
 
 When working on this project, record conversation history in structured markdown files:
 
 ### Directory Structure
-Create a `/conversation-history` folder in the project root to store all conversation records.
+Create a `/history` folder in the project root to store all conversation records.
 
 ### File Organization
 - **Planning Phase**: Save as `YYYY-MM-DD-planning.md`

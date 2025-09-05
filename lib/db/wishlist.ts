@@ -1,6 +1,7 @@
 import { db } from './client'
 import { WishlistCategory } from '@prisma/client'
 import { createId } from '@paralleldrive/cuid2'
+import type { ProductMetadata } from '@/lib/services/url-metadata'
 
 export interface CreateWishlistData {
   title: string
@@ -8,7 +9,10 @@ export interface CreateWishlistData {
   isPublic?: boolean
   category?: WishlistCategory
   userId?: string
-  productLinks?: string[]
+  productLinks?: Array<{
+    url: string
+    metadata?: ProductMetadata | null
+  }>
 }
 
 export interface CreateWishlistItemData {
@@ -17,6 +21,7 @@ export interface CreateWishlistItemData {
   productUrl: string
   imageUrl?: string
   price?: string
+  siteName?: string
   priority?: number
 }
 
@@ -33,6 +38,7 @@ export interface UpdateWishlistItemData {
   productUrl?: string
   imageUrl?: string
   price?: string
+  siteName?: string
   priority?: number
   isCompleted?: boolean
 }
@@ -66,12 +72,17 @@ export async function createWishlist(data: CreateWishlistData) {
   if (productLinks && productLinks.length > 0) {
     const items = await Promise.all(
       productLinks
-        .filter(url => url.trim())
-        .map(async (productUrl, index) => {
+        .filter(link => link.url.trim())
+        .map(async (link, index) => {
+          const metadata = link.metadata
           return db.wishlistItem.create({
             data: {
-              title: `Product ${index + 1}`, // Default title, could be enhanced with URL parsing
-              productUrl: productUrl.trim(),
+              title: metadata?.title || `Product ${index + 1}`,
+              description: metadata?.description,
+              productUrl: link.url.trim(),
+              imageUrl: metadata?.imageUrl,
+              price: metadata?.price,
+              siteName: metadata?.siteName,
               wishlistId: wishlist.id,
               priority: index
             }

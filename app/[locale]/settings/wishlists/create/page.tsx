@@ -3,6 +3,8 @@
 import { useState } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import { useI18n } from '@/lib/i18n/context'
+import { useAuth } from '@/components/providers/auth-provider'
+import { useCreateWishlist } from '@/hooks/use-wishlist'
 import type { ProductMetadata } from '@/lib/services/url-metadata'
 import CreateHeader from './components/create-header'
 import BasicInformation from './components/basic-information'
@@ -14,6 +16,8 @@ export default function CreateWishlistPage() {
   const router = useRouter()
   const { locale = 'kr' } = useParams()
   const { t } = useI18n()
+  const { user, isAuthenticated } = useAuth()
+  const createWishlistMutation = useCreateWishlist()
 
   const [formData, setFormData] = useState({
     title: '',
@@ -26,8 +30,8 @@ export default function CreateWishlistPage() {
   const [linkErrors, setLinkErrors] = useState<Record<number, string>>({})
   const [productMetadata, setProductMetadata] = useState<Record<number, ProductMetadata>>({})
 
-  const [loading, setLoading] = useState(false)
   const [errors, setErrors] = useState<Record<string, string>>({})
+  const loading = createWishlistMutation.isPending
 
   const validateForm = () => {
     const newErrors: Record<string, string> = {}
@@ -62,14 +66,17 @@ export default function CreateWishlistPage() {
     e.preventDefault()
 
     if (!validateForm()) return
-
-    setLoading(true)
+    if (!isAuthenticated || !user) {
+      setErrors({ auth: 'You must be logged in to create a wishlist' })
+      return
+    }
 
     try {
       // Prepare wishlist data with extracted metadata
       const validLinks = productLinks.filter(link => link.trim() !== '')
       const wishlistData = {
         ...formData,
+        userId: user.id,
         productLinks: validLinks.map((link, index) => ({
           url: link,
           metadata: productMetadata[index] || null
@@ -78,16 +85,17 @@ export default function CreateWishlistPage() {
       
       console.log('Creating wishlist:', wishlistData)
 
-      // TODO: API call to create wishlist with metadata
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1500))
+      const result = await createWishlistMutation.mutateAsync(wishlistData)
+      
+      console.log('Wishlist created successfully:', result)
 
       // Redirect back to wishlists page
       router.push(`/${locale}/settings/wishlists`)
     } catch (error) {
       console.error('Failed to create wishlist:', error)
-    } finally {
-      setLoading(false)
+      setErrors({ 
+        submit: error instanceof Error ? error.message : 'Failed to create wishlist' 
+      })
     }
   }
 
@@ -141,6 +149,15 @@ export default function CreateWishlistPage() {
           formData={formData}
           setFormData={setFormData}
         />
+
+        {/* Error Display */}
+        {(errors.auth || errors.submit) && (
+          <div className="bg-red-900/50 border border-red-600 rounded-lg p-4">
+            <div className="text-red-400 text-sm">
+              {errors.auth || errors.submit}
+            </div>
+          </div>
+        )}
 
         {/* Action Buttons */}
         <FormActions onBack={handleBack} loading={loading} />
