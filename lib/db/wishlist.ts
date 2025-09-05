@@ -45,58 +45,77 @@ export interface UpdateWishlistItemData {
 
 // Wishlist Operations
 export async function createWishlist(data: CreateWishlistData) {
+  if (!data?.title?.trim()) {
+    throw new Error('Wishlist title is required')
+  }
+
   const { productLinks, ...wishlistData } = data
+
+  // Sanitize data
+  const sanitizedData = {
+    ...wishlistData,
+    title: data.title.trim(),
+    description: data.description?.trim() || null,
+    userId: data.userId?.trim() || null,
+  }
 
   // Generate unique share URL
   const shareUrl = `w/${createId()}`
 
-  const wishlist = await db.wishlist.create({
-    data: {
-      ...wishlistData,
-      shareUrl,
-      category: data.category || WishlistCategory.GENERAL
-    },
-    include: {
-      items: true,
-      user: {
-        select: {
-          id: true,
-          name: true,
-          email: true
+  try {
+    const wishlist = await db.wishlist.create({
+      data: {
+        ...sanitizedData,
+        shareUrl,
+        category: data.category || WishlistCategory.GENERAL
+      },
+      include: {
+        items: true,
+        user: {
+          select: {
+            id: true,
+            name: true,
+            email: true
+          }
+        }
+      }
+    })
+
+    // Add product links as items if provided
+    if ([...(productLinks || [])].length > 0) {
+      const validLinks = [...(productLinks || [])].filter(link => link?.url?.trim())
+
+      if (validLinks.length > 0) {
+        const items = await Promise.all(
+          validLinks.map(async (link, index) => {
+            const metadata = link.metadata
+            return db.wishlistItem.create({
+              data: {
+                title: metadata?.title?.trim() || `Product ${index + 1}`,
+                description: metadata?.description?.trim() || null,
+                productUrl: link.url.trim(),
+                imageUrl: metadata?.imageUrl?.trim() || null,
+                price: metadata?.price?.trim() || null,
+                siteName: metadata?.siteName?.trim() || null,
+                wishlistId: wishlist.id,
+                priority: index
+              }
+            })
+          })
+        )
+
+        return {
+          ...wishlist,
+          items
         }
       }
     }
-  })
 
-  // Add product links as items if provided
-  if (productLinks && productLinks.length > 0) {
-    const items = await Promise.all(
-      productLinks
-        .filter(link => link.url.trim())
-        .map(async (link, index) => {
-          const metadata = link.metadata
-          return db.wishlistItem.create({
-            data: {
-              title: metadata?.title || `Product ${index + 1}`,
-              description: metadata?.description,
-              productUrl: link.url.trim(),
-              imageUrl: metadata?.imageUrl,
-              price: metadata?.price,
-              siteName: metadata?.siteName,
-              wishlistId: wishlist.id,
-              priority: index
-            }
-          })
-        })
-    )
-
-    return {
-      ...wishlist,
-      items
-    }
+    return wishlist
+  } catch (error) {
+    console.error('Error creating wishlist:', error)
+    throw error instanceof Error ? error : new Error('Failed to create wishlist')
   }
-
-  return wishlist
 }
 
 export async function getWishlistById(id: string, includeItems = true) {

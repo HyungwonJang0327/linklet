@@ -48,8 +48,9 @@ function ProductLinkItem({
   const [showMetadata, setShowMetadata] = useState(false)
 
   const handleExtractClick = () => {
-    if (link && isValidUrl(link)) {
-      onExtractMetadata(link)
+    const trimmedLink = link?.trim()
+    if (trimmedLink && isValidUrl(trimmedLink)) {
+      onExtractMetadata(trimmedLink)
     }
   }
 
@@ -79,7 +80,7 @@ function ProductLinkItem({
         
         <div className="flex items-start gap-2">
           {/* Extract Metadata Button */}
-          {link && isValidUrl(link) && (
+          {link?.trim() && isValidUrl(link.trim()) && (
             <Button
               type="button"
               variant="ghost"
@@ -111,10 +112,10 @@ function ProductLinkItem({
       {showMetadata && metadata && (
         <div className="bg-slate-900/50 border border-slate-600 rounded-lg p-4 ml-2">
           <div className="flex items-start gap-3">
-            {metadata.imageUrl && (
+            {metadata.imageUrl?.trim() && (
               <img
-                src={metadata.imageUrl}
-                alt={metadata.title || 'Product'}
+                src={metadata.imageUrl.trim()}
+                alt={metadata.title?.trim() || 'Product'}
                 className="w-16 h-16 object-cover rounded-lg bg-slate-800"
                 onError={(e) => {
                   e.currentTarget.style.display = 'none'
@@ -122,24 +123,24 @@ function ProductLinkItem({
               />
             )}
             <div className="flex-1 min-w-0">
-              {metadata.title && (
+              {metadata.title?.trim() && (
                 <h4 className="font-medium text-white text-sm line-clamp-2">
-                  {metadata.title}
+                  {metadata.title.trim()}
                 </h4>
               )}
-              {metadata.price && (
+              {metadata.price?.trim() && (
                 <p className="text-green-400 text-sm font-medium mt-1">
-                  {metadata.price}
+                  {metadata.price.trim()}
                 </p>
               )}
-              {metadata.description && (
+              {metadata.description?.trim() && (
                 <p className="text-slate-400 text-xs mt-1 line-clamp-2">
-                  {metadata.description}
+                  {metadata.description.trim()}
                 </p>
               )}
-              {metadata.siteName && (
+              {metadata.siteName?.trim() && (
                 <p className="text-slate-500 text-xs mt-1">
-                  from {metadata.siteName}
+                  from {metadata.siteName.trim()}
                 </p>
               )}
             </div>
@@ -204,36 +205,48 @@ export default function ProductLinks({
   }
 
   const handleExtractMetadata = async (url: string) => {
+    if (!url?.trim()) {
+      console.error('Invalid URL provided for metadata extraction')
+      return
+    }
+
     try {
-      const results = await extractBatchMetadata([url])
-      const result = results[0]
-      if (result?.result.success && result.result.data && onMetadataExtracted) {
-        const index = productLinks.findIndex(link => link === url)
+      const results = await extractBatchMetadata([url.trim()])
+      const result = results?.[0]
+      if (result?.result?.success && result.result?.data && onMetadataExtracted) {
+        const index = productLinks?.findIndex(link => link?.trim() === url.trim()) ?? -1
         if (index !== -1) {
           onMetadataExtracted(index, result.result.data)
         }
       }
-      setExtractedCount(prev => prev + 1)
+      setExtractedCount(prev => (prev ?? 0) + 1)
     } catch (error) {
       console.error('Failed to extract metadata:', error)
     }
   }
 
   const handleBulkExtract = async () => {
-    const validLinks = productLinks.filter(link => link.trim() && isValidUrl(link))
+    if (!productLinks?.length) return
+
+    const validLinks = productLinks
+      .filter(link => link?.trim())
+      .filter(link => isValidUrl(link.trim()))
+    
     if (validLinks.length === 0) return
 
     try {
-      const results = await extractBatchMetadata(validLinks)
-      results.forEach(({ url, result }) => {
-        if (result.success && result.data && onMetadataExtracted) {
-          const index = productLinks.findIndex(link => link === url)
-          if (index !== -1) {
-            onMetadataExtracted(index, result.data)
+      const results = await extractBatchMetadata(validLinks.map(link => link.trim()))
+      if (Array.isArray(results)) {
+        results.forEach(({ url, result }) => {
+          if (result?.success && result?.data && onMetadataExtracted) {
+            const index = productLinks.findIndex(link => link?.trim() === url?.trim())
+            if (index !== -1) {
+              onMetadataExtracted(index, result.data)
+            }
           }
-        }
-      })
-      setExtractedCount(results.length)
+        })
+        setExtractedCount(results.length)
+      }
     } catch (error) {
       console.error('Failed to extract metadata:', error)
     }

@@ -50,26 +50,47 @@ export function useCreateWishlist() {
 
   return useMutation({
     mutationFn: async (data: CreateWishlistRequest): Promise<WishlistResponse> => {
-      const response = await fetch('/api/wishlists', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(data),
-      })
-
-      if (!response.ok) {
-        const error = await response.json()
-        throw new Error(error.error || 'Failed to create wishlist')
+      if (!data?.title?.trim()) {
+        throw new Error('Wishlist title is required')
       }
 
-      return response.json()
+      try {
+        const response = await fetch('/api/wishlists', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            ...data,
+            title: data.title.trim(),
+            description: data.description?.trim() || undefined,
+            productLinks: data.productLinks?.filter(link => link?.url?.trim()) || []
+          }),
+        })
+
+        if (!response) {
+          throw new Error('No response received')
+        }
+
+        const result = await response.json().catch(() => ({ error: 'Invalid response format' }))
+
+        if (!response.ok) {
+          throw new Error(result?.error || `HTTP ${response.status}: ${response.statusText}`)
+        }
+
+        return result ?? { error: 'Empty response' }
+      } catch (error) {
+        if (error instanceof Error) {
+          throw error
+        }
+        throw new Error('Network error occurred')
+      }
     },
     onSuccess: (data, variables) => {
-      // Invalidate relevant queries
-      if (variables.userId) {
+      // Invalidate relevant queries with defensive checks
+      if (variables?.userId?.trim()) {
         queryClient.invalidateQueries({ 
-          queryKey: wishlistKeys.user(variables.userId) 
+          queryKey: wishlistKeys.user(variables.userId.trim()) 
         })
       }
       queryClient.invalidateQueries({ 
@@ -84,19 +105,33 @@ export function useCreateWishlist() {
 
 export function useUserWishlists(userId?: string) {
   return useQuery({
-    queryKey: wishlistKeys.user(userId || ''),
+    queryKey: wishlistKeys.user(userId?.trim() || ''),
     queryFn: async (): Promise<WishlistResponse[]> => {
-      if (!userId) throw new Error('User ID is required')
+      const trimmedUserId = userId?.trim()
+      if (!trimmedUserId) throw new Error('User ID is required')
       
-      const response = await fetch(`/api/wishlists?userId=${userId}`)
-      
-      if (!response.ok) {
+      try {
+        const response = await fetch(`/api/wishlists?userId=${encodeURIComponent(trimmedUserId)}`)
+        
+        if (!response) {
+          throw new Error('No response received')
+        }
+        
+        if (!response.ok) {
+          const errorData = await response.json().catch(() => ({}))
+          throw new Error(errorData?.error || `HTTP ${response.status}: ${response.statusText}`)
+        }
+        
+        const result = await response.json().catch(() => [])
+        return Array.isArray(result) ? result : []
+      } catch (error) {
+        if (error instanceof Error) {
+          throw error
+        }
         throw new Error('Failed to fetch wishlists')
       }
-      
-      return response.json()
     },
-    enabled: !!userId,
+    enabled: !!userId?.trim(),
     staleTime: 5 * 60 * 1000, // 5 minutes
     gcTime: 10 * 60 * 1000, // 10 minutes
   })
@@ -104,17 +139,40 @@ export function useUserWishlists(userId?: string) {
 
 export function useWishlistById(id: string) {
   return useQuery({
-    queryKey: wishlistKeys.detail(id),
+    queryKey: wishlistKeys.detail(id?.trim() || ''),
     queryFn: async (): Promise<WishlistResponse> => {
-      const response = await fetch(`/api/wishlists/${id}`)
+      const trimmedId = id?.trim()
+      if (!trimmedId) throw new Error('Wishlist ID is required')
       
-      if (!response.ok) {
+      try {
+        const response = await fetch(`/api/wishlists/${encodeURIComponent(trimmedId)}`)
+        
+        if (!response) {
+          throw new Error('No response received')
+        }
+        
+        if (!response.ok) {
+          const errorData = await response.json().catch(() => ({}))
+          if (response.status === 404) {
+            throw new Error('Wishlist not found')
+          }
+          throw new Error(errorData?.error || `HTTP ${response.status}: ${response.statusText}`)
+        }
+        
+        const result = await response.json().catch(() => null)
+        if (!result) {
+          throw new Error('Invalid wishlist data received')
+        }
+        
+        return result
+      } catch (error) {
+        if (error instanceof Error) {
+          throw error
+        }
         throw new Error('Failed to fetch wishlist')
       }
-      
-      return response.json()
     },
-    enabled: !!id,
+    enabled: !!id?.trim(),
     staleTime: 2 * 60 * 1000, // 2 minutes
     gcTime: 5 * 60 * 1000, // 5 minutes
   })

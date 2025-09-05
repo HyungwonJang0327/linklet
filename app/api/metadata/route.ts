@@ -33,7 +33,7 @@ export async function POST(request: Request) {
   try {
     // Get client IP for rate limiting
     const forwarded = request.headers.get('x-forwarded-for')
-    const ip = forwarded ? forwarded.split(/, /)[0] : 'unknown'
+    const ip = forwarded ? forwarded.split(/, /)[0]?.trim() : 'unknown'
 
     // Check rate limit
     if (!checkRateLimit(ip)) {
@@ -43,19 +43,32 @@ export async function POST(request: Request) {
       )
     }
 
-    const body = await request.json()
-    const { url } = body
-
-    if (!url || typeof url !== 'string') {
+    // Parse and validate request body
+    let body
+    try {
+      body = await request.json()
+    } catch (error) {
       return NextResponse.json(
-        { error: 'URL is required' },
+        { error: 'Invalid JSON in request body' },
         { status: 400 }
       )
     }
 
+    const { url } = body
+
+    if (!url || typeof url !== 'string' || !url.trim()) {
+      return NextResponse.json(
+        { error: 'Valid URL is required' },
+        { status: 400 }
+      )
+    }
+
+    const trimmedUrl = url.trim()
+
     // Validate URL format
+    let parsedUrl
     try {
-      new URL(url)
+      parsedUrl = new URL(trimmedUrl)
     } catch {
       return NextResponse.json(
         { error: 'Invalid URL format' },
@@ -63,8 +76,16 @@ export async function POST(request: Request) {
       )
     }
 
+    // Additional URL validation
+    if (!parsedUrl.protocol.startsWith('http')) {
+      return NextResponse.json(
+        { error: 'Only HTTP and HTTPS URLs are supported' },
+        { status: 400 }
+      )
+    }
+
     // Check if URL is from a supported domain (optional security measure)
-    const hostname = new URL(url).hostname.toLowerCase()
+    const hostname = parsedUrl.hostname?.toLowerCase() || ''
     const blockedDomains = [
       'localhost',
       '127.0.0.1',
@@ -86,22 +107,41 @@ export async function POST(request: Request) {
     }
 
     // Extract metadata
-    const result = await extractUrlMetadata(url)
+    const result = await extractUrlMetadata(trimmedUrl)
 
-    if (!result.success) {
+    if (!result?.success) {
       return NextResponse.json(
         { 
           success: false, 
-          error: result.error || 'Failed to extract metadata' 
+          error: result?.error || 'Failed to extract metadata' 
         },
         { status: 400 }
       )
     }
 
-    // Return successful result
+    // Validate extracted data
+    if (!result.data) {
+      return NextResponse.json(
+        { 
+          success: false, 
+          error: 'No metadata extracted' 
+        },
+        { status: 400 }
+      )
+    }
+
+    // Return successful result with sanitized data
     return NextResponse.json({
       success: true,
-      data: result.data
+      data: {
+        ...result.data,
+        title: result.data.title?.trim() || undefined,
+        description: result.data.description?.trim() || undefined,
+        imageUrl: result.data.imageUrl?.trim() || undefined,
+        price: result.data.price?.trim() || undefined,
+        siteName: result.data.siteName?.trim() || undefined,
+        url: result.data.url?.trim() || trimmedUrl
+      }
     })
 
   } catch (error) {

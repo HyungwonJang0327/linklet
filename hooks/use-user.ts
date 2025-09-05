@@ -30,31 +30,88 @@ export const userKeys = {
 
 // Fetch user data
 async function fetchUser(userId: string): Promise<UserData> {
-  const response = await fetch(`/api/users?id=${userId}`)
-
-  if (!response.ok) {
-    throw new Error('Failed to fetch user data')
+  if (!userId?.trim()) {
+    throw new Error('User ID is required')
   }
 
-  return response.json()
+  try {
+    const response = await fetch(`/api/users?id=${encodeURIComponent(userId.trim())}`)
+
+    if (!response) {
+      throw new Error('No response received')
+    }
+
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}))
+      if (response.status === 404) {
+        throw new Error('User not found')
+      }
+      throw new Error(errorData?.error || `HTTP ${response.status}: ${response.statusText}`)
+    }
+
+    const result = await response.json().catch(() => null)
+    if (!result) {
+      throw new Error('Invalid user data received')
+    }
+
+    return result
+  } catch (error) {
+    if (error instanceof Error) {
+      throw error
+    }
+    throw new Error('Failed to fetch user data')
+  }
 }
 
 // Update user data
 async function updateUser(userId: string, data: UpdateUserData): Promise<UserData> {
-  const response = await fetch(`/api/users?id=${userId}`, {
-    method: 'PUT',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify(data),
-  })
-
-  if (!response.ok) {
-    const errorData = await response.json()
-    throw new Error(errorData.error || 'Failed to update profile')
+  if (!userId?.trim()) {
+    throw new Error('User ID is required')
   }
 
-  return response.json()
+  if (!data || Object.keys(data).length === 0) {
+    throw new Error('Update data is required')
+  }
+
+  try {
+    // Sanitize data
+    const sanitizedData: UpdateUserData = {}
+    if (data.name !== undefined) sanitizedData.name = data.name?.trim() || null
+    if (data.bio !== undefined) sanitizedData.bio = data.bio?.trim() || null
+    if (data.locale !== undefined) sanitizedData.locale = data.locale?.trim() || null
+
+    const response = await fetch(`/api/users?id=${encodeURIComponent(userId.trim())}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(sanitizedData),
+    })
+
+    if (!response) {
+      throw new Error('No response received')
+    }
+
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}))
+      if (response.status === 404) {
+        throw new Error('User not found')
+      }
+      throw new Error(errorData?.error || `HTTP ${response.status}: ${response.statusText}`)
+    }
+
+    const result = await response.json().catch(() => null)
+    if (!result) {
+      throw new Error('Invalid response data')
+    }
+
+    return result
+  } catch (error) {
+    if (error instanceof Error) {
+      throw error
+    }
+    throw new Error('Failed to update profile')
+  }
 }
 
 // Hook to fetch user data
@@ -62,9 +119,9 @@ export function useUser() {
   const { user, isAuthenticated } = useAuth()
 
   return useQuery({
-    queryKey: userKeys.user(user?.id || ''),
-    queryFn: () => fetchUser(user!.id),
-    enabled: isAuthenticated && !!user?.id,
+    queryKey: userKeys.user(user?.id?.trim() || ''),
+    queryFn: () => fetchUser(user?.id?.trim() || ''),
+    enabled: isAuthenticated && !!user?.id?.trim(),
     staleTime: 5 * 60 * 1000, // 5 minutes
     gcTime: 10 * 60 * 1000, // 10 minutes (formerly cacheTime)
     retry: (failureCount, error) => {

@@ -26,21 +26,36 @@ export function useUrlMetadata(): UseUrlMetadataResult {
     mutationFn: async (url: string): Promise<MetadataResult> => {
       setError(null)
 
-      const response = await fetch('/api/metadata', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ url }),
-      })
-
-      const result = await response.json()
-
-      if (!response.ok) {
-        throw new Error(result.error || 'Failed to extract metadata')
+      if (!url?.trim()) {
+        throw new Error('URL is required')
       }
 
-      return result
+      try {
+        const response = await fetch('/api/metadata', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ url: url.trim() }),
+        })
+
+        if (!response) {
+          throw new Error('No response received')
+        }
+
+        const result = await response.json().catch(() => ({ error: 'Invalid response format' }))
+
+        if (!response.ok) {
+          throw new Error(result?.error || `HTTP ${response.status}: ${response.statusText}`)
+        }
+
+        return result ?? { success: false, error: 'Empty response' }
+      } catch (error) {
+        if (error instanceof Error) {
+          throw error
+        }
+        throw new Error('Network error occurred')
+      }
     },
     onError: (err) => {
       const errorMessage = err instanceof Error ? err.message : 'Failed to extract metadata'
@@ -81,32 +96,49 @@ export function useBatchUrlMetadata() {
 
   const extractBatchMetadata = useCallback(
     async (urls: string[]) => {
-      const validUrls = urls.filter(url => {
-        try {
-          new URL(url)
-          return true
-        } catch {
-          return false
-        }
-      })
+      if (!urls?.length) {
+        return []
+      }
 
-      setLoadingUrls(prev => new Set([...prev, ...validUrls]))
+      const validUrls = urls
+        .filter(url => url?.trim())
+        .filter(url => {
+          try {
+            new URL(url.trim())
+            return true
+          } catch {
+            return false
+          }
+        })
+
+      if (validUrls.length === 0) {
+        return []
+      }
+
+      setLoadingUrls(prev => new Set([...(prev ?? new Set()), ...validUrls]))
 
       const promises = validUrls.map(async (url) => {
         try {
           const result = await extractMetadata(url)
-          setResults(prev => new Map(prev.set(url, result)))
+          setResults(prev => {
+            const currentMap = prev ?? new Map()
+            return new Map(currentMap.set(url, result))
+          })
           return { url, result }
         } catch (err) {
           const errorResult: MetadataResult = {
             success: false,
             error: err instanceof Error ? err.message : 'Failed to extract metadata',
           }
-          setResults(prev => new Map(prev.set(url, errorResult)))
+          setResults(prev => {
+            const currentMap = prev ?? new Map()
+            return new Map(currentMap.set(url, errorResult))
+          })
           return { url, result: errorResult }
         } finally {
           setLoadingUrls(prev => {
-            const next = new Set(prev)
+            const current = prev ?? new Set()
+            const next = new Set(current)
             next.delete(url)
             return next
           })
@@ -120,14 +152,20 @@ export function useBatchUrlMetadata() {
 
   const getMetadataForUrl = useCallback(
     (url: string): MetadataResult | undefined => {
-      return results.get(url)
+      if (!url?.trim() || !results) {
+        return undefined
+      }
+      return results.get(url.trim())
     },
     [results]
   )
 
   const isUrlLoading = useCallback(
     (url: string): boolean => {
-      return loadingUrls.has(url)
+      if (!url?.trim() || !loadingUrls) {
+        return false
+      }
+      return loadingUrls.has(url.trim())
     },
     [loadingUrls]
   )
