@@ -4,10 +4,12 @@ import { useState, useEffect } from 'react'
 import { Card } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
+import ImageUpload from '@/components/ui/image-upload'
 import { GlobeAltIcon, PlusIcon, TrashIcon, SparklesIcon, PhotoIcon, PencilIcon, CheckIcon, XMarkIcon } from '@heroicons/react/24/outline'
 import { useI18n } from '@/lib/i18n/context'
 import { useBatchUrlMetadata } from '@/hooks/use-url-metadata'
 import type { ProductMetadata } from '@/lib/services/url-metadata'
+import Image from 'next/image'
 
 interface ProductLinksProps {
   productLinks: string[]
@@ -31,34 +33,37 @@ interface ProductLinkItemProps {
   metadata?: ProductMetadata
   isExtracting?: boolean
   onMetadataManualUpdate?: (index: number, metadata: Partial<ProductMetadata>) => void
+  extractionAttempted?: boolean
 }
 
-function ProductLinkItem({ 
-  index, 
-  link, 
-  error, 
-  loading, 
-  isValidUrl, 
-  onUpdate, 
-  onRemove, 
+function ProductLinkItem({
+  index,
+  link,
+  error,
+  loading,
+  isValidUrl,
+  onUpdate,
+  onRemove,
   onExtractMetadata,
   metadata,
   isExtracting,
-  onMetadataManualUpdate
+  onMetadataManualUpdate,
+  extractionAttempted
 }: ProductLinkItemProps) {
   const { t } = useI18n()
   const [isEditingMetadata, setIsEditingMetadata] = useState(false)
+  const [extractionFailed, setExtractionFailed] = useState(false)
   const [manualMetadata, setManualMetadata] = useState<Partial<ProductMetadata>>({
     title: '',
     imageUrl: '',
     price: '',
     description: ''
   })
-  
+
   // Determine if we should show the rich UI (when there's a URL input)
   const showRichUI = link?.trim() !== ''
   const hasMetadata = metadata && (metadata.title || metadata.imageUrl)
-  const showManualEdit = showRichUI && !hasMetadata && !isExtracting
+  const showManualEdit = showRichUI && !hasMetadata && !isExtracting && extractionFailed
 
   const handleExtractClick = () => {
     const trimmedLink = link?.trim()
@@ -78,6 +83,24 @@ function ProductLinkItem({
     setIsEditingMetadata(false)
     setManualMetadata({ title: '', imageUrl: '', price: '', description: '' })
   }
+
+  // Auto-extract metadata when valid URL is entered
+  useEffect(() => {
+    const trimmedLink = link?.trim()
+    if (trimmedLink && isValidUrl(trimmedLink) && !metadata && !isExtracting && !extractionAttempted) {
+      // Automatically trigger metadata extraction
+      onExtractMetadata(trimmedLink)
+    }
+  }, [link, isValidUrl, metadata, isExtracting, extractionAttempted, onExtractMetadata])
+
+  // Set extraction failed state when extraction attempted but no metadata received
+  useEffect(() => {
+    if (extractionAttempted && !isExtracting && !hasMetadata && link?.trim() && isValidUrl(link.trim())) {
+      setExtractionFailed(true)
+    } else if (hasMetadata || !link?.trim()) {
+      setExtractionFailed(false)
+    }
+  }, [extractionAttempted, isExtracting, hasMetadata, link, isValidUrl])
 
   useEffect(() => {
     if (metadata) {
@@ -99,16 +122,15 @@ function ProductLinkItem({
             value={link}
             onChange={(value) => onUpdate(index, value)}
             placeholder={`${t('wishlist.create.productLink')} ${index + 1} (${t('common.example')}: https://example.com/product)` || `상품 링크 ${index + 1} (예: https://example.com/product)`}
-            className={`bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 ${
-              error ? 'border-red-500' : ''
-            }`}
+            className={`bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 ${error ? 'border-red-500' : ''
+              }`}
             disabled={loading}
           />
           {error && (
             <p className="text-red-400 text-xs mt-1">{error}</p>
           )}
         </div>
-        
+
         <Button
           type="button"
           variant="ghost"
@@ -133,16 +155,15 @@ function ProductLinkItem({
             value={link}
             onChange={(value) => onUpdate(index, value)}
             placeholder="Product URL"
-            className={`bg-slate-800/50 border-slate-600 text-white placeholder:text-slate-400 ${
-              error ? 'border-red-500' : ''
-            }`}
+            className={`bg-slate-800/50 border-slate-600 text-white placeholder:text-slate-400 ${error ? 'border-red-500' : ''
+              }`}
             disabled={loading}
           />
           {error && (
             <p className="text-red-400 text-xs mt-1">{error}</p>
           )}
         </div>
-        
+
         <div className="flex items-start gap-2">
           {/* Extract Metadata Button */}
           {isValidUrl(link.trim()) && (
@@ -158,7 +179,7 @@ function ProductLinkItem({
               <SparklesIcon className={`w-4 h-4 ${isExtracting ? 'animate-spin' : ''}`} />
             </Button>
           )}
-          
+
           {/* Remove Button */}
           <Button
             type="button"
@@ -188,14 +209,15 @@ function ProductLinkItem({
             {/* Product Thumbnail */}
             <div className="flex-shrink-0">
               {metadata.imageUrl?.trim() ? (
-                <img
+                <Image
                   src={metadata.imageUrl.trim()}
                   alt={metadata.title?.trim() || 'Product'}
                   className="w-20 h-20 object-cover rounded-lg bg-slate-800 border border-slate-600/30"
-                  onError={(e) => {
-                    e.currentTarget.src = ''
-                    e.currentTarget.style.display = 'none'
+                  onError={() => {
+                    // Handle image load error
                   }}
+                  width={80}
+                  height={80}
                 />
               ) : (
                 <div className="w-20 h-20 bg-slate-800 rounded-lg border border-slate-600/30 flex items-center justify-center">
@@ -203,7 +225,7 @@ function ProductLinkItem({
                 </div>
               )}
             </div>
-            
+
             {/* Product Info */}
             <div className="flex-1 min-w-0">
               <h4 className="font-medium text-white text-base line-clamp-2 mb-2">
@@ -225,7 +247,7 @@ function ProductLinkItem({
                 </p>
               )}
             </div>
-            
+
             {/* Edit Button */}
             <Button
               type="button"
@@ -251,39 +273,46 @@ function ProductLinkItem({
               <span className="text-xs text-slate-500 ml-auto">Auto-extraction failed - please enter manually</span>
             )}
           </div>
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-            <div>
-              <label className="text-xs text-slate-400 mb-1 block">Product Name</label>
-              <Input
-                value={manualMetadata.title || ''}
-                onChange={(value) => setManualMetadata(prev => ({ ...prev, title: value }))}
-                placeholder="Enter product name"
-                className="bg-slate-800/50 border-slate-600 text-white text-sm"
-              />
+
+          <div className="grid grid-cols-2 md:grid-cols-6 gap-3">
+            <div className="md:col-span-2 col-span-6 space-y-3">
+              <div>
+                <label className="text-xs text-slate-400 mb-2 block">Product Image (Optional)</label>
+                <ImageUpload
+                  value={manualMetadata.imageUrl || ''}
+                  onChange={(imageUrl) => setManualMetadata(prev => ({ ...prev, imageUrl: imageUrl || '' }))}
+                  placeholder="Upload image"
+                  width={120}
+                  height={120}
+                  maxSizeKB={1024} // 1MB limit
+                  className="w-full"
+                />
+              </div>
             </div>
-            
-            <div>
-              <label className="text-xs text-slate-400 mb-1 block">Price (Optional)</label>
-              <Input
-                value={manualMetadata.price || ''}
-                onChange={(value) => setManualMetadata(prev => ({ ...prev, price: value }))}
-                placeholder="$0.00"
-                className="bg-slate-800/50 border-slate-600 text-white text-sm"
-              />
+            <div className="md:col-span-4 col-span-6 space-y-3">
+              <div>
+                <label className="text-xs text-slate-400 mb-1 block">Product Name</label>
+                <Input
+                  value={manualMetadata.title || ''}
+                  onChange={(value) => setManualMetadata(prev => ({ ...prev, title: value }))}
+                  placeholder="Enter product name"
+                  className="bg-slate-800/50 border-slate-600 text-white text-sm"
+                />
+              </div>
+
+              <div>
+                <label className="text-xs text-slate-400 mb-1 block">Price (Optional)</label>
+                <Input
+                  value={manualMetadata.price || ''}
+                  onChange={(value) => setManualMetadata(prev => ({ ...prev, price: value }))}
+                  placeholder="$0.00"
+                  className="bg-slate-800/50 border-slate-600 text-white text-sm"
+                />
+              </div>
             </div>
+
           </div>
-          
-          <div>
-            <label className="text-xs text-slate-400 mb-1 block">Image URL (Optional)</label>
-            <Input
-              value={manualMetadata.imageUrl || ''}
-              onChange={(value) => setManualMetadata(prev => ({ ...prev, imageUrl: value }))}
-              placeholder="https://example.com/image.jpg"
-              className="bg-slate-800/50 border-slate-600 text-white text-sm"
-            />
-          </div>
-          
+
           <div>
             <label className="text-xs text-slate-400 mb-1 block">Description (Optional)</label>
             <Input
@@ -293,7 +322,7 @@ function ProductLinkItem({
               className="bg-slate-800/50 border-slate-600 text-white text-sm"
             />
           </div>
-          
+
           <div className="flex gap-2 pt-2">
             <Button
               type="button"
@@ -322,19 +351,20 @@ function ProductLinkItem({
   )
 }
 
-export default function ProductLinks({ 
-  productLinks, 
-  setProductLinks, 
-  linkErrors, 
-  setLinkErrors, 
-  loading, 
+export default function ProductLinks({
+  productLinks,
+  setProductLinks,
+  linkErrors,
+  setLinkErrors,
+  loading,
   isValidUrl,
   onMetadataExtracted
 }: ProductLinksProps) {
   const { t } = useI18n()
   const { extractBatchMetadata, getMetadataForUrl, isUrlLoading } = useBatchUrlMetadata()
   const [extractedCount, setExtractedCount] = useState(0)
-  
+  const [extractionAttempted, setExtractionAttempted] = useState<Record<string, boolean>>({})
+
   const addProductLink = () => {
     if (productLinks.length < 10) {
       setProductLinks([...productLinks, ''])
@@ -345,7 +375,7 @@ export default function ProductLinks({
     if (productLinks.length > 1) {
       const newLinks = productLinks.filter((_, i) => i !== index)
       setProductLinks(newLinks)
-      
+
       // Remove error for removed link
       const newErrors = { ...linkErrors }
       delete newErrors[index]
@@ -357,7 +387,7 @@ export default function ProductLinks({
     const newLinks = [...productLinks]
     newLinks[index] = value
     setProductLinks(newLinks)
-    
+
     // Clear error when user starts typing
     if (linkErrors[index]) {
       const newErrors = { ...linkErrors }
@@ -372,11 +402,19 @@ export default function ProductLinks({
       return
     }
 
+    const trimmedUrl = url.trim()
+
+    // Mark extraction as attempted for this URL
+    setExtractionAttempted(prev => ({
+      ...prev,
+      [trimmedUrl]: true
+    }))
+
     try {
-      const results = await extractBatchMetadata([url.trim()])
+      const results = await extractBatchMetadata([trimmedUrl])
       const result = results?.[0]
       if (result?.result?.success && result.result?.data && onMetadataExtracted) {
-        const index = productLinks?.findIndex(link => link?.trim() === url.trim()) ?? -1
+        const index = productLinks?.findIndex(link => link?.trim() === trimmedUrl) ?? -1
         if (index !== -1) {
           onMetadataExtracted(index, result.result.data)
         }
@@ -393,7 +431,7 @@ export default function ProductLinks({
     const validLinks = productLinks
       .filter(link => link?.trim())
       .filter(link => isValidUrl(link.trim()))
-    
+
     if (validLinks.length === 0) return
 
     try {
@@ -420,10 +458,10 @@ export default function ProductLinks({
       const fullMetadata: ProductMetadata = {
         url: productLinks[index],
         title: metadata.title || '',
-        description: metadata.description || null,
-        imageUrl: metadata.imageUrl || null,
-        price: metadata.price || null,
-        siteName: null // This will be filled if available
+        description: metadata.description || undefined,
+        imageUrl: metadata.imageUrl || undefined,
+        price: metadata.price || undefined,
+        siteName: undefined // This will be filled if available
       }
       onMetadataExtracted(index, fullMetadata)
     }
@@ -472,14 +510,15 @@ export default function ProductLinks({
               loading={loading}
               isValidUrl={isValidUrl}
               onUpdate={updateProductLink}
-              onRemove={productLinks.length > 1 ? removeProductLink : () => {}}
+              onRemove={productLinks.length > 1 ? removeProductLink : () => { }}
               onExtractMetadata={handleExtractMetadata}
               metadata={getMetadataForUrl(link)?.data}
               isExtracting={isUrlLoading(link)}
               onMetadataManualUpdate={handleManualMetadataUpdate}
+              extractionAttempted={extractionAttempted[link?.trim()] || false}
             />
           ))}
-          
+
           {/* Add Link Button */}
           {productLinks.length < 10 && (
             <div className="flex justify-center">
@@ -496,7 +535,7 @@ export default function ProductLinks({
               </Button>
             </div>
           )}
-          
+
           <div className="flex items-center justify-between text-xs text-slate-400 pt-2">
             <span>{t('wishlist.create.maxLinks') || 'Up to 10 product links can be added'}</span>
             <span>{productLinks.filter(link => link.trim()).length}/10</span>
