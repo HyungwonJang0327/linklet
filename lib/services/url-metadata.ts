@@ -1,3 +1,5 @@
+import * as cheerio from 'cheerio'
+
 export interface ProductMetadata {
   title?: string
   description?: string
@@ -14,24 +16,48 @@ export interface MetadataExtractionResult {
 }
 
 /**
- * Extracts metadata from a product URL by parsing HTML
- * Supports Open Graph, Twitter Cards, and common e-commerce meta tags
+ * Extracts metadata from a product URL by parsing HTML using Cheerio
+ * Supports Open Graph, Twitter Cards, JSON-LD, and common e-commerce meta tags
  */
 export async function extractUrlMetadata(url: string): Promise<MetadataExtractionResult> {
   try {
-    // Validate URL
-    new URL(url) // This throws if URL is invalid
-    
+    // Validate URL format and structure
+    let parsedUrl: URL
+    try {
+      parsedUrl = new URL(url)
+    } catch {
+      throw new Error('Invalid URL format')
+    }
+
+    // Additional URL validation
+    if (!parsedUrl.protocol.startsWith('http')) {
+      throw new Error('Only HTTP and HTTPS URLs are supported')
+    }
+
+    if (!parsedUrl.hostname || parsedUrl.hostname.length < 3) {
+      throw new Error('Invalid hostname')
+    }
+
+    // Check if hostname has at least one dot (domain.tld format)
+    if (!parsedUrl.hostname.includes('.') || parsedUrl.hostname.endsWith('.')) {
+      throw new Error('Invalid domain format')
+    }
+
     const response = await fetch(url, {
       headers: {
-        'User-Agent': 'Mozilla/5.0 (compatible; Linklet Bot; +https://linklet.app)',
-        'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
-        'Accept-Language': 'en-US,en;q=0.5',
-        'Accept-Encoding': 'gzip, deflate',
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+        'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8',
+        'Accept-Language': 'en-US,en;q=0.9,ko;q=0.8',
+        'Accept-Encoding': 'gzip, deflate, br',
         'Connection': 'keep-alive',
+        'Upgrade-Insecure-Requests': '1',
+        'Sec-Fetch-Dest': 'document',
+        'Sec-Fetch-Mode': 'navigate',
+        'Sec-Fetch-Site': 'none',
+        'Cache-Control': 'no-cache',
       },
       // Add timeout
-      signal: AbortSignal.timeout(10000), // 10 second timeout
+      signal: AbortSignal.timeout(15000), // 15 second timeout
     })
 
     if (!response.ok) {
@@ -60,53 +86,49 @@ export async function extractUrlMetadata(url: string): Promise<MetadataExtractio
 }
 
 /**
- * Parses HTML content to extract product metadata
+ * Parses HTML content to extract product metadata using Cheerio
  */
 function parseHtmlMetadata(html: string, url: string): ProductMetadata {
+  const $ = cheerio.load(html)
   const metadata: ProductMetadata = { url }
 
-  // Create a simple parser for meta tags
-  const metaTags = extractMetaTags(html)
-  const title = extractTitle(html)
-
-  // Extract title (priority: og:title > twitter:title > title tag)
-  metadata.title = 
-    metaTags['og:title'] ||
-    metaTags['twitter:title'] ||
-    metaTags['title'] ||
-    title ||
+  // Extract title (priority: og:title > twitter:title > title tag > h1)
+  metadata.title =
+    $('meta[property="og:title"]').attr('content') ||
+    $('meta[name="twitter:title"]').attr('content') ||
+    $('meta[name="title"]').attr('content') ||
+    $('title').text() ||
+    $('h1').first().text() ||
     undefined
 
   // Extract description (priority: og:description > twitter:description > meta description)
-  metadata.description = 
-    metaTags['og:description'] ||
-    metaTags['twitter:description'] ||
-    metaTags['description'] ||
+  metadata.description =
+    $('meta[property="og:description"]').attr('content') ||
+    $('meta[name="twitter:description"]').attr('content') ||
+    $('meta[name="description"]').attr('content') ||
     undefined
 
-  // Extract image (priority: og:image > twitter:image)
-  let imageUrl = metaTags['og:image'] || metaTags['twitter:image']
+  // Extract image (priority: og:image > twitter:image > first img with alt)
+  let imageUrl =
+    $('meta[property="og:image"]').attr('content') ||
+    $('meta[name="twitter:image"]').attr('content') ||
+    $('meta[name="twitter:image:src"]').attr('content') ||
+    $('img[alt]').first().attr('src') ||
+    undefined
+
   if (imageUrl) {
-    // Handle relative URLs
-    if (imageUrl.startsWith('//')) {
-      imageUrl = 'https:' + imageUrl
-    } else if (imageUrl.startsWith('/')) {
-      const baseUrl = new URL(url)
-      imageUrl = baseUrl.origin + imageUrl
-    } else if (!imageUrl.startsWith('http')) {
-      const baseUrl = new URL(url)
-      imageUrl = new URL(imageUrl, baseUrl).href
-    }
+    imageUrl = resolveUrl(imageUrl, url)
     metadata.imageUrl = imageUrl
   }
 
-  // Extract price (common e-commerce patterns)
-  metadata.price = extractPrice(html, metaTags)
+  // Extract price using various methods
+  metadata.price = extractPrice($, url)
 
   // Extract site name
-  metadata.siteName = 
-    metaTags['og:site_name'] ||
-    metaTags['twitter:site'] ||
+  metadata.siteName =
+    $('meta[property="og:site_name"]').attr('content') ||
+    $('meta[name="twitter:site"]').attr('content')?.replace('@', '') ||
+    $('meta[name="application-name"]').attr('content') ||
     new URL(url).hostname ||
     undefined
 
@@ -122,70 +144,141 @@ function parseHtmlMetadata(html: string, url: string): ProductMetadata {
 }
 
 /**
- * Extracts meta tags from HTML
+ * Extracts price information using Cheerio and various selectors
  */
-function extractMetaTags(html: string): Record<string, string> {
-  const metaTags: Record<string, string> = {}
-  
-  // Match meta tags with property or name attributes
-  const metaRegex = /<meta\s+(?:property|name|itemprop)=["']([^"']+)["']\s+content=["']([^"']*)["'][^>]*>/gi
-  const metaRegex2 = /<meta\s+content=["']([^"']*)["']\s+(?:property|name|itemprop)=["']([^"']+)["'][^>]*>/gi
-  
-  let match
-  while ((match = metaRegex.exec(html)) !== null) {
-    const key = match[1].toLowerCase()
-    const content = match[2]
-    if (content.trim()) {
-      metaTags[key] = content.trim()
-    }
-  }
-  
-  while ((match = metaRegex2.exec(html)) !== null) {
-    const content = match[1]
-    const key = match[2].toLowerCase()
-    if (content.trim()) {
-      metaTags[key] = content.trim()
+function extractPrice($: cheerio.Root, url: string): string | undefined {
+  // Check JSON-LD structured data first
+  const jsonLdScripts = $('script[type="application/ld+json"]')
+  for (let i = 0; i < jsonLdScripts.length; i++) {
+    try {
+      const jsonLdText = $(jsonLdScripts[i]).html()
+      if (jsonLdText) {
+        const jsonLd = JSON.parse(jsonLdText)
+        const price = extractPriceFromJsonLd(jsonLd)
+        if (price) return price
+      }
+    } catch (e) {
+      // Continue if JSON parsing fails
     }
   }
 
-  return metaTags
-}
+  // Check meta tags for price
+  const priceFromMeta =
+    $('meta[property="product:price:amount"]').attr('content') ||
+    $('meta[name="price"]').attr('content') ||
+    undefined
 
-/**
- * Extracts title from title tag
- */
-function extractTitle(html: string): string | null {
-  const titleMatch = html.match(/<title[^>]*>([^<]*)<\/title>/i)
-  return titleMatch ? titleMatch[1].trim() : null
-}
-
-/**
- * Extracts price information from HTML and meta tags
- */
-function extractPrice(html: string, metaTags: Record<string, string>): string | undefined {
-  // Check structured data first
-  if (metaTags['product:price:amount']) {
-    const currency = metaTags['product:price:currency'] || ''
-    return `${currency} ${metaTags['product:price:amount']}`.trim()
+  if (priceFromMeta) {
+    const currency = $('meta[property="product:price:currency"]').attr('content') || ''
+    return currency ? `${currency} ${priceFromMeta}` : priceFromMeta
   }
 
-  // Check common price patterns in HTML
-  const pricePatterns = [
-    /["']price["']\s*:\s*["']([^"']+)["']/i,
-    /price["\s]*[:=]\s*["']?([0-9,]+\.?[0-9]*)\s*[₩$€£¥]?/i,
-    /[₩$€£¥]\s*([0-9,]+\.?[0-9]*)/,
-    /([0-9,]+\.?[0-9]*)\s*[₩$€£¥]/,
-    /price[^>]*>([^<]*[0-9][^<]*)</i
+  // Check common price selectors
+  const priceSelectors = [
+    '.price',
+    '.product-price',
+    '.price-current',
+    '.sale-price',
+    '.regular-price',
+    '.amount',
+    '[data-price]',
+    '[class*="price"]',
+    '[id*="price"]',
+    '.money',
+    '.cost'
   ]
 
-  for (const pattern of pricePatterns) {
-    const match = html.match(pattern)
-    if (match && match[1]) {
-      return match[1].trim()
+  for (const selector of priceSelectors) {
+    const priceElement = $(selector).first()
+    if (priceElement.length > 0) {
+      const priceText = priceElement.text().trim()
+      if (priceText && /[0-9]/.test(priceText)) {
+        return cleanPriceText(priceText)
+      }
+    }
+  }
+
+  // Check data attributes
+  const dataPrice = $('[data-price]').first().attr('data-price')
+  if (dataPrice) {
+    return cleanPriceText(dataPrice)
+  }
+
+  return undefined
+}
+
+/**
+ * Extracts price from JSON-LD structured data
+ */
+function extractPriceFromJsonLd(jsonLd: any): string | undefined {
+  if (!jsonLd) return undefined
+
+  // Handle arrays
+  if (Array.isArray(jsonLd)) {
+    for (const item of jsonLd) {
+      const price = extractPriceFromJsonLd(item)
+      if (price) return price
+    }
+    return undefined
+  }
+
+  // Check for Product type
+  if (jsonLd['@type'] === 'Product' && jsonLd.offers) {
+    const offers = Array.isArray(jsonLd.offers) ? jsonLd.offers[0] : jsonLd.offers
+    if (offers.price && offers.priceCurrency) {
+      return `${offers.priceCurrency} ${offers.price}`
+    }
+    if (offers.price) {
+      return offers.price.toString()
+    }
+  }
+
+  // Check for Offer type
+  if (jsonLd['@type'] === 'Offer') {
+    if (jsonLd.price && jsonLd.priceCurrency) {
+      return `${jsonLd.priceCurrency} ${jsonLd.price}`
+    }
+    if (jsonLd.price) {
+      return jsonLd.price.toString()
     }
   }
 
   return undefined
+}
+
+/**
+ * Resolves relative URLs to absolute URLs
+ */
+function resolveUrl(relativeUrl: string, baseUrl: string): string {
+  try {
+    if (relativeUrl.startsWith('//')) {
+      return 'https:' + relativeUrl
+    } else if (relativeUrl.startsWith('/')) {
+      const base = new URL(baseUrl)
+      return base.origin + relativeUrl
+    } else if (!relativeUrl.startsWith('http')) {
+      return new URL(relativeUrl, baseUrl).href
+    }
+    return relativeUrl
+  } catch {
+    return relativeUrl
+  }
+}
+
+/**
+ * Cleans price text by extracting numbers and currency symbols
+ */
+function cleanPriceText(text: string): string {
+  // Extract currency symbols and numbers
+  const priceMatch = text.match(/([₩$€£¥¢]?)\s*([0-9,]+\.?[0-9]*)\s*([₩$€£¥¢]?)/i)
+  if (priceMatch) {
+    const currency = priceMatch[1] || priceMatch[3] || ''
+    const amount = priceMatch[2]
+    return currency ? `${currency}${amount}` : amount
+  }
+
+  // Fallback: return original text if it contains numbers
+  return text.replace(/\s+/g, ' ').trim()
 }
 
 /**
@@ -200,5 +293,6 @@ function cleanText(text: string): string {
     .replace(/&gt;/g, '>') // Replace &gt; with >
     .replace(/&quot;/g, '"') // Replace &quot; with "
     .replace(/&#39;/g, "'") // Replace &#39; with '
+    .replace(/\n|\r/g, ' ') // Replace newlines with space
     .trim()
 }

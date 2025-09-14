@@ -94,11 +94,11 @@ export async function POST(request: Request) {
       '192.168.',
       '172.'
     ]
-    
-    const isBlocked = blockedDomains.some(blocked => 
+
+    const isBlocked = blockedDomains.some(blocked =>
       hostname.includes(blocked) || hostname.startsWith(blocked)
     )
-    
+
     if (isBlocked) {
       return NextResponse.json(
         { error: 'URL not allowed for security reasons' },
@@ -111,9 +111,9 @@ export async function POST(request: Request) {
 
     if (!result?.success) {
       return NextResponse.json(
-        { 
-          success: false, 
-          error: result?.error || 'Failed to extract metadata' 
+        {
+          success: false,
+          error: result?.error || 'Failed to extract metadata'
         },
         { status: 400 }
       )
@@ -122,9 +122,9 @@ export async function POST(request: Request) {
     // Validate extracted data
     if (!result.data) {
       return NextResponse.json(
-        { 
-          success: false, 
-          error: 'No metadata extracted' 
+        {
+          success: false,
+          error: 'No metadata extracted'
         },
         { status: 400 }
       )
@@ -147,9 +147,9 @@ export async function POST(request: Request) {
   } catch (error) {
     console.error('Metadata extraction API error:', error)
     return NextResponse.json(
-      { 
-        success: false, 
-        error: 'Internal server error' 
+      {
+        success: false,
+        error: 'Internal server error'
       },
       { status: 500 }
     )

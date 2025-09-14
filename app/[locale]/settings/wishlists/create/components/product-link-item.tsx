@@ -6,6 +6,8 @@ import { Input } from '@/components/ui/input'
 import ImageUpload from '@/components/ui/image-upload'
 import { TrashIcon, SparklesIcon, PhotoIcon, PencilIcon, CheckIcon, XMarkIcon } from '@heroicons/react/24/outline'
 import { useI18n } from '@/lib/i18n/context'
+import useDebounce from '@/hooks/use-debounce'
+import { useUrlMetadata } from '@/hooks/use-url-metadata'
 import type { ProductMetadata } from '@/lib/services/url-metadata'
 import Image from 'next/image'
 
@@ -47,11 +49,18 @@ export default function ProductLinkItem({
     price: '',
     description: ''
   })
+  const [autoMetadata, setAutoMetadata] = useState<ProductMetadata | null>(null)
+  
+  // Debounced URL for automatic metadata fetching
+  const debouncedUrl = useDebounce(link, 1500) // 1.5 second delay
+  const { extractMetadata, isLoading: isFetchingMetadata } = useUrlMetadata()
 
   // Determine if we should show the rich UI (when there's a URL input)
   const showRichUI = link?.trim() !== ''
-  const hasMetadata = metadata && (metadata.title || metadata.imageUrl)
-  const showManualEdit = showRichUI && !hasMetadata && !isExtracting && extractionFailed
+  const currentMetadata = autoMetadata || metadata
+  const hasMetadata = currentMetadata && (currentMetadata.title || currentMetadata.imageUrl)
+  const isCurrentlyExtracting = isExtracting || isFetchingMetadata
+  const showManualEdit = showRichUI && !hasMetadata && !isCurrentlyExtracting && (extractionFailed || (extractionAttempted && !metadata && !autoMetadata))
 
   const handleExtractClick = () => {
     const trimmedLink = link?.trim()
@@ -72,7 +81,7 @@ export default function ProductLinkItem({
     setManualMetadata({ title: '', imageUrl: '', price: '', description: '' })
   }
 
-  // Auto-extract metadata when valid URL is entered
+  // Auto-extract metadata when valid URL is entered (existing logic)
   useEffect(() => {
     const trimmedLink = link?.trim()
     if (trimmedLink && isValidUrl(trimmedLink) && !metadata && !isExtracting && !extractionAttempted) {
@@ -80,6 +89,32 @@ export default function ProductLinkItem({
       onExtractMetadata(trimmedLink)
     }
   }, [link, isValidUrl, metadata, isExtracting, extractionAttempted, onExtractMetadata])
+
+  // Debounced automatic metadata fetching
+  useEffect(() => {
+    const fetchMetadata = async () => {
+      const trimmedUrl = debouncedUrl?.trim()
+      if (trimmedUrl && isValidUrl(trimmedUrl) && !metadata && !autoMetadata) {
+        try {
+          const result = await extractMetadata(trimmedUrl)
+          if (result.success && result.data) {
+            setAutoMetadata(result.data)
+            // Also call the parent callback if provided
+            if (onMetadataManualUpdate) {
+              onMetadataManualUpdate(index, result.data)
+            }
+          } else {
+            setAutoMetadata(null)
+          }
+        } catch (error) {
+          console.error('Auto metadata extraction failed:', error)
+          setAutoMetadata(null)
+        }
+      }
+    }
+
+    fetchMetadata()
+  }, [debouncedUrl, isValidUrl, metadata, autoMetadata, extractMetadata, onMetadataManualUpdate, index])
 
   // Set extraction failed state when extraction attempted but no metadata received
   useEffect(() => {
@@ -91,15 +126,15 @@ export default function ProductLinkItem({
   }, [extractionAttempted, isExtracting, hasMetadata, link, isValidUrl])
 
   useEffect(() => {
-    if (metadata) {
+    if (currentMetadata) {
       setManualMetadata({
-        title: metadata.title || '',
-        imageUrl: metadata.imageUrl || '',
-        price: metadata.price || '',
-        description: metadata.description || ''
+        title: currentMetadata.title || '',
+        imageUrl: currentMetadata.imageUrl || '',
+        price: currentMetadata.price || '',
+        description: currentMetadata.description || ''
       })
     }
-  }, [metadata])
+  }, [currentMetadata])
 
   // Simple input mode (when no URL is entered yet)
   if (!showRichUI) {
@@ -183,10 +218,12 @@ export default function ProductLinkItem({
       </div>
 
       {/* Loading State */}
-      {isExtracting && (
+      {isCurrentlyExtracting && (
         <div className="flex items-center gap-3 py-4 text-slate-300">
           <SparklesIcon className="w-5 h-5 animate-pulse text-purple-400" />
-          <span className="text-sm">Extracting product information...</span>
+          <span className="text-sm">
+            {isFetchingMetadata ? 'Auto-extracting product information...' : 'Extracting product information...'}
+          </span>
         </div>
       )}
 
@@ -196,10 +233,10 @@ export default function ProductLinkItem({
           <div className="flex items-start gap-3">
             {/* Product Thumbnail */}
             <div className="flex-shrink-0">
-              {metadata.imageUrl?.trim() ? (
+              {currentMetadata?.imageUrl?.trim() ? (
                 <Image
-                  src={metadata.imageUrl.trim()}
-                  alt={metadata.title?.trim() || 'Product'}
+                  src={currentMetadata.imageUrl.trim()}
+                  alt={currentMetadata.title?.trim() || 'Product'}
                   className="w-20 h-20 object-cover rounded-lg bg-slate-800 border border-slate-600/30"
                   onError={() => {
                     // Handle image load error
@@ -217,21 +254,21 @@ export default function ProductLinkItem({
             {/* Product Info */}
             <div className="flex-1 min-w-0">
               <h4 className="font-medium text-white text-base line-clamp-2 mb-2">
-                {metadata.title?.trim() || 'Untitled Product'}
+                {currentMetadata?.title?.trim() || 'Untitled Product'}
               </h4>
-              {metadata.price?.trim() && (
+              {currentMetadata?.price?.trim() && (
                 <p className="text-green-400 font-semibold text-sm mb-2">
-                  {metadata.price.trim()}
+                  {currentMetadata.price.trim()}
                 </p>
               )}
-              {metadata.description?.trim() && (
+              {currentMetadata?.description?.trim() && (
                 <p className="text-slate-400 text-sm line-clamp-2 mb-2">
-                  {metadata.description.trim()}
+                  {currentMetadata.description.trim()}
                 </p>
               )}
-              {metadata.siteName?.trim() && (
+              {currentMetadata?.siteName?.trim() && (
                 <p className="text-slate-500 text-xs">
-                  from {metadata.siteName.trim()}
+                  from {currentMetadata.siteName.trim()}
                 </p>
               )}
             </div>
