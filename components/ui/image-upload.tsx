@@ -62,20 +62,33 @@ export default function ImageUpload({
     setUploading(true)
 
     try {
-      // Create data URL for preview
-      const dataUrl = await new Promise<string>((resolve, reject) => {
-        const reader = new FileReader()
-        reader.onload = () => resolve(reader.result as string)
-        reader.onerror = reject
-        reader.readAsDataURL(file)
+      // Upload to S3 via /api/image
+      const formData = new FormData()
+      formData.append('img', file)
+
+      const response = await fetch('/api/image', {
+        method: 'POST',
+        body: formData
       })
 
-      // Call the callbacks
-      onChange?.(dataUrl)
+      const result = await response.json()
+
+      if (!response.ok) {
+        throw new Error(result.message || 'Upload failed')
+      }
+
+      // Get the S3 URL from the response
+      const s3Url = result.data?.[0]
+      if (!s3Url) {
+        throw new Error('No URL returned from server')
+      }
+
+      // Call the callbacks with S3 URL
+      onChange?.(s3Url)
       onFileChange?.(file)
     } catch (error) {
-      console.error('Error processing file:', error)
-      setError('Failed to process image file')
+      console.error('Error uploading file:', error)
+      setError(error instanceof Error ? error.message : 'Failed to upload image')
     } finally {
       setUploading(false)
     }
