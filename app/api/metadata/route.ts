@@ -130,6 +130,47 @@ export async function POST(request: Request) {
       )
     }
 
+    // Upload image to S3 if imageUrl exists
+    let s3ImageUrl = result.data.imageUrl
+    if (result.data.imageUrl) {
+      try {
+        // Fetch the image from the original URL
+        const imageResponse = await fetch(result.data.imageUrl, {
+          headers: {
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+          },
+        })
+
+        if (imageResponse.ok) {
+          const imageBlob = await imageResponse.blob()
+          
+          // Check if it's a valid image type
+          if (imageBlob.type.startsWith('image/')) {
+            // Create FormData for S3 upload using existing API
+            const formData = new FormData()
+            const fileName = `metadata-image-${Date.now()}.${imageBlob.type.split('/')[1] || 'jpg'}`
+            formData.append('img', imageBlob, fileName)
+
+            // Upload to S3 using existing /api/image endpoint
+            const s3Response = await fetch(`${request.url.split('/api/')[0]}/api/image`, {
+              method: 'POST',
+              body: formData,
+            })
+
+            if (s3Response.ok) {
+              const s3Result = await s3Response.json()
+              if (s3Result.data && s3Result.data[0]) {
+                s3ImageUrl = s3Result.data[0]
+              }
+            }
+          }
+        }
+      } catch (error) {
+        console.log('Failed to upload image to S3, using original URL:', error)
+        // Keep the original imageUrl if S3 upload fails
+      }
+    }
+
     // Return successful result with sanitized data
     return NextResponse.json({
       success: true,
@@ -137,7 +178,7 @@ export async function POST(request: Request) {
         ...result.data,
         title: result.data.title?.trim() || undefined,
         description: result.data.description?.trim() || undefined,
-        imageUrl: result.data.imageUrl?.trim() || undefined,
+        imageUrl: s3ImageUrl?.trim() || undefined,
         price: result.data.price?.trim() || undefined,
         siteName: result.data.siteName?.trim() || undefined,
         url: result.data.url?.trim() || trimmedUrl
