@@ -170,7 +170,7 @@ export default function ProductLinks({
             </div>
           )}
 
-          {productLinks.map((link, index) => (
+          {/* {productLinks.map((link, index) => (
             <ProductLinkItem
               key={index}
               index={index}
@@ -186,7 +186,7 @@ export default function ProductLinks({
               onMetadataManualUpdate={handleManualMetadataUpdate}
               extractionAttempted={extractionAttempted[link?.trim()] || false}
             />
-          ))}
+          ))} */}
 
           {/* Add Link Button */}
           {productLinks.length < 10 && (
