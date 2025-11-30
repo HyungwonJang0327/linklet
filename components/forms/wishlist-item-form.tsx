@@ -65,7 +65,7 @@ export function WishlistItemForm({
         productUrl: formData.productUrl.trim(),
         imageUrl: formData.imageUrl.trim() || undefined,
         price: formData.price.trim() || undefined,
-        priority: formData.priority
+        priority: formData.priority || 0 // 우선순위 기본값 0
       })
       
       // Reset form after successful submission

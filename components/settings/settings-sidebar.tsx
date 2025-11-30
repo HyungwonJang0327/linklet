@@ -71,14 +71,14 @@ export function SettingsSidebar({ collapsed = false, onToggleCollapse }: Setting
           href: `/${locale}/settings/customize`,
           icon: SwatchIcon,
           descriptionKey: 'settings.wishlists.customizeDesc',
-          disabled: true
+          // disabled: true
         },
         {
           nameKey: 'settings.analytics.title',
           href: `/${locale}/settings/analytics`,
           icon: ChartBarIcon,
           descriptionKey: 'settings.analytics.description',
-          disabled: true
+          // disabled: true
         }
       ]
     },

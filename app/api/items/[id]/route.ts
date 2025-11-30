@@ -9,7 +9,7 @@ export async function PUT(
   try {
     const { id } = await params
     const { title, description, productUrl, imageUrl, price, priority, isCompleted } = await request.json()
-    
+
     const item = await updateWishlistItem(id, {
       title,
       description,

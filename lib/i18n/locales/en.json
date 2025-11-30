@@ -165,6 +165,15 @@
     "created": "Created",
     "updated": "Updated",
     "noItems": "No items in this wishlist",
+    "status": {
+      "all": "All",
+      "received": "Received",
+      "wishlist": "Wishlist",
+      "receivedBadge": "Received",
+      "toggleReceived": "Mark as received",
+      "toggleWishlist": "Unmark received",
+      "statusChanged": "Status changed successfully"
+    },
     "form": {
       "title": "Title",
       "description": "Description",

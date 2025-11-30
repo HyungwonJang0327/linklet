@@ -7,41 +7,58 @@ import { useI18n } from '@/lib/i18n/context'
 import { XMarkIcon } from '@heroicons/react/24/outline'
 import { toast } from 'sonner'
 
-interface EditItemDialogProps {
-  item: {
+const CATEGORIES = [
+  'GENERAL',
+  'BIRTHDAY',
+  'CHRISTMAS',
+  'WEDDING',
+  'BABY',
+  'ELECTRONICS',
+  'FASHION',
+  'BOOKS',
+  'TRAVEL',
+  'HOME',
+] as const
+
+interface EditWishlistDialogProps {
+  wishlist: {
     id: string
     title: string
     description?: string | null
-    productUrl: string
-    price?: string | null
-    priority?: number
+    category: string
+    isPublic: boolean
   } | null
   isOpen: boolean
   onClose: () => void
   onSuccess: () => void
 }
 
-export function EditItemDialog({ item, isOpen, onClose, onSuccess }: EditItemDialogProps) {
+export function EditWishlistDialog({
+  wishlist,
+  isOpen,
+  onClose,
+  onSuccess
+}: EditWishlistDialogProps) {
   const { t } = useI18n()
   const [title, setTitle] = useState('')
-  const [price, setPrice] = useState('')
   const [description, setDescription] = useState('')
-  const [priority, setPriority] = useState(0)
+  const [category, setCategory] = useState('GENERAL')
+  const [isPublic, setIsPublic] = useState(true)
   const [isLoading, setIsLoading] = useState(false)
 
   useEffect(() => {
-    if (item) {
-      setTitle(item.title)
-      setPrice(item.price || '')
-      setDescription(item.description || '')
-      setPriority(item.priority || 0)
+    if (wishlist) {
+      setTitle(wishlist.title)
+      setDescription(wishlist.description || '')
+      setCategory(wishlist.category)
+      setIsPublic(wishlist.isPublic)
     }
-  }, [item])
+  }, [wishlist])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
 
-    if (!item || !title.trim()) {
+    if (!wishlist || !title.trim()) {
       toast.error('제목을 입력해주세요')
       return
     }
@@ -49,14 +66,14 @@ export function EditItemDialog({ item, isOpen, onClose, onSuccess }: EditItemDia
     setIsLoading(true)
 
     try {
-      const response = await fetch(`/api/items/${item.id}`, {
+      const response = await fetch(`/api/wishlists/${wishlist.id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           title: title.trim(),
-          price: price.trim() || null,
           description: description.trim() || null,
-          priority: priority || 0, // 우선순위 기본값 0
+          category,
+          isPublic,
         }),
       })
 
@@ -65,24 +82,24 @@ export function EditItemDialog({ item, isOpen, onClose, onSuccess }: EditItemDia
         throw new Error(errorData.error || '수정에 실패했습니다')
       }
 
-      toast.success('아이템이 수정되었습니다')
+      toast.success('위시리스트가 수정되었습니다')
       onSuccess()
       onClose()
     } catch (error) {
-      console.error('Failed to update item:', error)
+      console.error('Failed to update wishlist:', error)
       toast.error(error instanceof Error ? error.message : '수정에 실패했습니다')
     } finally {
       setIsLoading(false)
     }
   }
 
-  if (!isOpen || !item) return null
+  if (!isOpen || !wishlist) return null
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
       <div className="bg-slate-900 border border-slate-700 rounded-lg shadow-xl max-w-md w-full mx-4">
         <div className="flex items-center justify-between p-6 border-b border-slate-700">
-          <h2 className="text-xl font-bold text-white">아이템 수정</h2>
+          <h2 className="text-xl font-bold text-white">위시리스트 수정</h2>
           <button
             onClick={onClose}
             className="text-slate-400 hover:text-white transition-colors"
@@ -100,21 +117,7 @@ export function EditItemDialog({ item, isOpen, onClose, onSuccess }: EditItemDia
               type="text"
               value={title}
               onChange={setTitle}
-              placeholder="상품 제목"
-              className="bg-slate-800 border-slate-600 text-white placeholder:text-slate-400"
-              disabled={isLoading}
-            />
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-slate-300 mb-2">
-              가격
-            </label>
-            <Input
-              type="text"
-              value={price}
-              onChange={setPrice}
-              placeholder="29,900원"
+              placeholder="위시리스트 제목"
               className="bg-slate-800 border-slate-600 text-white placeholder:text-slate-400"
               disabled={isLoading}
             />
@@ -127,30 +130,44 @@ export function EditItemDialog({ item, isOpen, onClose, onSuccess }: EditItemDia
             <textarea
               value={description}
               onChange={(e) => setDescription(e.target.value)}
-              placeholder="상품 설명"
+              placeholder="위시리스트 설명"
               rows={3}
               className="w-full px-3 py-2 bg-slate-800 border border-slate-600 rounded-lg text-white placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
               disabled={isLoading}
             />
           </div>
 
-          {/* 우선순위 입력 필드 - 나중에 다시 사용할 수 있도록 주석처리 */}
-          {/* <div>
+          <div>
             <label className="block text-sm font-medium text-slate-300 mb-2">
-              우선순위
+              카테고리
             </label>
             <select
-              value={priority}
-              onChange={(e) => setPriority(Number(e.target.value))}
+              value={category}
+              onChange={(e) => setCategory(e.target.value)}
               className="w-full px-3 py-2 bg-slate-800 border border-slate-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
               disabled={isLoading}
             >
-              <option value={0}>설정 안함</option>
-              <option value={1}>낮음</option>
-              <option value={3}>중간</option>
-              <option value={5}>높음</option>
+              {CATEGORIES.map((cat) => (
+                <option key={cat} value={cat}>
+                  {t(`wishlist.categories.${cat}`) || cat}
+                </option>
+              ))}
             </select>
-          </div> */}
+          </div>
+
+          <div className="flex items-center gap-3">
+            <input
+              type="checkbox"
+              id="isPublic"
+              checked={isPublic}
+              onChange={(e) => setIsPublic(e.target.checked)}
+              className="w-4 h-4 rounded border-slate-600 bg-slate-800 text-blue-600 focus:ring-2 focus:ring-blue-500"
+              disabled={isLoading}
+            />
+            <label htmlFor="isPublic" className="text-sm text-slate-300">
+              공개 위시리스트로 설정
+            </label>
+          </div>
 
           <div className="flex items-center gap-3 pt-4">
             <Button

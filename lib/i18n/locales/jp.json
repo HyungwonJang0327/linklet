@@ -165,6 +165,15 @@
     "created": "作成日",
     "updated": "更新日",
     "noItems": "このウィッシュリストにアイテムがありません",
+    "status": {
+      "all": "全体",
+      "received": "受け取った",
+      "wishlist": "欲しい",
+      "receivedBadge": "受け取った",
+      "toggleReceived": "受け取った処理",
+      "toggleWishlist": "受け取った取消",
+      "statusChanged": "状態が変更されました"
+    },
     "form": {
       "title": "タイトル",
       "description": "説明",

@@ -31,10 +31,10 @@ export async function POST(
   try {
     const { id } = await params
     const { title, description, productUrl, imageUrl, price, priority } = await request.json()
-    
+
     if (!title || !productUrl) {
       return NextResponse.json(
-        { error: 'Title and product URL are required' }, 
+        { error: 'Title and product URL are required' },
         { status: 400 }
       )
     }
