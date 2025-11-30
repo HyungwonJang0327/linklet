@@ -4,6 +4,7 @@ import { Card } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { PencilIcon, TrashIcon, Bars3Icon } from '@heroicons/react/24/outline'
 import { useI18n } from '@/lib/i18n/context'
+import { formatRelativeTime } from '@/lib/utils'
 
 interface WishlistCardProps {
   wishlist: {
@@ -20,7 +21,7 @@ export default function WishlistCard({ wishlist }: WishlistCardProps) {
   const { t } = useI18n()
 
   return (
-    <Card className="bg-slate-800/50 border-slate-700/50 backdrop-blur-sm">
+    <Card className="bg-slate-800/50 border-slate-700/50 backdrop-blur-sm hover:bg-slate-700/50 transition-all duration-200 hover:border-slate-600/50 group">
       <div className="p-6">
         {/* Header */}
         <div className="flex items-start justify-between mb-4">
@@ -38,6 +39,7 @@ export default function WishlistCard({ wishlist }: WishlistCardProps) {
               variant="ghost"
               size="sm"
               className="text-slate-400 hover:text-white hover:bg-slate-700"
+              title={t('common.edit') || '편집'}
             >
               <PencilIcon className="w-4 h-4" />
             </Button>
@@ -45,6 +47,7 @@ export default function WishlistCard({ wishlist }: WishlistCardProps) {
               variant="ghost"
               size="sm"
               className="text-slate-400 hover:text-red-400 hover:bg-red-500/10"
+              title={t('common.delete') || '삭제'}
             >
               <TrashIcon className="w-4 h-4" />
             </Button>
@@ -84,7 +87,7 @@ export default function WishlistCard({ wishlist }: WishlistCardProps) {
         {/* Creation Date */}
         <div className="mt-3 pt-3 border-t border-slate-700/50">
           <span className="text-xs text-slate-500">
-            {t('wishlist.created')}: {wishlist.createdAt}
+            {t('wishlist.created')}: {formatRelativeTime(wishlist.createdAt)}
           </span>
         </div>
       </div>

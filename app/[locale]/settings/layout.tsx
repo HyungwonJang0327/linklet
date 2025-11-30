@@ -42,7 +42,7 @@ export default function SettingsLayout({ children }: SettingsLayoutProps) {
               onClick={() => setSidebarOpen(false)}
             />
             <div className="fixed inset-y-0 left-0 z-50 w-72">
-              <SettingsSidebar onItemClick={() => setSidebarOpen(false)} />
+              <SettingsSidebar />
             </div>
           </div>
         )}

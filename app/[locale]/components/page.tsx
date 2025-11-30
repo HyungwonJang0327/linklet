@@ -9,14 +9,12 @@ import {
   dialogOpen,
   dialogClose,
   dialogCloseAll,
-  useDialog,
 } from '@/components/ui/dialog-provider'
 import { ArrowRight, Download, Heart, Plus, Search, Settings, Trash2, User } from 'lucide-react'
 
 export default function ComponentsPage() {
   const [inputValue, setInputValue] = useState('')
   const [isLoading, setIsLoading] = useState(false)
-  const { openDialog } = useDialog()
 
   const handleLoadingTest = () => {
     setIsLoading(true)
@@ -106,7 +104,7 @@ export default function ComponentsPage() {
 
   const handleMultipleDialogs = () => {
     // First dialog
-    const firstId = dialogOpen({
+    dialogOpen({
       type: 'alert',
       title: '첫 번째 다이얼로그',
       description: '첫 번째 다이얼로그입니다.'
@@ -114,7 +112,7 @@ export default function ComponentsPage() {
 
     // Second dialog after short delay
     setTimeout(() => {
-      const secondId = dialogOpen({
+      dialogOpen({
         type: 'confirm',
         title: '두 번째 다이얼로그',
         description: '두 번째 다이얼로그가 첫 번째 위에 표시됩니다.',
@@ -132,7 +130,7 @@ export default function ComponentsPage() {
 
   const handleCloseTests = () => {
     // Open multiple dialogs for testing close functions
-    const id1 = dialogOpen({
+    dialogOpen({
       id: 'test-dialog-1',
       type: 'alert',
       title: '테스트 다이얼로그 1',
@@ -140,7 +138,7 @@ export default function ComponentsPage() {
     })
 
     setTimeout(() => {
-      const id2 = dialogOpen({
+      dialogOpen({
         id: 'test-dialog-2',
         type: 'alert',
         title: '테스트 다이얼로그 2',
@@ -148,7 +146,7 @@ export default function ComponentsPage() {
       })
 
       setTimeout(() => {
-        const id3 = dialogOpen({
+        dialogOpen({
           type: 'alert',
           title: '테스트 다이얼로그 3',
           description: 'ID 없음 - 자동 생성됨'

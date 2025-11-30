@@ -3,9 +3,7 @@
 import { useState } from 'react'
 import { Card } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
-import { PaintBrushIcon, SunIcon, MoonIcon, ComputerDesktopIcon } from '@heroicons/react/24/outline'
 import { useI18n } from '@/lib/i18n/context'
-import ThemeOption from './components/theme-option'
 import SelectOption from './components/select-option'
 import AppearancePreview from './components/appearance-preview'
 

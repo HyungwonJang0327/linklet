@@ -32,12 +32,14 @@ The development server runs on http://localhost:3000 (or next available port if 
 ## Architecture Overview
 
 ### Core Technologies
-- **Framework**: Next.js 15 with App Router
-- **UI**: React 19 with TypeScript
-- **Database**: PostgreSQL with Prisma ORM
+- **Framework**: Next.js 15.5.2 with App Router
+- **UI**: React 19.1.0 with TypeScript 5
+- **Database**: PostgreSQL with Prisma ORM 6.15.0
 - **Styling**: Tailwind CSS v4 with inline theme configuration
-- **State Management**: TanStack Query for server state
-- **Authentication**: NextAuth.js with Google OAuth
+- **State Management**: TanStack Query 5.85.6 for server state
+- **Authentication**: NextAuth.js 4.24.11 with Google OAuth
+- **File Storage**: AWS S3 SDK for image uploads
+- **HTML Parsing**: Cheerio 1.1.2 for URL metadata extraction
 - **Icons**: Heroicons and Lucide React
 - **Internationalization**: Custom i18n system supporting Korean (kr), English (en), Japanese (jp)
 
@@ -71,13 +73,29 @@ The database layer is modularized into:
 
 RESTful API routes following Next.js 15 conventions:
 
-- **`/api/wishlists`**: CRUD operations for wishlists, supports user filtering and public browsing
-- **`/api/wishlists/[id]`**: Individual wishlist operations
-- **`/api/wishlists/[id]/items`**: Wishlist item management
-- **`/api/wishlists/share/[shareUrl]`**: Public wishlist access via shareable URLs
-- **`/api/items/[id]`**: Individual item operations with ISR revalidation
-- **`/api/users`**: User account management with GET, POST, PUT operations
-- **`/api/metadata`**: URL metadata extraction for product links
+**Wishlists**:
+- **`/api/wishlists`**: List/create wishlists (GET, POST)
+- **`/api/wishlists/[id]`**: Individual wishlist operations (GET, PUT, DELETE)
+- **`/api/wishlists/[id]/items`**: Add items (POST)
+- **`/api/wishlists/[id]/items/reorder`**: Reorder items (POST)
+- **`/api/wishlists/share/[shareUrl]`**: Public access via shareable URLs (GET)
+
+**Items**:
+- **`/api/items/[id]`**: Item operations with ISR revalidation (GET, PUT, DELETE)
+- **`/api/items/[id]/toggle-complete`**: Toggle completion status (POST)
+
+**Users**:
+- **`/api/users`**: User account management (GET, POST, PUT)
+- **`/api/users/[id]/wishlists`**: User's wishlists (GET)
+- **`/api/users/[id]/stats`**: User statistics (GET)
+
+**Metadata & Media**:
+- **`/api/metadata`**: URL metadata extraction for product links (POST)
+- **`/api/image`**: Upload images to AWS S3 (POST)
+
+**Revalidation**:
+- **`/api/revalidate`**: ISR revalidation for single paths (POST)
+- **`/api/revalidate-batch`**: Batch revalidation (POST)
 
 All API routes include proper error handling, validation, and support for ISR revalidation.
 
@@ -93,21 +111,30 @@ All API routes include proper error handling, validation, and support for ISR re
 
 Organized by functionality:
 
-- **`ui/`**: Reusable UI components (Button, Input, Card, etc.)
+- **`ui/`**: Reusable UI components (Button, Input, Card, Dialog, ImageUpload, Loading, etc.)
 - **`layout/`**: Layout components (Header, ConditionalHeader)
-- **`providers/`**: Context providers (Auth, Query, I18n)
+- **`providers/`**: Context providers (Auth, Query, I18n, Dialog)
 - **`wishlist/`**: Wishlist-specific components
 - **`forms/`**: Form components with validation
 - **`customize/`**: Wishlist customization components
 - **`settings/`**: User settings interface
+- **`auth/`**: Authentication components
+- **`errors/`**: Error handling components (ErrorBoundary)
+
+**Provider Hierarchy**: QueryProvider → AuthProvider → DialogProvider → I18nProvider → children
 
 ### Custom Hooks (`/hooks/`)
 
 TanStack Query-based hooks for data management:
 
 - **`use-user.ts`**: User profile operations with optimistic updates
+- **`use-wishlists.ts`**: All wishlists with 5-minute cache
+- **`use-wishlist.ts`**: Single wishlist details
+- **`use-shared-wishlist.ts`**: Public wishlists (10-min cache, no retry on 404/403)
 - **`use-url-metadata.ts`**: URL metadata extraction (single and batch processing)
-- All hooks include proper loading states, error handling, and cache management
+- **`use-debounce.ts`**: Debouncing utility
+
+All hooks include proper loading states, error handling, and cache management with TanStack Query.
 
 ### Validation & Data Sanitization (`/lib/validations/`)
 
@@ -156,19 +183,39 @@ Dynamic locale-based routing with:
 - API routes automatically revalidate when items are modified
 - Middleware adds country headers for geo-based features
 
-### State Management
-- TanStack Query for server state caching and synchronization
-- React Context for i18n and authentication state
-- No global client state - prefer server state patterns
-- Custom hooks pattern for reusable data operations with optimistic updates
+### State Management & Query Configuration
+- **TanStack Query** for server state caching and synchronization
+  - Stale time: 5 minutes
+  - GC time: 30 minutes
+  - Max 3 retries with exponential backoff (skip 404s)
+  - Separate query clients for SSR
+- **React Context** for i18n and authentication state
+- **No global client state** - prefer server state patterns
+- **Custom hooks pattern** for reusable data operations with optimistic updates
+- **Query key strategy**: Consistent key patterns (e.g., `['users', id]`, `['wishlists', 'detail', id]`)
 
 ### Environment Variables Required
 ```bash
+# Database
 DATABASE_URL="postgresql://..."
+
+# App
+NEXT_PUBLIC_APP_URL="http://localhost:3000"
+
+# Authentication
+NEXTAUTH_URL="http://localhost:3000"
 NEXTAUTH_SECRET="your-secret-key"
 GOOGLE_CLIENT_ID="your-google-client-id"
 GOOGLE_CLIENT_SECRET="your-google-client-secret"
-NEXT_PUBLIC_APP_URL="http://localhost:3000"
+
+# AWS S3 (for image uploads)
+AWS_ACCESS_KEY_ID="your-access-key"
+AWS_SECRET_ACCESS_KEY="your-secret-key"
+AMPLIFY_BUCKET="linklet-image"
+AWS_REGION="ap-northeast-2"
+
+# Optional
+REVALIDATE_SECRET_TOKEN="your-revalidate-token"
 ```
 
 ## Development Patterns
@@ -183,6 +230,38 @@ NEXT_PUBLIC_APP_URL="http://localhost:3000"
 - Check neighboring files and package.json for library usage before assuming availability
 - Use existing utilities and maintain consistent code style across components
 - Import database functions from `@/lib/db` or specific modules to avoid circular dependencies
+
+### TanStack Query Best Practices
+- Use provided query key factories from hooks (e.g., `userKeys`, `wishlistKeys`)
+- Implement optimistic updates for better UX (see `use-user.ts` for reference)
+- Invalidate queries after mutations to keep UI in sync
+- Use proper error handling and loading states
+- Configure appropriate stale times based on data volatility
+
+## Key Utilities & Services
+
+### URL Metadata Extraction (`/lib/services/url-metadata.ts`)
+- Cheerio-based HTML parsing for product link metadata
+- Extracts: title, description, images, prices, site names
+- Supports: Open Graph, Twitter Cards, JSON-LD, common e-commerce selectors
+- Security: URL validation, SSRF protection, domain blocklisting
+- Timeout: 15 seconds per request
+- Automatic S3 image upload for extracted images
+- Rate limiting: 10 requests/minute per IP on `/api/metadata` endpoint
+
+### Revalidation System (`/lib/revalidation.ts`)
+- `revalidateSharedWishlist(shareUrl)`: Revalidate single wishlist page
+- `revalidateAllWishlists()`: Bulk revalidation for all wishlists
+- `revalidatePath(path)`: Path-based ISR revalidation
+- Auto-revalidation triggered by item mutations in API routes
+
+### Utility Functions (`/lib/utils/`)
+- **`cn()`**: Class merging with clsx and tailwind-merge
+- **Date formatting**: Locale-aware date strings with date-fns
+- **Price formatting**: Korean won formatting
+- **URL utilities**: Validation and share URL generation with cuid2
+- **Clipboard**: Copy to clipboard with fallback support
+- **Storage**: localStorage wrapper with error handling
 
 ## Conversation History Guidelines
 

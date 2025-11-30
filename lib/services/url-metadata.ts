@@ -18,8 +18,11 @@ export interface MetadataExtractionResult {
 /**
  * Extracts metadata from a product URL by parsing HTML using Cheerio
  * Supports Open Graph, Twitter Cards, JSON-LD, and common e-commerce meta tags
+ * Includes retry logic for improved reliability
  */
-export async function extractUrlMetadata(url: string): Promise<MetadataExtractionResult> {
+export async function extractUrlMetadata(url: string, retryCount = 0): Promise<MetadataExtractionResult> {
+  const MAX_RETRIES = 2
+
   try {
     // Validate URL format and structure
     let parsedUrl: URL
@@ -56,11 +59,17 @@ export async function extractUrlMetadata(url: string): Promise<MetadataExtractio
         'Sec-Fetch-Site': 'none',
         'Cache-Control': 'no-cache',
       },
-      // Add timeout
-      signal: AbortSignal.timeout(15000), // 15 second timeout
+      // Add timeout with exponential backoff
+      signal: AbortSignal.timeout(15000 + (retryCount * 5000)), // 15s, 20s, 25s
+      redirect: 'follow', // Follow redirects automatically
     })
 
     if (!response.ok) {
+      // Retry on 5xx errors or rate limiting
+      if ((response.status >= 500 || response.status === 429) && retryCount < MAX_RETRIES) {
+        await new Promise(resolve => setTimeout(resolve, 1000 * (retryCount + 1))) // Wait 1s, 2s
+        return extractUrlMetadata(url, retryCount + 1)
+      }
       throw new Error(`HTTP ${response.status}: ${response.statusText}`)
     }
 
@@ -72,12 +81,31 @@ export async function extractUrlMetadata(url: string): Promise<MetadataExtractio
     const html = await response.text()
     const metadata = parseHtmlMetadata(html, url)
 
+    // Validate that we extracted at least some meaningful data
+    if (!metadata.title && !metadata.description && !metadata.imageUrl) {
+      // Retry if we got nothing useful and haven't exceeded retry limit
+      if (retryCount < MAX_RETRIES) {
+        await new Promise(resolve => setTimeout(resolve, 1000 * (retryCount + 1)))
+        return extractUrlMetadata(url, retryCount + 1)
+      }
+    }
+
     return {
       success: true,
       data: metadata
     }
   } catch (error) {
     console.error('Metadata extraction error:', error)
+
+    // Retry on timeout or network errors
+    if (retryCount < MAX_RETRIES && (
+      error instanceof TypeError || // Network errors
+      (error instanceof Error && error.name === 'AbortError') // Timeout errors
+    )) {
+      await new Promise(resolve => setTimeout(resolve, 1000 * (retryCount + 1)))
+      return extractUrlMetadata(url, retryCount + 1)
+    }
+
     return {
       success: false,
       error: error instanceof Error ? error.message : 'Failed to extract metadata'
@@ -92,28 +120,47 @@ function parseHtmlMetadata(html: string, url: string): ProductMetadata {
   const $ = cheerio.load(html)
   const metadata: ProductMetadata = { url }
 
-  // Extract title (priority: og:title > twitter:title > title tag > h1)
+  // Extract title (multiple fallbacks for better success rate)
   metadata.title =
     $('meta[property="og:title"]').attr('content') ||
     $('meta[name="twitter:title"]').attr('content') ||
     $('meta[name="title"]').attr('content') ||
+    $('[itemprop="name"]').first().text() || // Schema.org Product name
+    $('h1[class*="product"]').first().text() || // Product-specific h1
+    $('h1[class*="title"]').first().text() ||
     $('title').text() ||
     $('h1').first().text() ||
+    $('.product-name').first().text() ||
+    $('.product-title').first().text() ||
     undefined
 
-  // Extract description (priority: og:description > twitter:description > meta description)
+  // Extract description (multiple fallbacks)
   metadata.description =
     $('meta[property="og:description"]').attr('content') ||
     $('meta[name="twitter:description"]').attr('content') ||
     $('meta[name="description"]').attr('content') ||
+    $('[itemprop="description"]').first().text() || // Schema.org description
+    $('.product-description').first().text() ||
     undefined
 
-  // Extract image (priority: og:image > twitter:image > first img with alt)
+  // Extract image (enhanced with multiple sources and high-res preference)
   let imageUrl =
     $('meta[property="og:image"]').attr('content') ||
+    $('meta[property="og:image:secure_url"]').attr('content') || // Prefer secure URLs
     $('meta[name="twitter:image"]').attr('content') ||
     $('meta[name="twitter:image:src"]').attr('content') ||
-    $('img[alt]').first().attr('src') ||
+    $('[itemprop="image"]').attr('content') || // Schema.org image
+    $('link[rel="image_src"]').attr('href') || // Link rel image
+    extractBestImageFromSrcset($('img[class*="product"][class*="main"]').first()) ||
+    extractBestImageFromSrcset($('img[class*="product"][class*="image"]').first()) ||
+    $('img[class*="product"][class*="main"]').first().attr('src') || // Main product image
+    $('img[class*="product"][class*="image"]').first().attr('src') ||
+    $('img.product-image').first().attr('src') ||
+    $('.product-img img').first().attr('src') ||
+    $('img[alt][src*="product"]').first().attr('src') || // Product-related images
+    extractBestImageFromSrcset($('img[alt]').first()) ||
+    $('img[alt]').first().attr('src') || // Fallback to first img with alt
+    $('img').first().attr('src') || // Last resort: first image
     undefined
 
   if (imageUrl) {
@@ -122,7 +169,7 @@ function parseHtmlMetadata(html: string, url: string): ProductMetadata {
   }
 
   // Extract price using various methods
-  metadata.price = extractPrice($, url)
+  metadata.price = extractPrice($)
 
   // Extract site name
   metadata.siteName =
@@ -146,7 +193,7 @@ function parseHtmlMetadata(html: string, url: string): ProductMetadata {
 /**
  * Extracts price information using Cheerio and various selectors
  */
-function extractPrice($: cheerio.Root, url: string): string | undefined {
+function extractPrice($: cheerio.Root): string | undefined {
   // Check JSON-LD structured data first
   const jsonLdScripts = $('script[type="application/ld+json"]')
   for (let i = 0; i < jsonLdScripts.length; i++) {
@@ -157,7 +204,7 @@ function extractPrice($: cheerio.Root, url: string): string | undefined {
         const price = extractPriceFromJsonLd(jsonLd)
         if (price) return price
       }
-    } catch (e) {
+    } catch {
       // Continue if JSON parsing fails
     }
   }
@@ -173,19 +220,40 @@ function extractPrice($: cheerio.Root, url: string): string | undefined {
     return currency ? `${currency} ${priceFromMeta}` : priceFromMeta
   }
 
-  // Check common price selectors
+  // Check common price selectors (expanded for better coverage)
   const priceSelectors = [
+    // Schema.org
+    '[itemprop="price"]',
+    '[itemprop="lowPrice"]',
+    '[itemprop="highPrice"]',
+    // Standard price classes
     '.price',
     '.product-price',
     '.price-current',
     '.sale-price',
     '.regular-price',
+    '.final-price',
+    '.actual-price',
     '.amount',
+    '.money',
+    '.cost',
+    // Korean e-commerce specific
+    '.total_price', // Coupang
+    '.price_num', // 11st
+    '.price-value', // Gmarket
+    '.sale_price', // Naver Shopping
+    '.ProductPrice', // Various sites
+    '.prod-price',
+    '.item-price',
+    // Attribute-based selectors
     '[data-price]',
+    '[data-product-price]',
+    '[data-sale-price]',
+    // Class/ID wildcards (keep at end for lower priority)
     '[class*="price"]',
     '[id*="price"]',
-    '.money',
-    '.cost'
+    '[class*="Price"]',
+    '[id*="Price"]'
   ]
 
   for (const selector of priceSelectors) {
@@ -279,6 +347,37 @@ function cleanPriceText(text: string): string {
 
   // Fallback: return original text if it contains numbers
   return text.replace(/\s+/g, ' ').trim()
+}
+
+/**
+ * Extracts the highest resolution image from srcset attribute
+ */
+function extractBestImageFromSrcset(element: cheerio.Cheerio<cheerio.Element>): string | undefined {
+  if (!element || element.length === 0) return undefined
+
+  const srcset = element.attr('srcset')
+  if (!srcset) return undefined
+
+  try {
+    // Parse srcset: "image1.jpg 1x, image2.jpg 2x" or "image1.jpg 300w, image2.jpg 600w"
+    const sources = srcset.split(',').map(s => {
+      const parts = s.trim().split(/\s+/)
+      if (parts.length >= 2) {
+        const url = parts[0]
+        const descriptor = parts[1]
+        // Extract numeric value from descriptor (e.g., "2x" -> 2, "600w" -> 600)
+        const value = parseFloat(descriptor)
+        return { url, value: isNaN(value) ? 1 : value }
+      }
+      return { url: parts[0], value: 1 }
+    })
+
+    // Sort by descriptor value (highest first) and return the best quality image
+    sources.sort((a, b) => b.value - a.value)
+    return sources[0]?.url
+  } catch {
+    return undefined
+  }
 }
 
 /**

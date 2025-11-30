@@ -61,9 +61,9 @@ export function hasRequiredFields<T extends Record<string, unknown>>(
   if (!isNonNullObject(obj)) {
     return false
   }
-  
-  return requiredFields.every(field => 
-    field in obj && obj[field] !== null && obj[field] !== undefined
+
+  return requiredFields.every(field =>
+    field in obj && (obj as T)[field] !== null && (obj as T)[field] !== undefined
   )
 }
 

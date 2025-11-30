@@ -5,6 +5,8 @@ import { useParams, useRouter } from 'next/navigation'
 import { useI18n } from '@/lib/i18n/context'
 import { useAuth } from '@/components/providers/auth-provider'
 import { useCreateWishlist } from '@/hooks/use-wishlist'
+import { isValidUrl } from '@/lib/utils/url-validator'
+import { RateLimitProvider } from '@/contexts/rate-limit-context'
 import type { ProductMetadata } from '@/lib/services/url-metadata'
 import CreateHeader from './components/create-header'
 import BasicInformation from './components/basic-information'
@@ -31,7 +33,14 @@ export default function CreateWishlistPage() {
   const [productMetadata, setProductMetadata] = useState<Record<number, ProductMetadata>>({})
 
   const [errors, setErrors] = useState<Record<string, string>>({})
+  const [isSubmitting, setIsSubmitting] = useState(false)
   const loading = createWishlistMutation.isPending
+
+  // Check if there are valid URLs without metadata (potentially still extracting)
+  const hasIncompleteMetadata = productLinks
+    .map((link, index) => ({ link: link.trim(), index }))
+    .filter(({ link }) => link && isValidUrl(link))
+    .some(({ index }) => !productMetadata[index])
 
   const validateForm = () => {
     const newErrors: Record<string, string> = {}
@@ -48,16 +57,42 @@ export default function CreateWishlistPage() {
       newErrors.description = t('wishlist.create.errors.descriptionTooLong') || '설명은 200글자 이하로 입력해주세요'
     }
 
-    setErrors(newErrors)
+    // Validate product links - at least one valid link is required
+    const validLinks = productLinks.filter(link => link.trim() !== '' && isValidUrl(link.trim()))
+    if (validLinks.length === 0) {
+      newErrors.productLinks = t('wishlist.create.errors.productLinksRequired') || '상품 URL을 한 개 이상 입력해주세요.'
+    }
 
-    // Validate product links
+    // Validate product links format
     const linkValidationErrors: Record<number, string> = {}
+    const seenUrls = new Set<string>()
+
     productLinks.forEach((link, index) => {
-      if (link && !isValidUrl(link)) {
-        linkValidationErrors[index] = t('wishlist.create.errors.invalidUrl') || '유효한 URL을 입력해주세요'
+      const trimmedLink = link.trim()
+
+      if (trimmedLink) {
+        // Check URL format and protocol
+        if (!isValidUrl(trimmedLink)) {
+          linkValidationErrors[index] = t('wishlist.create.errors.invalidUrl') || '유효한 URL을 입력해주세요'
+        }
+        // Check for duplicate URLs
+        else if (seenUrls.has(trimmedLink)) {
+          linkValidationErrors[index] = t('wishlist.create.errors.duplicateUrl') || '중복된 URL입니다'
+        } else {
+          seenUrls.add(trimmedLink)
+        }
       }
     })
     setLinkErrors(linkValidationErrors)
+
+    // Add general error message if there are invalid links
+    const invalidLinkCount = Object.keys(linkValidationErrors).length
+    if (invalidLinkCount > 0 && !newErrors.productLinks) {
+      newErrors.productLinks = t('wishlist.create.errors.invalidLinksFound')?.replace('{count}', String(invalidLinkCount))
+        || `입력한 링크 중 ${invalidLinkCount}개가 유효하지 않습니다. 링크를 확인해주세요.`
+    }
+
+    setErrors(newErrors)
 
     return Object.keys(newErrors).length === 0 && Object.keys(linkValidationErrors).length === 0
   }
@@ -67,7 +102,26 @@ export default function CreateWishlistPage() {
 
     if (!validateForm()) return
     if (!isAuthenticated || !user) {
-      setErrors({ auth: 'You must be logged in to create a wishlist' })
+      setErrors({ auth: t('wishlist.create.errors.authRequired') || 'You must be logged in to create a wishlist' })
+      return
+    }
+
+    // Prevent concurrent metadata updates during submission
+    setIsSubmitting(true)
+
+    // Check if there are valid URLs without metadata (potentially still extracting)
+    const linksWithoutMetadata = productLinks
+      .map((link, index) => ({ link: link.trim(), index }))
+      .filter(({ link }) => link && isValidUrl(link))
+      .filter(({ index }) => !productMetadata[index])
+
+    if (linksWithoutMetadata.length > 0) {
+      const count = linksWithoutMetadata.length
+      setErrors({
+        submit: t('wishlist.create.errors.metadataExtractingOrFailed')?.replace('{count}', String(count))
+          || `${count}개의 링크에 대한 메타데이터가 아직 추출되지 않았습니다. 추출이 완료될 때까지 기다리거나 수동으로 입력해주세요.`
+      })
+      setIsSubmitting(false)
       return
     }
 
@@ -84,11 +138,7 @@ export default function CreateWishlistPage() {
         }))
       }
 
-      console.log('Creating wishlist:', wishlistData)
-
-      const result = await createWishlistMutation.mutateAsync(wishlistData)
-
-      console.log('Wishlist created successfully:', result)
+      await createWishlistMutation.mutateAsync(wishlistData)
 
       // Redirect back to wishlists page
       router.push(`/${locale}/settings/wishlists`)
@@ -97,6 +147,8 @@ export default function CreateWishlistPage() {
       setErrors({
         submit: error instanceof Error ? error.message : 'Failed to create wishlist'
       })
+    } finally {
+      setIsSubmitting(false)
     }
   }
 
@@ -105,64 +157,69 @@ export default function CreateWishlistPage() {
   }
 
   const handleMetadataExtracted = (index: number, metadata: ProductMetadata) => {
+    // Prevent metadata updates during form submission to avoid race conditions
+    if (isSubmitting) return
+
     setProductMetadata(prev => ({
       ...prev,
       [index]: metadata
     }))
   }
 
-  const isValidUrl = (string: string) => {
-    try {
-      new URL(string)
-      return true
-    } catch (_) {
-      return false
-    }
-  }
-
-
   return (
-    <div className="max-w-4xl mx-auto space-y-6">
-      <CreateHeader onBack={handleBack} />
+    <RateLimitProvider>
+      <div className="max-w-4xl mx-auto space-y-6">
+        <CreateHeader onBack={handleBack} />
 
-      <form onSubmit={handleSubmit} className="space-y-6">
-        {/* Basic Information */}
-        <BasicInformation
-          formData={formData}
-          setFormData={setFormData}
-          errors={errors}
-          loading={loading}
-        />
-
-        {/* Product Links */}
-        <ProductLinks
-          productLinks={productLinks}
-          setProductLinks={setProductLinks}
-          linkErrors={linkErrors}
-          setLinkErrors={setLinkErrors}
-          loading={loading}
-          isValidUrl={isValidUrl}
-          onMetadataExtracted={handleMetadataExtracted}
-        />
-
-        {/* Privacy Settings */}
-        <PrivacySettings
-          formData={formData}
-          setFormData={setFormData}
-        />
-
-        {/* Error Display */}
-        {(errors.auth || errors.submit) && (
-          <div className="bg-red-900/50 border border-red-600 rounded-lg p-4">
-            <div className="text-red-400 text-sm">
-              {errors.auth || errors.submit}
+        <form onSubmit={handleSubmit} className="space-y-6">
+          {/* System-level Error Display - Auth and Submission Errors */}
+          {(errors.auth || errors.submit) && (
+            <div className="bg-red-900/50 border border-red-600 rounded-lg p-4">
+              <div className="flex items-start gap-3">
+                <svg className="w-5 h-5 text-red-400 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
+                </svg>
+                <div className="text-red-400 text-sm">
+                  {errors.auth || errors.submit}
+                </div>
+              </div>
             </div>
-          </div>
-        )}
+          )}
 
-        {/* Action Buttons */}
-        <FormActions onBack={handleBack} loading={loading} />
-      </form>
-    </div>
+          {/* Basic Information */}
+          <BasicInformation
+            formData={formData}
+            setFormData={setFormData}
+            errors={errors}
+            loading={loading}
+          />
+
+          {/* Product Links */}
+          <ProductLinks
+            productLinks={productLinks}
+            setProductLinks={setProductLinks}
+            linkErrors={linkErrors}
+            setLinkErrors={setLinkErrors}
+            loading={loading || isSubmitting}
+            isValidUrl={isValidUrl}
+            onMetadataExtracted={handleMetadataExtracted}
+            error={errors.productLinks}
+          />
+
+          {/* Privacy Settings */}
+          <PrivacySettings
+            formData={formData}
+            setFormData={setFormData}
+          />
+
+          {/* Action Buttons */}
+          <FormActions
+            onBack={handleBack}
+            loading={loading}
+            hasIncompleteMetadata={hasIncompleteMetadata}
+          />
+        </form>
+      </div>
+    </RateLimitProvider>
   )
 }

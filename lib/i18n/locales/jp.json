@@ -200,12 +200,23 @@
       "privateDesc": "自分だけが見ることができます",
       "subtitle": "新しいウィッシュリストを作成して欲しい商品を整理してみてください",
       "submit": "ウィッシュリストを作成",
+      "extracting": "抽出中...",
+      "metadataExtractingHint": "一部のリンクのメタデータを抽出中です。完了までお待ちください。",
+      "rateLimitWarning": {
+        "title": "自動抽出が一時的に制限されました",
+        "message": "リクエストが多すぎるため、60秒間自動メタデータ抽出がブロックされました。しばらくしてから再試行するか、手動で入力してください。"
+      },
       "errors": {
+        "authRequired": "ウィッシュリストを作成するにはログインが必要です",
         "titleRequired": "ウィッシュリストのタイトルを入力してください",
         "titleTooShort": "タイトルは2文字以上入力してください",
         "titleTooLong": "タイトルは50文字以下で入力してください",
         "descriptionTooLong": "説明は200文字以下で入力してください",
-        "invalidUrl": "有効なURLを入力してください"
+        "invalidUrl": "有効なURLを入力してください",
+        "duplicateUrl": "重複したURLです",
+        "productLinksRequired": "少なくとも1つの商品リンクを追加してください",
+        "invalidLinksFound": "入力したリンクのうち{count}個が無効です。リンクを確認してください。",
+        "metadataExtractingOrFailed": "{count}個のリンクのメタデータがまだ抽出されていません。抽出が完了するまでお待ちいただくか、手動で入力してください。"
       }
     },
     "shared": {

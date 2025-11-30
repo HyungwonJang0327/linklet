@@ -1,5 +1,3 @@
-import type { Metadata } from "next";
-import { Inter, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import { ConditionalHeader } from "@/components/layout/conditional-header";
 import { QueryProvider } from "@/components/providers/query-provider";

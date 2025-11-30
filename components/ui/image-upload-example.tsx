@@ -15,7 +15,7 @@ export default function ImageUploadExample() {
         <h3 className="text-lg font-medium mb-2">Basic Usage</h3>
         <ImageUpload
           value={imageUrl}
-          onChange={setImageUrl}
+          onChange={(url) => setImageUrl(url || '')}
           onFileChange={setUploadedFile}
         />
       </div>
@@ -25,7 +25,7 @@ export default function ImageUploadExample() {
         <h3 className="text-lg font-medium mb-2">Compact Size</h3>
         <ImageUpload
           value={imageUrl}
-          onChange={setImageUrl}
+          onChange={(url) => setImageUrl(url || '')}
           width={80}
           height={80}
           placeholder="Upload avatar"
@@ -38,7 +38,7 @@ export default function ImageUploadExample() {
         <h3 className="text-lg font-medium mb-2">No Preview Mode</h3>
         <ImageUpload
           value={imageUrl}
-          onChange={setImageUrl}
+          onChange={(url) => setImageUrl(url || '')}
           preview={false}
           placeholder="Upload without preview"
         />
@@ -49,7 +49,7 @@ export default function ImageUploadExample() {
         <h3 className="text-lg font-medium mb-2">PNG Only</h3>
         <ImageUpload
           value={imageUrl}
-          onChange={setImageUrl}
+          onChange={(url) => setImageUrl(url || '')}
           acceptedTypes={['image/png']}
           placeholder="PNG files only"
         />

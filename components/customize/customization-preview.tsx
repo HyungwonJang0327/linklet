@@ -1,7 +1,7 @@
 'use client'
 
 import { Card } from '@/components/ui/card'
-import { UserCircleIcon, HeartIcon, ShareIcon } from '@heroicons/react/24/outline'
+import { UserCircleIcon, HeartIcon } from '@heroicons/react/24/outline'
 import Image from 'next/image'
 
 interface CustomizationPreviewProps {
@@ -232,11 +232,13 @@ export function CustomizationPreview({ customization }: CustomizationPreviewProp
                       >
                         <div className={`${
                           customization.layout === 'list' ? 'w-16 h-16' : 'aspect-square'
-                        } bg-slate-600 rounded`}>
-                          <img 
-                            src={item.imageUrl} 
+                        } bg-slate-600 rounded relative`}>
+                          <Image
+                            src={item.imageUrl}
                             alt={item.title}
-                            className="w-full h-full object-cover"
+                            fill
+                            className="object-cover"
+                            unoptimized
                           />
                         </div>
                         

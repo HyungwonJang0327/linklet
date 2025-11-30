@@ -14,11 +14,13 @@ export const wishlistKeys = {
   details: () => [...wishlistKeys.all, 'detail'] as const,
   detail: (id: string) => [...wishlistKeys.details(), id] as const,
   shared: (shareUrl: string) => [...wishlistKeys.all, 'shared', shareUrl] as const,
+  user: (userId: string) => [...wishlistKeys.lists(), 'user', userId] as const,
 }
 
 // API Functions
-async function fetchWishlists(): Promise<Wishlist[]> {
-  const response = await fetch('/api/wishlists')
+async function fetchWishlists(userId?: string): Promise<Wishlist[]> {
+  const url = userId ? `/api/wishlists?userId=${userId}` : '/api/wishlists'
+  const response = await fetch(url)
   if (!response.ok) {
     throw new Error('Failed to fetch wishlists')
   }
@@ -107,11 +109,12 @@ async function deleteWishlistItem(itemId: string): Promise<void> {
 }
 
 // Hooks
-export function useWishlists() {
+export function useWishlists(userId?: string) {
   return useQuery({
-    queryKey: wishlistKeys.lists(),
-    queryFn: fetchWishlists,
+    queryKey: userId ? wishlistKeys.user(userId) : wishlistKeys.lists(),
+    queryFn: () => fetchWishlists(userId),
     staleTime: 1000 * 60 * 5, // 5분
+    enabled: userId ? !!userId : true,
   })
 }
 

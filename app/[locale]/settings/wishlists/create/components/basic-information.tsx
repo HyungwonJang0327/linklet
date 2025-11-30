@@ -57,10 +57,16 @@ export default function BasicInformation({ formData, setFormData, errors, loadin
               className={`bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 ${errors.title ? 'border-red-500' : ''
                 }`}
               disabled={loading}
+              maxLength={50}
             />
-            {errors.title && (
-              <p className="text-red-400 text-sm mt-1">{errors.title}</p>
-            )}
+            <div className="flex items-center justify-between mt-1">
+              {errors.title && (
+                <p className="text-red-400 text-sm">{errors.title}</p>
+              )}
+              <p className={`text-xs ml-auto ${formData.title.length > 45 ? 'text-yellow-400' : 'text-slate-500'}`}>
+                {formData.title.length}/50
+              </p>
+            </div>
           </div>
 
           <div>
@@ -80,7 +86,7 @@ export default function BasicInformation({ formData, setFormData, errors, loadin
               {errors.description && (
                 <p className="text-red-400 text-sm">{errors.description}</p>
               )}
-              <p className="text-slate-500 text-xs ml-auto">
+              <p className={`text-xs ml-auto ${formData.description.length > 180 ? 'text-yellow-400' : 'text-slate-500'}`}>
                 {formData.description.length}/200
               </p>
             </div>

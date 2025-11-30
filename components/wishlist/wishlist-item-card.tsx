@@ -1,3 +1,4 @@
+import Image from 'next/image'
 import { WishlistItem } from '@/lib/types'
 import { Card } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
@@ -26,11 +27,12 @@ export function WishlistItemCard({
     <Card className="overflow-hidden bg-slate-800/50 border-slate-700 backdrop-blur-sm">
       {item.imageUrl && (
         <div className="aspect-video relative overflow-hidden bg-slate-700">
-          <img
+          <Image
             src={item.imageUrl}
             alt={item.title}
-            className="object-cover w-full h-full"
-            loading="lazy"
+            fill
+            className="object-cover"
+            unoptimized
           />
         </div>
       )}

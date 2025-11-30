@@ -110,6 +110,7 @@ export function DialogProvider({ children }: DialogProviderProps) {
   // Set context globally
   useEffect(() => {
     setDialogContext(contextValue)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   return (

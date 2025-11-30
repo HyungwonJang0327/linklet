@@ -3,14 +3,12 @@
 import { useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
-import { CheckIcon, XMarkIcon } from '@heroicons/react/24/outline'
+import { CheckIcon } from '@heroicons/react/24/outline'
 import { useI18n } from '@/lib/i18n/context'
-import { useParams } from 'next/navigation'
 import { useAuth } from '@/components/providers/auth-provider'
 
 export default function PricingPage() {
   const { t } = useI18n()
-  const { locale = 'kr' } = useParams()
   const { user, isAuthenticated } = useAuth()
   const [isAnnual, setIsAnnual] = useState(false)
 

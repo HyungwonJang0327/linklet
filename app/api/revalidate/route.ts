@@ -5,7 +5,7 @@ import { prisma } from '@/lib/db'
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json()
-    const { type, shareUrl, wishlistId, secret } = body
+    const { type, shareUrl, secret } = body
 
     // 보안을 위한 시크릿 키 검증 (환경변수로 설정)
     const revalidateSecret = process.env.REVALIDATE_SECRET_TOKEN

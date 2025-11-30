@@ -7,8 +7,6 @@ import { useI18n } from '@/lib/i18n/context'
 import { useAuth } from '@/components/providers/auth-provider'
 import {
   UserIcon,
-  BellIcon,
-  PaintBrushIcon,
   SwatchIcon,
   ChevronLeftIcon,
   ChevronRightIcon,
@@ -23,7 +21,6 @@ import { LogOut } from 'lucide-react'
 import { Button } from '../ui'
 
 interface SettingsSidebarProps {
-  onItemClick?: () => void
   collapsed?: boolean
   onToggleCollapse?: () => void
 }
@@ -46,7 +43,7 @@ interface SubMenuListType {
   disabled?: boolean
 }
 
-export function SettingsSidebar({ onItemClick, collapsed = false, onToggleCollapse }: SettingsSidebarProps) {
+export function SettingsSidebar({ collapsed = false, onToggleCollapse }: SettingsSidebarProps) {
   const pathname = usePathname()
   const router = useRouter()
   const { t, locale } = useI18n()

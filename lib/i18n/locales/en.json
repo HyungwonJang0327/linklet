@@ -200,12 +200,23 @@
       "privateDesc": "Only you can view this",
       "subtitle": "Create a new wishlist to organize your desired products",
       "submit": "Create",
+      "extracting": "Extracting...",
+      "metadataExtractingHint": "We're extracting metadata from some links. Please wait until it's complete.",
+      "rateLimitWarning": {
+        "title": "Automatic extraction temporarily limited",
+        "message": "Due to too many requests, automatic metadata extraction has been blocked for 60 seconds. Please try again later or enter manually."
+      },
       "errors": {
+        "authRequired": "You must be logged in to create a wishlist",
         "titleRequired": "Please enter a wishlist title",
         "titleTooShort": "Title must be at least 2 characters long",
         "titleTooLong": "Title must be 50 characters or less",
         "descriptionTooLong": "Description must be 200 characters or less",
-        "invalidUrl": "Please enter a valid URL"
+        "invalidUrl": "Please enter a valid URL",
+        "duplicateUrl": "Duplicate URL",
+        "productLinksRequired": "Please add at least one product link",
+        "invalidLinksFound": "{count} of your links are invalid. Please check your links.",
+        "metadataExtractingOrFailed": "Metadata for {count} links has not been extracted yet. Please wait for extraction to complete or enter manually."
       }
     },
     "shared": {

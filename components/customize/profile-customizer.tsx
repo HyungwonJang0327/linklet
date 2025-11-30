@@ -1,5 +1,6 @@
 'use client'
 
+import Image from 'next/image'
 import { Card } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
@@ -33,12 +34,14 @@ export function ProfileCustomizer({ profile, onProfileChange }: ProfileCustomize
         <div className="mb-6">
           <h3 className="text-lg font-medium text-white mb-4">프로필 이미지</h3>
           <div className="flex items-center gap-4">
-            <div className="w-20 h-20 bg-slate-700 rounded-full flex items-center justify-center overflow-hidden">
+            <div className="w-20 h-20 bg-slate-700 rounded-full flex items-center justify-center overflow-hidden relative">
               {profile.avatar ? (
-                <img 
-                  src={profile.avatar} 
-                  alt="Profile" 
-                  className="w-full h-full object-cover"
+                <Image
+                  src={profile.avatar}
+                  alt="Profile"
+                  fill
+                  className="object-cover"
+                  unoptimized
                 />
               ) : (
                 <UserCircleIcon className="w-12 h-12 text-slate-400" />

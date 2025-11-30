@@ -1,51 +1,107 @@
 'use client'
 
-import { useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { PlusIcon } from '@heroicons/react/24/outline'
 import { useI18n } from '@/lib/i18n/context'
+import { useAuth } from '@/components/providers/auth-provider'
+import { useWishlists } from '@/hooks/use-wishlists'
+import { Loading } from '@/components/ui/loading'
 import QuickAddProduct from './components/quick-add-product'
 import WishlistCard from './components/wishlist-card'
 import CreateWishlistCard from './components/create-wishlist-card'
 import { useParams, useRouter } from 'next/navigation'
+import { toast } from 'sonner'
 
 export default function WishlistsManagePage() {
   const { t } = useI18n()
   const router = useRouter()
   const { locale = 'kr' } = useParams()
+  const { user, isAuthenticated } = useAuth()
 
-  const [wishlists, setWishlists] = useState([
-    {
-      id: 1,
-      title: '생일 선물 위시리스트',
-      description: '올해 받고 싶은 생일 선물들',
-      itemCount: 5,
-      isPublic: true,
-      createdAt: '2024-01-15'
-    },
-    {
-      id: 2,
-      title: '쇼핑 리스트',
-      description: '평소 사고 싶었던 물건들',
-      itemCount: 12,
-      isPublic: false,
-      createdAt: '2024-02-10'
+  // Fetch user's wishlists using TanStack Query
+  const { data: wishlists, isLoading, error } = useWishlists(user?.id)
+
+  const handleAddProductFromUrl = async (productUrl: string, selectedWishlistId: string) => {
+    try {
+      // Extract metadata from URL
+      const metadataResponse = await fetch('/api/metadata', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ url: productUrl }),
+      })
+
+      if (!metadataResponse.ok) {
+        throw new Error(t('item.errors.metadataFailed') || '상품 정보를 가져올 수 없습니다')
+      }
+
+      const metadata = await metadataResponse.json()
+
+      // Create wishlist item with extracted metadata
+      const createResponse = await fetch(`/api/wishlists/${selectedWishlistId}/items`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          title: metadata.title || 'Untitled Product',
+          productUrl: productUrl,
+          imageUrl: metadata.images?.[0] || null,
+          description: metadata.description || null,
+          price: metadata.price || null,
+        }),
+      })
+
+      if (!createResponse.ok) {
+        const errorData = await createResponse.json()
+        throw new Error(errorData.error || t('item.errors.addFailed') || '상품 추가에 실패했습니다')
+      }
+
+      toast.success(t('item.addSuccess') || '상품이 추가되었습니다')
+
+      // Refresh wishlists to show updated item count
+      if (wishlists) {
+        router.refresh()
+      }
+    } catch (error) {
+      console.error('Failed to add product:', error)
+      toast.error(error instanceof Error ? error.message : t('item.errors.addFailed') || '상품 추가에 실패했습니다')
+      throw error
     }
-  ])
+  }
 
-  const handleAddProductFromUrl = async (productUrl: string, selectedWishlist: string) => {
-    // TODO: API call to extract product info from URL and add to wishlist
-    console.log('Adding product from URL:', productUrl, 'to wishlist:', selectedWishlist)
+  if (!isAuthenticated) {
+    return (
+      <div className="max-w-4xl mx-auto text-center py-12">
+        <h2 className="text-2xl font-bold text-white mb-4">
+          {t('auth.settingsAccess.title')}
+        </h2>
+        <p className="text-slate-300 mb-6">
+          {t('auth.settingsAccess.description')}
+        </p>
+        <Button onClick={() => router.push(`/${locale}/login`)}>
+          {t('navigation.login')}
+        </Button>
+      </div>
+    )
+  }
 
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 1500))
+  if (isLoading) {
+    return (
+      <div className="max-w-6xl mx-auto">
+        <Loading text={t('common.loading')} />
+      </div>
+    )
+  }
 
-    // Update wishlist item count (mock behavior)
-    setWishlists(prev => prev.map(wishlist =>
-      wishlist.id.toString() === selectedWishlist
-        ? { ...wishlist, itemCount: wishlist.itemCount + 1 }
-        : wishlist
-    ))
+  if (error) {
+    return (
+      <div className="max-w-4xl mx-auto text-center py-12">
+        <h2 className="text-2xl font-bold text-red-400 mb-4">
+          {t('common.error')}
+        </h2>
+        <p className="text-slate-300">
+          {error instanceof Error ? error.message : 'Failed to load wishlists'}
+        </p>
+      </div>
+    )
   }
 
   return (
@@ -68,14 +124,27 @@ export default function WishlistsManagePage() {
       </div>
 
       {/* Quick Add Product from URL */}
-      <QuickAddProduct wishlists={wishlists} onAddProduct={handleAddProductFromUrl} />
+      {wishlists && wishlists.length > 0 && (
+        <QuickAddProduct wishlists={wishlists} onAddProduct={handleAddProductFromUrl} />
+      )}
 
       {/* Wishlists Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
-        {wishlists.map((wishlist) => (
-          <WishlistCard key={wishlist.id} wishlist={wishlist} />
-        ))}
-        <CreateWishlistCard />
+        {wishlists && wishlists.length > 0 ? (
+          <>
+            {wishlists.map((wishlist) => (
+              <WishlistCard key={wishlist.id} wishlist={wishlist} />
+            ))}
+            <CreateWishlistCard />
+          </>
+        ) : (
+          <div className="col-span-full text-center py-12">
+            <p className="text-slate-400 mb-6">
+              {t('wishlist.create.subtitle') || '아직 생성된 위시리스트가 없습니다'}
+            </p>
+            <CreateWishlistCard />
+          </div>
+        )}
       </div>
     </div>
   )

@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server'
-import { extractUrlMetadata, type ProductMetadata } from '@/lib/services/url-metadata'
+import { extractUrlMetadata } from '@/lib/services/url-metadata'
 
 // Rate limiting simple implementation
 const rateLimitMap = new Map<string, { count: number; resetTime: number }>()
@@ -47,7 +47,7 @@ export async function POST(request: Request) {
     let body
     try {
       body = await request.json()
-    } catch (error) {
+    } catch {
       return NextResponse.json(
         { error: 'Invalid JSON in request body' },
         { status: 400 }
@@ -198,7 +198,7 @@ export async function POST(request: Request) {
 }
 
 // Handle preflight requests for CORS if needed
-export async function OPTIONS(request: Request) {
+export async function OPTIONS() {
   return new NextResponse(null, {
     status: 200,
     headers: {

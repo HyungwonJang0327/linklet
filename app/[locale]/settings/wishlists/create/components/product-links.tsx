@@ -1,11 +1,11 @@
 'use client'
 
-import { useState } from 'react'
 import { Card } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { GlobeAltIcon, PlusIcon, SparklesIcon } from '@heroicons/react/24/outline'
 import { useI18n } from '@/lib/i18n/context'
-import { useBatchUrlMetadata } from '@/hooks/use-url-metadata'
+import { useProductMetadataManager } from '@/hooks/use-product-metadata-manager'
+import { useRateLimit } from '@/contexts/rate-limit-context'
 import type { ProductMetadata } from '@/lib/services/url-metadata'
 import ProductLinkItem from './product-link-item'
 
@@ -17,8 +17,8 @@ interface ProductLinksProps {
   loading: boolean
   isValidUrl: (string: string) => boolean
   onMetadataExtracted?: (index: number, metadata: ProductMetadata) => void
+  error?: string
 }
-
 
 export default function ProductLinks({
   productLinks,
@@ -27,12 +27,24 @@ export default function ProductLinks({
   setLinkErrors,
   loading,
   isValidUrl,
-  onMetadataExtracted
+  onMetadataExtracted,
+  error,
 }: ProductLinksProps) {
   const { t } = useI18n()
-  const { extractBatchMetadata, getMetadataForUrl, isUrlLoading } = useBatchUrlMetadata()
-  const [extractedCount, setExtractedCount] = useState(0)
-  const [extractionAttempted, setExtractionAttempted] = useState<Record<string, boolean>>({})
+  const { isGloballyRateLimited, rateLimitSecondsLeft, handleRateLimitDetected } = useRateLimit()
+
+  const {
+    extractedCount,
+    extractionAttempted,
+    handleExtractMetadata,
+    handleBulkExtract,
+    getMetadataForUrl,
+    isUrlLoading,
+  } = useProductMetadataManager({
+    productLinks,
+    isValidUrl,
+    onMetadataExtracted,
+  })
 
   const addProductLink = () => {
     if (productLinks.length < 10) {
@@ -65,62 +77,6 @@ export default function ProductLinks({
     }
   }
 
-  const handleExtractMetadata = async (url: string) => {
-    if (!url?.trim()) {
-      console.error('Invalid URL provided for metadata extraction')
-      return
-    }
-
-    const trimmedUrl = url.trim()
-
-    // Mark extraction as attempted for this URL
-    setExtractionAttempted(prev => ({
-      ...prev,
-      [trimmedUrl]: true
-    }))
-
-    try {
-      const results = await extractBatchMetadata([trimmedUrl])
-      const result = results?.[0]
-      if (result?.result?.success && result.result?.data && onMetadataExtracted) {
-        const index = productLinks?.findIndex(link => link?.trim() === trimmedUrl) ?? -1
-        if (index !== -1) {
-          onMetadataExtracted(index, result.result.data)
-        }
-      }
-      setExtractedCount(prev => (prev ?? 0) + 1)
-    } catch (error) {
-      console.error('Failed to extract metadata:', error)
-    }
-  }
-
-  const handleBulkExtract = async () => {
-    if (!productLinks?.length) return
-
-    const validLinks = productLinks
-      .filter(link => link?.trim())
-      .filter(link => isValidUrl(link.trim()))
-
-    if (validLinks.length === 0) return
-
-    try {
-      const results = await extractBatchMetadata(validLinks.map(link => link.trim()))
-      if (Array.isArray(results)) {
-        results.forEach(({ url, result }) => {
-          if (result?.success && result?.data && onMetadataExtracted) {
-            const index = productLinks.findIndex(link => link?.trim() === url?.trim())
-            if (index !== -1) {
-              onMetadataExtracted(index, result.data)
-            }
-          }
-        })
-        setExtractedCount(results.length)
-      }
-    } catch (error) {
-      console.error('Failed to extract metadata:', error)
-    }
-  }
-
   const handleManualMetadataUpdate = (index: number, metadata: Partial<ProductMetadata>) => {
     if (onMetadataExtracted) {
       // Convert partial metadata to full ProductMetadata with required fields
@@ -137,15 +93,49 @@ export default function ProductLinks({
   }
 
   return (
-    <Card className="bg-slate-800/50 border-slate-700/50 backdrop-blur-sm">
+    <Card className={`bg-slate-800/50 backdrop-blur-sm ${error ? 'border-red-500' : 'border-slate-700/50'}`}>
       <div className="p-6">
         <div className="flex items-center gap-3 mb-6">
           <GlobeAltIcon className="w-6 h-6 text-green-400" />
-          <div>
-            <h2 className="text-xl font-semibold text-white">{t('wishlist.create.productLinks') || '상품 링크 추가 (선택사항)'}</h2>
-            <p className="text-sm text-slate-400 mt-1">{t('wishlist.create.productLinksDesc') || '위시리스트 생성과 함께 원하는 상품들을 바로 추가해보세요'}</p>
+          <div className="flex-1">
+            <h2 className="text-xl font-semibold text-white">
+              {t('wishlist.create.productLinks') || '상품 링크 추가'} <span className="text-red-400">*</span>
+            </h2>
+            <p className="text-sm text-slate-400 mt-1">{t('wishlist.create.productLinksDesc') || '최소 1개 이상의 상품 링크를 추가해주세요'}</p>
+            {error && (
+              <p className="text-red-400 text-sm mt-2">{error}</p>
+            )}
           </div>
         </div>
+
+        {/* Global Rate Limit Warning */}
+        {isGloballyRateLimited && (
+          <div className="bg-yellow-900/50 border border-yellow-600 rounded-lg p-4 mb-4">
+            <div className="flex items-start gap-3">
+              <svg className="w-5 h-5 text-yellow-400 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+              </svg>
+              <div className="flex-1">
+                <div className="flex items-center justify-between">
+                  <p className="text-yellow-400 text-sm font-medium">
+                    {t('wishlist.create.rateLimitWarning.title') || '일시적으로 자동 추출이 제한되었습니다'}
+                  </p>
+                  {rateLimitSecondsLeft > 0 && (
+                    <span className="text-yellow-400 text-sm font-mono font-bold">
+                      {rateLimitSecondsLeft}s
+                    </span>
+                  )}
+                </div>
+                <p className="text-yellow-300/80 text-xs mt-1">
+                  {rateLimitSecondsLeft > 0
+                    ? `${rateLimitSecondsLeft}초 후 자동 추출을 다시 시도할 수 있습니다.`
+                    : (t('wishlist.create.rateLimitWarning.message') || '너무 많은 요청으로 인해 60초 동안 자동 메타데이터 추출이 차단되었습니다. 잠시 후 다시 시도하거나 수동으로 입력해주세요.')
+                  }
+                </p>
+              </div>
+            </div>
+          </div>
+        )}
 
         <div className="space-y-4">
           {/* Bulk Extract Button */}
@@ -170,7 +160,7 @@ export default function ProductLinks({
             </div>
           )}
 
-          {/* {productLinks.map((link, index) => (
+          {productLinks.map((link, index) => (
             <ProductLinkItem
               key={index}
               index={index}
@@ -181,12 +171,14 @@ export default function ProductLinks({
               onUpdate={updateProductLink}
               onRemove={productLinks.length > 1 ? removeProductLink : () => { }}
               onExtractMetadata={handleExtractMetadata}
-              metadata={getMetadataForUrl(link)?.data}
+              metadata={getMetadataForUrl(link)?.data ?? undefined}
               isExtracting={isUrlLoading(link)}
               onMetadataManualUpdate={handleManualMetadataUpdate}
               extractionAttempted={extractionAttempted[link?.trim()] || false}
+              isGloballyRateLimited={isGloballyRateLimited}
+              onRateLimitDetected={handleRateLimitDetected}
             />
-          ))} */}
+          ))}
 
           {/* Add Link Button */}
           {productLinks.length < 10 && (

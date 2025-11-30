@@ -132,3 +132,30 @@ export const storage = {
   }
 }
 
+// Re-export validation helpers
+export {
+  validateLength,
+  validateRequired,
+  validateEmail,
+  validateUrlFormat,
+  combineValidations,
+  validateFormData,
+  sanitizeString,
+  hasDuplicates,
+  findDuplicates,
+  type ValidationResult,
+} from './validation-helpers'
+
+// Re-export API helpers
+export {
+  safeJsonParse,
+  handleApiError,
+  createErrorResponse,
+  createSuccessResponse,
+  fetchJson,
+  postJson,
+  putJson,
+  deleteJson,
+  type ApiResponse,
+} from './api-helpers'
+

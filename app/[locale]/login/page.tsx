@@ -8,11 +8,7 @@ import Link from 'next/link'
 import { useI18n } from '@/lib/i18n/context'
 import { signIn } from 'next-auth/react'
 
-interface LoginPageProps {
-  params: Promise<{ locale: string }>
-}
-
-export default function LoginPage({ params }: LoginPageProps) {
+export default function LoginPage() {
   const { t, locale } = useI18n()
   const [isLoading, setIsLoading] = useState(false)
 

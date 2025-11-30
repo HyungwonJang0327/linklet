@@ -76,9 +76,9 @@ async function updateUser(userId: string, data: UpdateUserData): Promise<UserDat
   try {
     // Sanitize data
     const sanitizedData: UpdateUserData = {}
-    if (data.name !== undefined) sanitizedData.name = data.name?.trim() || null
-    if (data.bio !== undefined) sanitizedData.bio = data.bio?.trim() || null
-    if (data.locale !== undefined) sanitizedData.locale = data.locale?.trim() || null
+    if (data.name !== undefined) sanitizedData.name = data.name?.trim() || undefined
+    if (data.bio !== undefined) sanitizedData.bio = data.bio?.trim() || undefined
+    if (data.locale !== undefined) sanitizedData.locale = data.locale?.trim() || undefined
 
     const response = await fetch(`/api/users?id=${encodeURIComponent(userId.trim())}`, {
       method: 'PUT',

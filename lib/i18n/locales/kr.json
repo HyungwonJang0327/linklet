@@ -200,12 +200,23 @@
       "privateDesc": "나만 볼 수 있습니다",
       "subtitle": "새로운 위시리스트를 만들어 원하는 상품들을 정리해보세요",
       "submit": "만들기",
+      "extracting": "추출 중...",
+      "metadataExtractingHint": "일부 링크의 메타데이터를 추출 중입니다. 완료될 때까지 기다려주세요.",
+      "rateLimitWarning": {
+        "title": "일시적으로 자동 추출이 제한되었습니다",
+        "message": "너무 많은 요청으로 인해 60초 동안 자동 메타데이터 추출이 차단되었습니다. 잠시 후 다시 시도하거나 수동으로 입력해주세요."
+      },
       "errors": {
+        "authRequired": "위시리스트를 만들려면 로그인이 필요합니다",
         "titleRequired": "위시리스트 제목을 입력해주세요",
         "titleTooShort": "제목은 2글자 이상 입력해주세요",
         "titleTooLong": "제목은 50글자 이하로 입력해주세요",
         "descriptionTooLong": "설명은 200글자 이하로 입력해주세요",
-        "invalidUrl": "유효한 URL을 입력해주세요"
+        "invalidUrl": "유효한 URL을 입력해주세요",
+        "duplicateUrl": "중복된 URL입니다",
+        "productLinksRequired": "상품 URL을 한 개 이상 입력해주세요.",
+        "invalidLinksFound": "입력한 링크 중 {count}개가 유효하지 않습니다. 링크를 확인해주세요.",
+        "metadataExtractingOrFailed": "{count}개의 링크에 대한 메타데이터가 아직 추출되지 않았습니다. 추출이 완료될 때까지 기다리거나 수동으로 입력해주세요."
       }
     },
     "shared": {
