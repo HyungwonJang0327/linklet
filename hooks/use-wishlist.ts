@@ -29,13 +29,16 @@ interface WishlistResponse {
   items?: Array<{
     id: string
     title: string
-    description?: string
+    description?: string | null
     productUrl: string
-    imageUrl?: string
-    price?: string
+    imageUrl?: string | null
+    price?: string | null
     siteName?: string
     priority: number
     isCompleted: boolean
+    createdAt: string
+    updatedAt: string
+    wishlistId: string
   }>
 }
 

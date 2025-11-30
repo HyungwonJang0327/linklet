@@ -7,6 +7,7 @@ import { DialogProvider } from "@/components/ui/dialog-provider";
 import { getDictionary } from "@/lib/i18n/dictionary";
 import { type Locale, locales } from "@/lib/i18n/config";
 import { notFound } from "next/navigation";
+import { Toaster } from "sonner";
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: 'kr' | 'en' | 'jp' }> }) {
   const { locale } = await params;
@@ -53,6 +54,7 @@ export default async function RootLayout({
                   <ConditionalHeader />
                   {children}
                 </div>
+                <Toaster position="top-right" richColors />
               </I18nProvider>
             </DialogProvider>
           </AuthProvider>

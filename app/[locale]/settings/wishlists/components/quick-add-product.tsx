@@ -9,9 +9,11 @@ import { useI18n } from '@/lib/i18n/context'
 
 interface QuickAddProductProps {
   wishlists: Array<{
-    id: number
+    id: string
     title: string
-    itemCount: number
+    _count?: {
+      items: number
+    }
   }>
   onAddProduct: (productUrl: string, wishlistId: string) => Promise<void>
 }

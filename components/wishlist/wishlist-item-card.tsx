@@ -1,5 +1,4 @@
 import Image from 'next/image'
-import { WishlistItem } from '@/lib/types'
 import { Card } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { ExternalLinkIcon, TrashIcon, EditIcon } from 'lucide-react'
@@ -7,7 +6,19 @@ import { formatDistanceToNow } from 'date-fns'
 import { ko } from 'date-fns/locale'
 
 interface WishlistItemCardProps {
-  item: WishlistItem
+  item: {
+    id: string
+    title: string
+    description?: string | null
+    productUrl: string
+    imageUrl?: string | null
+    price?: string | null
+    priority: number
+    isCompleted: boolean
+    createdAt: string | Date
+    updatedAt: string | Date
+    wishlistId: string
+  }
   isSharedView?: boolean
   onEdit?: () => void
   onDelete?: () => void
@@ -77,7 +88,7 @@ export function WishlistItemCard({
 
         {item.price && (
           <p className="text-lg font-semibold mb-3 text-blue-400">
-            {item.price.toLocaleString()}원
+            {item.price}
           </p>
         )}
 

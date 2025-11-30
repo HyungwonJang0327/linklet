@@ -19,7 +19,7 @@ export default function WishlistsManagePage() {
   const { user, isAuthenticated } = useAuth()
 
   // Fetch user's wishlists using TanStack Query
-  const { data: wishlists, isLoading, error } = useWishlists(user?.id)
+  const { data: wishlists, isLoading, error, refetch } = useWishlists(user?.id)
 
   const handleAddProductFromUrl = async (productUrl: string, selectedWishlistId: string) => {
     try {
@@ -133,7 +133,11 @@ export default function WishlistsManagePage() {
         {wishlists && wishlists.length > 0 ? (
           <>
             {wishlists.map((wishlist) => (
-              <WishlistCard key={wishlist.id} wishlist={wishlist} />
+              <WishlistCard
+                key={wishlist.id}
+                wishlist={wishlist}
+                onDelete={() => refetch()}
+              />
             ))}
             <CreateWishlistCard />
           </>

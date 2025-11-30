@@ -352,7 +352,7 @@ function cleanPriceText(text: string): string {
 /**
  * Extracts the highest resolution image from srcset attribute
  */
-function extractBestImageFromSrcset(element: cheerio.Cheerio<cheerio.Element>): string | undefined {
+function extractBestImageFromSrcset(element: any): string | undefined {
   if (!element || element.length === 0) return undefined
 
   const srcset = element.attr('srcset')
@@ -360,7 +360,7 @@ function extractBestImageFromSrcset(element: cheerio.Cheerio<cheerio.Element>): 
 
   try {
     // Parse srcset: "image1.jpg 1x, image2.jpg 2x" or "image1.jpg 300w, image2.jpg 600w"
-    const sources = srcset.split(',').map(s => {
+    const sources = srcset.split(',').map((s: string) => {
       const parts = s.trim().split(/\s+/)
       if (parts.length >= 2) {
         const url = parts[0]
@@ -373,7 +373,7 @@ function extractBestImageFromSrcset(element: cheerio.Cheerio<cheerio.Element>): 
     })
 
     // Sort by descriptor value (highest first) and return the best quality image
-    sources.sort((a, b) => b.value - a.value)
+    sources.sort((a: any, b: any) => b.value - a.value)
     return sources[0]?.url
   } catch {
     return undefined

@@ -31,6 +31,7 @@ export interface WishlistItem {
   imageUrl: string | null
   price: string | null
   priority: number
+  isCompleted: boolean
   createdAt: Date
   updatedAt: Date
   wishlistId: string
