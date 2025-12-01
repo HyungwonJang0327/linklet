@@ -4,29 +4,35 @@ import { Button } from '@/components/ui/button'
 import { PlusIcon } from '@heroicons/react/24/outline'
 import { useI18n } from '@/lib/i18n/context'
 import { useAuth } from '@/components/providers/auth-provider'
-import { useWishlists } from '@/hooks/use-wishlists'
+import { useWishlists, wishlistKeys } from '@/hooks/use-wishlists'
 import { Loading } from '@/components/ui/loading'
 import QuickAddProduct from './components/quick-add-product'
 import WishlistCard from './components/wishlist-card'
 import CreateWishlistCard from './components/create-wishlist-card'
 import { useParams, useRouter } from 'next/navigation'
 import { toast } from 'sonner'
+import { useQueryClient } from '@tanstack/react-query'
 
 export default function WishlistsManagePage() {
   const { t } = useI18n()
   const router = useRouter()
+  const queryClient = useQueryClient()
   const { locale = 'kr' } = useParams()
   const { user, isAuthenticated } = useAuth()
 
   // Fetch user's wishlists using TanStack Query
   const { data: wishlists, isLoading, error, refetch } = useWishlists(user?.id)
 
-  const handleAddProductFromUrl = async (productUrl: string, selectedWishlistId: string, title: string) => {
+  const handleAddProductFromUrl = async (
+    productUrl: string,
+    selectedWishlistId: string,
+    title: string
+  ) => {
     let metadata = null
     let metadataFailed = false
 
+    // Always attempt metadata extraction when button is clicked
     try {
-      // Try to extract metadata from URL
       const metadataResponse = await fetch('/api/metadata', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -49,7 +55,7 @@ export default function WishlistsManagePage() {
     }
 
     try {
-      // Create wishlist item with extracted metadata (or basic info if extraction failed)
+      // Always add item regardless of metadata extraction result
       const createResponse = await fetch(`/api/wishlists/${selectedWishlistId}/items`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -67,20 +73,29 @@ export default function WishlistsManagePage() {
         throw new Error(errorData.error || t('item.add.error'))
       }
 
+      // Invalidate queries to update cache
+      // 1. Invalidate wishlist detail for fresh data when navigating
+      await queryClient.invalidateQueries({ queryKey: wishlistKeys.detail(selectedWishlistId) })
+      // 2. Invalidate user's wishlist list to update item counts
+      if (user?.id) {
+        await queryClient.invalidateQueries({ queryKey: wishlistKeys.user(user.id) })
+      }
+
       // Show success message with guidance for manual editing if metadata failed
       if (metadataFailed) {
         toast.success(
           t('item.add.successWithoutMetadata') ||
           '상품이 추가되었습니다. 상품 정보를 수동으로 입력해주세요.',
-          { duration: 5000 }
+          {
+            action: {
+              label: t('common.view') || '보기',
+              onClick: () => router.push(`/${locale}/settings/wishlists/${selectedWishlistId}`)
+            },
+            duration: 5000
+          }
         )
       } else {
         toast.success(t('item.add.success'))
-      }
-
-      // Refresh wishlists to show updated item count
-      if (wishlists) {
-        router.refresh()
       }
     } catch (error) {
       console.error('Failed to add product:', error)

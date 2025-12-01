@@ -10,11 +10,13 @@
     "edit": "Edit",
     "add": "Add",
     "close": "Close",
+    "view": "View",
     "loading": "Loading...",
     "error": "An error occurred",
     "select": "Please select",
     "back": "Back",
-    "example": "e.g."
+    "example": "e.g.",
+    "optional": "Optional"
   },
   "navigation": {
     "home": "Home",
@@ -406,8 +408,13 @@
       "error": "Failed to reorder"
     },
     "metadata": {
-      "fetchError": "Unable to fetch product information"
+      "fetchError": "Unable to fetch product information",
+      "extracting": "Fetching product information...",
+      "extractionFailed": "Failed to extract metadata",
+      "preview": "Product Preview",
+      "manualInputPrompt": "Please enter product information manually in the form below."
     },
+    "siteName": "Site",
     "form": {
       "newItemTitle": "Add New Item",
       "newItemSubtitle": "Enter product information to add to your wishlist",

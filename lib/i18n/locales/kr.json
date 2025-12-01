@@ -10,11 +10,13 @@
     "edit": "편집",
     "add": "추가",
     "close": "닫기",
+    "view": "보기",
     "loading": "로딩 중...",
     "error": "오류가 발생했습니다",
     "select": "선택하세요",
     "back": "돌아가기",
-    "example": "예"
+    "example": "예",
+    "optional": "선택사항"
   },
   "navigation": {
     "home": "홈",
@@ -406,8 +408,13 @@
       "error": "순서 변경에 실패했습니다"
     },
     "metadata": {
-      "fetchError": "상품 정보를 가져올 수 없습니다"
+      "fetchError": "상품 정보를 가져올 수 없습니다",
+      "extracting": "상품 정보를 가져오는 중...",
+      "extractionFailed": "메타데이터 추출 실패",
+      "preview": "상품 정보 미리보기",
+      "manualInputPrompt": "아래 폼에서 상품 정보를 직접 입력해주세요."
     },
+    "siteName": "사이트",
     "form": {
       "newItemTitle": "새 아이템 추가",
       "newItemSubtitle": "위시리스트에 추가할 상품 정보를 입력해주세요",

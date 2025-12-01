@@ -37,8 +37,8 @@ export function AddItemDialog({ wishlistId, isOpen, onClose, onSuccess }: AddIte
     let metadata = null
     let metadataFailed = false
 
+    // Always attempt metadata extraction when button is clicked
     try {
-      // Try to extract metadata from URL
       const metadataResponse = await fetch('/api/metadata', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -61,7 +61,7 @@ export function AddItemDialog({ wishlistId, isOpen, onClose, onSuccess }: AddIte
     }
 
     try {
-      // Create wishlist item with extracted metadata (or basic info if extraction failed)
+      // Always add item regardless of metadata extraction result
       const createResponse = await fetch(`/api/wishlists/${wishlistId}/items`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
