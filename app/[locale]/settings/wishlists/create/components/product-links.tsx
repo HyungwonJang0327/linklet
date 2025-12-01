@@ -154,7 +154,7 @@ export default function ProductLinks({
               </Button>
               {extractedCount > 0 && (
                 <span className="text-xs text-slate-400">
-                  {extractedCount} items processed
+                  {extractedCount.toLocaleString()} items processed
                 </span>
               )}
             </div>
@@ -199,7 +199,7 @@ export default function ProductLinks({
 
           <div className="flex items-center justify-between text-xs text-slate-400 pt-2">
             <span>{t('wishlist.create.maxLinks') || 'Up to 10 product links can be added'}</span>
-            <span>{productLinks.filter(link => link.trim()).length}/10</span>
+            <span>{productLinks.filter(link => link.trim()).length.toLocaleString()}/10</span>
           </div>
         </div>
       </div>

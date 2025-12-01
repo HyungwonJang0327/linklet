@@ -201,7 +201,7 @@ export function CustomizationPreview({ customization }: CustomizationPreviewProp
                   
                   <div className="flex items-center justify-center gap-4 text-xs opacity-70">
                     {customization.profile.showItemCount && (
-                      <span>{wishlistData?.itemCount || 4}개 아이템</span>
+                      <span>{(wishlistData?.itemCount || 4).toLocaleString()}개 아이템</span>
                     )}
                     {customization.profile.showCreatedDate && (
                       <span>{wishlistData?.createdAt || '2024.08.31'}</span>

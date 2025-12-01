@@ -5,6 +5,7 @@ import Image from 'next/image'
 import { Button } from '@/components/ui/button'
 import { PhotoIcon, PencilIcon } from '@heroicons/react/24/outline'
 import type { ProductMetadata } from '@/lib/services/url-metadata'
+import { formatNumber } from '@/lib/utils/format'
 
 interface MetadataDisplayProps {
   metadata: ProductMetadata
@@ -42,7 +43,7 @@ export default function MetadataDisplay({ metadata, onEdit }: MetadataDisplayPro
           </h4>
           {metadata?.price?.trim() && (
             <p className="text-green-400 font-semibold text-sm mb-2">
-              {metadata.price.trim()}
+              {formatNumber(metadata.price.trim()) || metadata.price.trim()}
             </p>
           )}
           {metadata?.description?.trim() && (

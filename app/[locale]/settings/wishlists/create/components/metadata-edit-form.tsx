@@ -5,6 +5,7 @@ import { Input } from '@/components/ui/input'
 import ImageUpload from '@/components/ui/image-upload'
 import { PhotoIcon, CheckIcon, XMarkIcon } from '@heroicons/react/24/outline'
 import type { ProductMetadata } from '@/lib/services/url-metadata'
+import { formatNumberInput } from '@/lib/utils/format'
 
 interface MetadataEditFormProps {
   metadata: Partial<ProductMetadata>
@@ -73,7 +74,7 @@ export default function MetadataEditForm({
             <label className="text-xs text-slate-400 mb-1 block">Price (Optional)</label>
             <Input
               value={metadata.price || ''}
-              onChange={(value) => onChange({ ...metadata, price: value })}
+              onChange={(value) => onChange({ ...metadata, price: formatNumberInput(value) })}
               placeholder="$0.00"
               className="bg-slate-800/50 border-slate-600 text-white text-sm"
             />

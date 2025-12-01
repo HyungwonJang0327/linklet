@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Card } from '@/components/ui/card'
 import { isValidUrl } from '@/lib/utils'
+import { formatNumberInput, parseFormattedNumber } from '@/lib/utils/format'
 import type { CreateWishlistItemRequest, WishlistItem } from '@/lib/types'
 
 interface WishlistItemFormProps {
@@ -148,9 +149,13 @@ export function WishlistItemForm({
 
           <Input
             label={formData.priceOptional || "가격 (선택사항)"}
-            placeholder={formData.pricePlaceholder || "예: 999,000원"}
+            placeholder={formData.pricePlaceholder || "예: 999000"}
             value={formData.price}
-            onChange={(value: string) => setFormData(prev => ({ ...prev, price: value }))}
+            onChange={(value: string) => {
+              // Format as user types - only allow numbers and auto-format with commas
+              const formatted = formatNumberInput(value)
+              setFormData(prev => ({ ...prev, price: formatted }))
+            }}
             disabled={loading}
           />
         </div>

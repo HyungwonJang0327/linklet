@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button'
 import { ExternalLinkIcon, TrashIcon, EditIcon } from 'lucide-react'
 import { formatDistanceToNow } from 'date-fns'
 import { ko, enUS, ja } from 'date-fns/locale'
+import { formatNumber } from '@/lib/utils/format'
 
 interface WishlistItemCardProps {
   item: {
@@ -169,7 +170,7 @@ export function WishlistItemCard({
           <p className={`text-lg font-semibold mb-3 text-blue-400 ${
             item.isCompleted ? 'opacity-75' : ''
           }`}>
-            {item.price}
+            {formatNumber(item.price) ? `${formatNumber(item.price)}원` : item.price}
           </p>
         )}
 

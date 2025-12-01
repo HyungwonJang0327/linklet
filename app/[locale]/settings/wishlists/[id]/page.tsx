@@ -381,11 +381,11 @@ export default function WishlistDetailPage() {
           {/* Stats */}
           <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mt-6 pt-6 border-t border-slate-700/50">
             <div className="text-center">
-              <div className="text-2xl font-bold text-white">{totalCount}</div>
+              <div className="text-2xl font-bold text-white">{totalCount.toLocaleString()}</div>
               <div className="text-sm text-slate-400">{t('wishlist.detail.totalItems')}</div>
             </div>
             <div className="text-center">
-              <div className="text-2xl font-bold text-green-400">{completedCount}</div>
+              <div className="text-2xl font-bold text-green-400">{completedCount.toLocaleString()}</div>
               <div className="text-sm text-slate-400">{t('wishlist.status.received')}</div>
             </div>
             <div className="text-center">
@@ -433,7 +433,7 @@ export default function WishlistDetailPage() {
       <div className="space-y-4">
         <div className="flex items-center justify-between flex-wrap gap-4">
           <h2 className="text-2xl font-bold text-white">
-            {t('wishlist.detail.itemList')} ({sortedItems.length}/{totalCount})
+            {t('wishlist.detail.itemList')} ({sortedItems.length.toLocaleString()}/{totalCount.toLocaleString()})
           </h2>
           <div className="flex items-center gap-3 flex-wrap">
             {!isSelectionMode ? (

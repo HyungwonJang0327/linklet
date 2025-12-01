@@ -7,6 +7,7 @@ import { ExternalLinkIcon } from 'lucide-react'
 import { formatDistanceToNow } from 'date-fns'
 import { ko, enUS, ja } from 'date-fns/locale'
 import { useI18n } from '@/lib/i18n/context'
+import { formatNumber } from '@/lib/utils/format'
 
 interface ItemDetailDialogProps {
   item: {
@@ -116,7 +117,9 @@ export function ItemDetailDialog({
           {item.price && (
             <div>
               <h4 className="text-sm font-medium text-slate-400 mb-2">{t('item.detail.price')}</h4>
-              <p className="text-2xl font-bold text-blue-400">{item.price}</p>
+              <p className="text-2xl font-bold text-blue-400">
+                {formatNumber(item.price) ? `${formatNumber(item.price)}원` : item.price}
+              </p>
             </div>
           )}
 

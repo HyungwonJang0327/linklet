@@ -9,6 +9,7 @@ import { toast } from 'sonner'
 import { useUrlMetadata } from '@/hooks/use-url-metadata'
 import { Loader2 } from 'lucide-react'
 import ImageUpload from '@/components/ui/image-upload'
+import { formatNumberInput } from '@/lib/utils/format'
 
 interface EditItemDialogProps {
   item: {
@@ -227,7 +228,7 @@ export function EditItemDialog({ item, isOpen, onClose, onSuccess }: EditItemDia
             <Input
               type="text"
               value={price}
-              onChange={setPrice}
+              onChange={(value) => setPrice(formatNumberInput(value))}
               placeholder={t('item.edit.pricePlaceholder')}
               className="bg-slate-800 border-slate-600 text-white placeholder:text-slate-400"
               disabled={isLoading}
