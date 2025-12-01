@@ -176,16 +176,16 @@ export default function ImageUpload({
       >
         {hasImage && preview ? (
           // Image preview mode
-          <div className="relative w-full h-full">
+          <div className="relative w-full aspect-square">
             <Image
               src={value}
               alt="Uploaded image"
-              className="w-full h-full object-cover rounded-lg"
+              fill
+              className="object-cover rounded-lg"
               onError={() => {
                 setError('Failed to load image')
               }}
-              width={width}
-              height={height}
+              unoptimized
             />
 
             {/* Remove button */}
@@ -195,7 +195,7 @@ export default function ImageUpload({
                 variant="ghost"
                 size="sm"
                 onClick={handleRemove}
-                className="absolute -top-2 -right-2 w-6 h-6 p-0 bg-red-600 hover:bg-red-700 text-white rounded-full border-2 border-white"
+                className="absolute -top-2 -right-2 w-6 h-6 p-0 bg-red-600 hover:bg-red-700 text-white rounded-full border-2 border-white z-10"
               >
                 <XMarkIcon className="w-3 h-3" />
               </Button>

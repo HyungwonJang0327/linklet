@@ -59,7 +59,7 @@ export function EditWishlistDialog({
     e.preventDefault()
 
     if (!wishlist || !title.trim()) {
-      toast.error('제목을 입력해주세요')
+      toast.error(t('wishlist.edit.titleRequired'))
       return
     }
 
@@ -79,15 +79,15 @@ export function EditWishlistDialog({
 
       if (!response.ok) {
         const errorData = await response.json()
-        throw new Error(errorData.error || '수정에 실패했습니다')
+        throw new Error(errorData.error || t('wishlist.edit.updateFailed'))
       }
 
-      toast.success('위시리스트가 수정되었습니다')
+      toast.success(t('wishlist.edit.updateSuccess'))
       onSuccess()
       onClose()
     } catch (error) {
       console.error('Failed to update wishlist:', error)
-      toast.error(error instanceof Error ? error.message : '수정에 실패했습니다')
+      toast.error(error instanceof Error ? error.message : t('wishlist.edit.updateFailed'))
     } finally {
       setIsLoading(false)
     }
@@ -99,7 +99,7 @@ export function EditWishlistDialog({
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
       <div className="bg-slate-900 border border-slate-700 rounded-lg shadow-xl max-w-md w-full mx-4">
         <div className="flex items-center justify-between p-6 border-b border-slate-700">
-          <h2 className="text-xl font-bold text-white">위시리스트 수정</h2>
+          <h2 className="text-xl font-bold text-white">{t('wishlist.edit.title')}</h2>
           <button
             onClick={onClose}
             className="text-slate-400 hover:text-white transition-colors"
@@ -111,13 +111,13 @@ export function EditWishlistDialog({
         <form onSubmit={handleSubmit} className="p-6 space-y-4">
           <div>
             <label className="block text-sm font-medium text-slate-300 mb-2">
-              제목 *
+              {t('wishlist.edit.titleLabel')}
             </label>
             <Input
               type="text"
               value={title}
               onChange={setTitle}
-              placeholder="위시리스트 제목"
+              placeholder={t('wishlist.edit.titlePlaceholder')}
               className="bg-slate-800 border-slate-600 text-white placeholder:text-slate-400"
               disabled={isLoading}
             />
@@ -125,12 +125,12 @@ export function EditWishlistDialog({
 
           <div>
             <label className="block text-sm font-medium text-slate-300 mb-2">
-              설명
+              {t('wishlist.edit.descriptionLabel')}
             </label>
             <textarea
               value={description}
               onChange={(e) => setDescription(e.target.value)}
-              placeholder="위시리스트 설명"
+              placeholder={t('wishlist.edit.descriptionPlaceholder')}
               rows={3}
               className="w-full px-3 py-2 bg-slate-800 border border-slate-600 rounded-lg text-white placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
               disabled={isLoading}
@@ -139,7 +139,7 @@ export function EditWishlistDialog({
 
           <div>
             <label className="block text-sm font-medium text-slate-300 mb-2">
-              카테고리
+              {t('wishlist.edit.categoryLabel')}
             </label>
             <select
               value={category}
@@ -149,7 +149,7 @@ export function EditWishlistDialog({
             >
               {CATEGORIES.map((cat) => (
                 <option key={cat} value={cat}>
-                  {t(`wishlist.categories.${cat}`) || cat}
+                  {t(`wishlist.categories.${cat.toLowerCase()}`) || cat}
                 </option>
               ))}
             </select>
@@ -165,7 +165,7 @@ export function EditWishlistDialog({
               disabled={isLoading}
             />
             <label htmlFor="isPublic" className="text-sm text-slate-300">
-              공개 위시리스트로 설정
+              {t('wishlist.publicSetting')}
             </label>
           </div>
 
@@ -185,7 +185,7 @@ export function EditWishlistDialog({
               disabled={!title.trim() || isLoading}
               className="flex-1 bg-blue-600 hover:bg-blue-700 text-white"
             >
-              {isLoading ? '저장 중...' : '저장하기'}
+              {isLoading ? t('wishlist.edit.updating') : t('common.save')}
             </Button>
           </div>
         </form>

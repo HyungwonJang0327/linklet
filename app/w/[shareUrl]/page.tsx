@@ -54,9 +54,10 @@ export default async function SharedWishlistPage({ params }: SharedWishlistPageP
 
   return (
     <div>
-      <SharedWishlistClient 
+      <SharedWishlistClient
         shareUrl={shareUrl}
         dictionary={dictionary}
+        locale={locale}
       />
     </div>
   )

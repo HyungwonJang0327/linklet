@@ -5,7 +5,8 @@ import { Button } from '@/components/ui/button'
 import { XMarkIcon, PencilIcon, TrashIcon as TrashIconHero } from '@heroicons/react/24/outline'
 import { ExternalLinkIcon } from 'lucide-react'
 import { formatDistanceToNow } from 'date-fns'
-import { ko } from 'date-fns/locale'
+import { ko, enUS, ja } from 'date-fns/locale'
+import { useI18n } from '@/lib/i18n/context'
 
 interface ItemDetailDialogProps {
   item: {
@@ -33,11 +34,16 @@ export function ItemDetailDialog({
   onEdit,
   onDelete
 }: ItemDetailDialogProps) {
+  const { t, locale } = useI18n()
+
   if (!isOpen || !item) return null
 
   const handleLinkClick = () => {
     window.open(item.productUrl, '_blank', 'noopener,noreferrer')
   }
+
+  // Get date-fns locale based on current locale
+  const dateFnsLocale = locale === 'en' ? enUS : locale === 'jp' ? ja : ko
 
   // 우선순위 관련 함수 - 나중에 다시 사용할 수 있도록 주석처리
   // const getPriorityLabel = (priority: number) => {
@@ -53,7 +59,7 @@ export function ItemDetailDialog({
       <div className="bg-slate-900 border border-slate-700 rounded-lg shadow-xl max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto">
         {/* Header */}
         <div className="flex items-center justify-between p-6 border-b border-slate-700 sticky top-0 bg-slate-900 z-10">
-          <h2 className="text-xl font-bold text-white">아이템 상세</h2>
+          <h2 className="text-xl font-bold text-white">{t('item.detail.title')}</h2>
           <button
             onClick={onClose}
             className="text-slate-400 hover:text-white transition-colors"
@@ -83,7 +89,7 @@ export function ItemDetailDialog({
               <h3 className="text-2xl font-bold text-white flex-1">{item.title}</h3>
               {item.isCompleted && (
                 <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-green-600 text-white">
-                  받음
+                  {t('item.detail.completed')}
                 </span>
               )}
             </div>
@@ -101,7 +107,7 @@ export function ItemDetailDialog({
           {/* Description */}
           {item.description && (
             <div>
-              <h4 className="text-sm font-medium text-slate-400 mb-2">설명</h4>
+              <h4 className="text-sm font-medium text-slate-400 mb-2">{t('item.detail.description')}</h4>
               <p className="text-slate-200 whitespace-pre-wrap">{item.description}</p>
             </div>
           )}
@@ -109,40 +115,40 @@ export function ItemDetailDialog({
           {/* Price */}
           {item.price && (
             <div>
-              <h4 className="text-sm font-medium text-slate-400 mb-2">가격</h4>
+              <h4 className="text-sm font-medium text-slate-400 mb-2">{t('item.detail.price')}</h4>
               <p className="text-2xl font-bold text-blue-400">{item.price}</p>
             </div>
           )}
 
           {/* Product URL */}
           <div>
-            <h4 className="text-sm font-medium text-slate-400 mb-2">상품 링크</h4>
+            <h4 className="text-sm font-medium text-slate-400 mb-2">{t('item.detail.productLink')}</h4>
             <Button
               onClick={handleLinkClick}
               className="w-full bg-blue-600 hover:bg-blue-700 text-white"
             >
               <ExternalLinkIcon className="w-5 h-5 mr-2" />
-              상품 페이지 열기
+              {t('item.detail.openProductPage')}
             </Button>
           </div>
 
           {/* Metadata */}
           <div className="grid grid-cols-2 gap-4 pt-4 border-t border-slate-700">
             <div>
-              <h4 className="text-sm font-medium text-slate-400 mb-1">생성일</h4>
+              <h4 className="text-sm font-medium text-slate-400 mb-1">{t('item.detail.createdAt')}</h4>
               <p className="text-sm text-slate-300">
                 {formatDistanceToNow(new Date(item.createdAt), {
                   addSuffix: true,
-                  locale: ko
+                  locale: dateFnsLocale
                 })}
               </p>
             </div>
             <div>
-              <h4 className="text-sm font-medium text-slate-400 mb-1">수정일</h4>
+              <h4 className="text-sm font-medium text-slate-400 mb-1">{t('item.detail.updatedAt')}</h4>
               <p className="text-sm text-slate-300">
                 {formatDistanceToNow(new Date(item.updatedAt), {
                   addSuffix: true,
-                  locale: ko
+                  locale: dateFnsLocale
                 })}
               </p>
             </div>
@@ -157,7 +163,7 @@ export function ItemDetailDialog({
             className="flex-1 border-slate-600 text-slate-300 hover:bg-slate-700"
           >
             <PencilIcon className="w-4 h-4 mr-2" />
-            편집
+            {t('item.detail.edit')}
           </Button>
           <Button
             onClick={onDelete}
@@ -165,13 +171,13 @@ export function ItemDetailDialog({
             className="flex-1 border-red-600 text-red-400 hover:bg-red-900/20"
           >
             <TrashIconHero className="w-4 h-4 mr-2" />
-            삭제
+            {t('item.detail.delete')}
           </Button>
           <Button
             onClick={onClose}
             className="flex-1 bg-slate-700 hover:bg-slate-600 text-white"
           >
-            닫기
+            {t('item.detail.close')}
           </Button>
         </div>
       </div>

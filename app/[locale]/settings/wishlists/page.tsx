@@ -21,40 +21,62 @@ export default function WishlistsManagePage() {
   // Fetch user's wishlists using TanStack Query
   const { data: wishlists, isLoading, error, refetch } = useWishlists(user?.id)
 
-  const handleAddProductFromUrl = async (productUrl: string, selectedWishlistId: string) => {
+  const handleAddProductFromUrl = async (productUrl: string, selectedWishlistId: string, title: string) => {
+    let metadata = null
+    let metadataFailed = false
+
     try {
-      // Extract metadata from URL
+      // Try to extract metadata from URL
       const metadataResponse = await fetch('/api/metadata', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ url: productUrl }),
       })
 
-      if (!metadataResponse.ok) {
-        throw new Error(t('item.errors.metadataFailed') || '상품 정보를 가져올 수 없습니다')
+      if (metadataResponse.ok) {
+        const response = await metadataResponse.json()
+        if (response.success && response.data) {
+          metadata = response.data
+        } else {
+          metadataFailed = true
+        }
+      } else {
+        metadataFailed = true
       }
+    } catch (error) {
+      console.log('Metadata extraction failed, continuing with basic info:', error)
+      metadataFailed = true
+    }
 
-      const metadata = await metadataResponse.json()
-
-      // Create wishlist item with extracted metadata
+    try {
+      // Create wishlist item with extracted metadata (or basic info if extraction failed)
       const createResponse = await fetch(`/api/wishlists/${selectedWishlistId}/items`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          title: metadata.title || 'Untitled Product',
+          title: title,
           productUrl: productUrl,
-          imageUrl: metadata.images?.[0] || null,
-          description: metadata.description || null,
-          price: metadata.price || null,
+          imageUrl: metadata?.imageUrl || null,
+          description: metadata?.description || null,
+          price: metadata?.price || null,
         }),
       })
 
       if (!createResponse.ok) {
         const errorData = await createResponse.json()
-        throw new Error(errorData.error || t('item.errors.addFailed') || '상품 추가에 실패했습니다')
+        throw new Error(errorData.error || t('item.add.error'))
       }
 
-      toast.success(t('item.addSuccess') || '상품이 추가되었습니다')
+      // Show success message with guidance for manual editing if metadata failed
+      if (metadataFailed) {
+        toast.success(
+          t('item.add.successWithoutMetadata') ||
+          '상품이 추가되었습니다. 상품 정보를 수동으로 입력해주세요.',
+          { duration: 5000 }
+        )
+      } else {
+        toast.success(t('item.add.success'))
+      }
 
       // Refresh wishlists to show updated item count
       if (wishlists) {
@@ -62,7 +84,7 @@ export default function WishlistsManagePage() {
       }
     } catch (error) {
       console.error('Failed to add product:', error)
-      toast.error(error instanceof Error ? error.message : t('item.errors.addFailed') || '상품 추가에 실패했습니다')
+      toast.error(error instanceof Error ? error.message : t('item.add.error'))
       throw error
     }
   }
@@ -144,7 +166,7 @@ export default function WishlistsManagePage() {
         ) : (
           <div className="col-span-full text-center py-12">
             <p className="text-slate-400 mb-6">
-              {t('wishlist.create.subtitle') || '아직 생성된 위시리스트가 없습니다'}
+              {t('wishlist.noWishlists')}
             </p>
             <CreateWishlistCard />
           </div>

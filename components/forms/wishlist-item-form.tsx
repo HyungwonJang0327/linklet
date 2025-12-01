@@ -36,19 +36,19 @@ export function WishlistItemForm({
     
     // Validation
     const newErrors: Record<string, string> = {}
-    
+
     if (!formData.title.trim()) {
-      newErrors.title = '상품명을 입력해주세요'
+      newErrors.title = formData.productNameRequired || '상품명을 입력해주세요'
     }
-    
+
     if (!formData.productUrl.trim()) {
-      newErrors.productUrl = '상품 링크를 입력해주세요'
+      newErrors.productUrl = formData.productLinkRequired || '상품 링크를 입력해주세요'
     } else if (!isValidUrl(formData.productUrl)) {
-      newErrors.productUrl = '올바른 URL 형식을 입력해주세요'
+      newErrors.productUrl = formData.productLinkInvalid || '올바른 URL 형식을 입력해주세요'
     }
-    
+
     if (formData.imageUrl && !isValidUrl(formData.imageUrl)) {
-      newErrors.imageUrl = '올바른 이미지 URL 형식을 입력해주세요'
+      newErrors.imageUrl = formData.imageUrlInvalid || '올바른 이미지 URL 형식을 입력해주세요'
     }
     
     if (Object.keys(newErrors).length > 0) {
@@ -91,17 +91,17 @@ export function WishlistItemForm({
           </div>
           <div>
             <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
-              새 아이템 추가
+              {formData.newItemTitle || '새 아이템 추가'}
             </h3>
             <p className="text-sm text-gray-600 dark:text-gray-300">
-              위시리스트에 추가할 상품 정보를 입력해주세요
+              {formData.newItemSubtitle || '위시리스트에 추가할 상품 정보를 입력해주세요'}
             </p>
           </div>
         </div>
 
         <Input
-          label="상품명"
-          placeholder="예: iPhone 15 Pro"
+          label={formData.productName || "상품명"}
+          placeholder={formData.titlePlaceholder || "예: iPhone 15 Pro"}
           value={formData.title}
           onChange={(value: string) => setFormData(prev => ({ ...prev, title: value }))}
           required
@@ -113,12 +113,12 @@ export function WishlistItemForm({
           <div className="flex items-center gap-2 mb-2">
             <LinkIcon className="w-4 h-4 text-gray-500" />
             <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
-              상품 링크 <span className="text-red-500">*</span>
+              {formData.productLink || "상품 링크"} <span className="text-red-500">*</span>
             </label>
           </div>
           <Input
             type="url"
-            placeholder="https://example.com/product"
+            placeholder={formData.urlPlaceholder || "https://example.com/product"}
             value={formData.productUrl}
             onChange={(value: string) => setFormData(prev => ({ ...prev, productUrl: value }))}
             required
@@ -128,8 +128,8 @@ export function WishlistItemForm({
         </div>
 
         <Input
-          label="설명 (선택사항)"
-          placeholder="상품에 대한 간단한 설명"
+          label={formData.descriptionOptional || "설명 (선택사항)"}
+          placeholder={formData.descriptionPlaceholder || "상품에 대한 간단한 설명"}
           value={formData.description}
           onChange={(value: string) => setFormData(prev => ({ ...prev, description: value }))}
           disabled={loading}
@@ -137,9 +137,9 @@ export function WishlistItemForm({
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <Input
-            label="이미지 URL (선택사항)"
+            label={formData.imageUrlOptional || "이미지 URL (선택사항)"}
             type="url"
-            placeholder="https://example.com/image.jpg"
+            placeholder={formData.imagePlaceholder || "https://example.com/image.jpg"}
             value={formData.imageUrl}
             onChange={(value: string) => setFormData(prev => ({ ...prev, imageUrl: value }))}
             error={errors.imageUrl}
@@ -147,8 +147,8 @@ export function WishlistItemForm({
           />
 
           <Input
-            label="가격 (선택사항)"
-            placeholder="예: 999,000원"
+            label={formData.priceOptional || "가격 (선택사항)"}
+            placeholder={formData.pricePlaceholder || "예: 999,000원"}
             value={formData.price}
             onChange={(value: string) => setFormData(prev => ({ ...prev, price: value }))}
             disabled={loading}

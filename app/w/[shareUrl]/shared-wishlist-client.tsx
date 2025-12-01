@@ -9,9 +9,10 @@ import { notFound } from 'next/navigation'
 interface SharedWishlistClientProps {
   shareUrl: string
   dictionary: any
+  locale?: string
 }
 
-export default function SharedWishlistClient({ shareUrl, dictionary }: SharedWishlistClientProps) {
+export default function SharedWishlistClient({ shareUrl, dictionary, locale = 'kr' }: SharedWishlistClientProps) {
   const { data: wishlist, isLoading, error } = useSharedWishlist(shareUrl)
 
   if (isLoading) {
@@ -71,10 +72,11 @@ export default function SharedWishlistClient({ shareUrl, dictionary }: SharedWis
             {wishlist.items && wishlist.items.length > 0 ? (
               <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
                 {wishlist.items.map((item) => (
-                  <WishlistItemCard 
-                    key={item.id} 
-                    item={item} 
+                  <WishlistItemCard
+                    key={item.id}
+                    item={item}
                     isSharedView={true}
+                    locale={locale}
                   />
                 ))}
               </div>

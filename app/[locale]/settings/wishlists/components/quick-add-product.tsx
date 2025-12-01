@@ -15,23 +15,25 @@ interface QuickAddProductProps {
       items: number
     }
   }>
-  onAddProduct: (productUrl: string, wishlistId: string) => Promise<void>
+  onAddProduct: (productUrl: string, wishlistId: string, title: string) => Promise<void>
 }
 
 export default function QuickAddProduct({ wishlists, onAddProduct }: QuickAddProductProps) {
   const { t } = useI18n()
   const [productUrl, setProductUrl] = useState('')
+  const [productTitle, setProductTitle] = useState('')
   const [selectedWishlist, setSelectedWishlist] = useState('')
   const [isAddingProduct, setIsAddingProduct] = useState(false)
 
   const handleAddProductFromUrl = async () => {
-    if (!productUrl || !selectedWishlist) return
-    
+    if (!productUrl || !selectedWishlist || !productTitle.trim()) return
+
     setIsAddingProduct(true)
-    
+
     try {
-      await onAddProduct(productUrl, selectedWishlist)
+      await onAddProduct(productUrl, selectedWishlist, productTitle.trim())
       setProductUrl('')
+      setProductTitle('')
       setSelectedWishlist('')
     } catch (error) {
       console.error('Failed to add product:', error)
@@ -51,7 +53,7 @@ export default function QuickAddProduct({ wishlists, onAddProduct }: QuickAddPro
           </div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
           <div className="md:col-span-1">
             <label className="block text-sm font-medium text-slate-300 mb-2">
               {t('wishlist.title')}
@@ -72,7 +74,19 @@ export default function QuickAddProduct({ wishlists, onAddProduct }: QuickAddPro
 
           <div className="md:col-span-1">
             <label className="block text-sm font-medium text-slate-300 mb-2">
-              {t('item.productUrl')}
+              {t('item.productTitle')} <span className="text-red-400">*</span>
+            </label>
+            <Input
+              value={productTitle}
+              onChange={setProductTitle}
+              placeholder={t('item.productTitlePlaceholder') || '상품명'}
+              className="bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400"
+            />
+          </div>
+
+          <div className="md:col-span-1">
+            <label className="block text-sm font-medium text-slate-300 mb-2">
+              {t('item.productUrl')} <span className="text-red-400">*</span>
             </label>
             <Input
               value={productUrl}
@@ -86,11 +100,11 @@ export default function QuickAddProduct({ wishlists, onAddProduct }: QuickAddPro
             <Button
               onClick={handleAddProductFromUrl}
               loading={isAddingProduct}
-              disabled={!productUrl || !selectedWishlist}
+              disabled={!productUrl || !selectedWishlist || !productTitle.trim()}
               className="w-full bg-green-600 hover:bg-green-700 text-white disabled:opacity-50 disabled:cursor-not-allowed"
             >
               <LinkIcon className="w-4 h-4 mr-2" />
-              {isAddingProduct ? '추가 중...' : (t('item.addFromUrl') || '링크로 추가')}
+              {isAddingProduct ? t('item.addingFromUrl') : t('item.linkAdd')}
             </Button>
           </div>
         </div>

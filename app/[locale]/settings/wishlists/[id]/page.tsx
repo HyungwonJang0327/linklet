@@ -65,6 +65,7 @@ export default function WishlistDetailPage() {
     title: string
     description?: string | null
     productUrl: string
+    imageUrl?: string | null
     price?: string | null
     priority?: number
   } | null>(null)
@@ -96,10 +97,10 @@ export default function WishlistDetailPage() {
     const shareUrl = `${window.location.origin}/w/${wishlist.shareUrl}`
     navigator.clipboard.writeText(shareUrl)
       .then(() => {
-        toast.success('공유 링크가 복사되었습니다')
+        toast.success(t('wishlist.shareLinkCopied'))
       })
       .catch(() => {
-        toast.error('링크 복사에 실패했습니다')
+        toast.error(t('wishlist.shareLinkCopyFailed'))
       })
   }
 
@@ -138,7 +139,7 @@ export default function WishlistDetailPage() {
           {t('common.error')}
         </h2>
         <p className="text-slate-300 mb-6">
-          {error instanceof Error ? error.message : '위시리스트를 불러올 수 없습니다'}
+          {error instanceof Error ? error.message : t('wishlist.loadError')}
         </p>
         <Button onClick={handleBack}>
           {t('common.back')}
@@ -202,7 +203,7 @@ export default function WishlistDetailPage() {
   }, 0)
 
   const handleDeleteItem = async (itemId: string) => {
-    if (!confirm('이 아이템을 삭제하시겠습니까?')) {
+    if (!confirm(t('item.delete.confirm'))) {
       return
     }
 
@@ -212,14 +213,14 @@ export default function WishlistDetailPage() {
       })
 
       if (!response.ok) {
-        throw new Error('삭제에 실패했습니다')
+        throw new Error(t('item.delete.error'))
       }
 
-      toast.success('아이템이 삭제되었습니다')
+      toast.success(t('item.delete.success'))
       refetch()
     } catch (error) {
       console.error('Failed to delete item:', error)
-      toast.error(error instanceof Error ? error.message : '삭제에 실패했습니다')
+      toast.error(error instanceof Error ? error.message : t('item.delete.error'))
     }
   }
 
@@ -230,14 +231,14 @@ export default function WishlistDetailPage() {
       })
 
       if (!response.ok) {
-        throw new Error('상태 변경에 실패했습니다')
+        throw new Error(t('item.toggle.error'))
       }
 
       toast.success(t('wishlist.status.statusChanged'))
       refetch()
     } catch (error) {
       console.error('Failed to toggle completion:', error)
-      toast.error(error instanceof Error ? error.message : '상태 변경에 실패했습니다')
+      toast.error(error instanceof Error ? error.message : t('item.toggle.error'))
     }
   }
 
@@ -267,7 +268,7 @@ export default function WishlistDetailPage() {
   const handleDeleteSelected = async () => {
     if (selectedItemIds.size === 0) return
 
-    if (!confirm(`선택한 ${selectedItemIds.size}개의 아이템을 삭제하시겠습니까?`)) {
+    if (!confirm(t('item.delete.confirmMultiple', { count: selectedItemIds.size }))) {
       return
     }
 
@@ -280,16 +281,16 @@ export default function WishlistDetailPage() {
       const failedCount = results.filter(r => !r.ok).length
 
       if (failedCount > 0) {
-        throw new Error(`${failedCount}개 아이템 삭제에 실패했습니다`)
+        throw new Error(t('item.delete.errorMultiple', { count: failedCount }))
       }
 
-      toast.success(`${selectedItemIds.size}개 아이템이 삭제되었습니다`)
+      toast.success(t('item.delete.successMultiple', { count: selectedItemIds.size }))
       setSelectedItemIds(new Set())
       setIsSelectionMode(false)
       refetch()
     } catch (error) {
       console.error('Failed to delete selected items:', error)
-      toast.error(error instanceof Error ? error.message : '삭제에 실패했습니다')
+      toast.error(error instanceof Error ? error.message : t('item.delete.error'))
     }
   }
 
@@ -315,13 +316,13 @@ export default function WishlistDetailPage() {
       })
 
       if (!response.ok) {
-        throw new Error('순서 변경에 실패했습니다')
+        throw new Error(t('item.reorder.error'))
       }
 
       refetch()
     } catch (error) {
       console.error('Failed to reorder items:', error)
-      toast.error(error instanceof Error ? error.message : '순서 변경에 실패했습니다')
+      toast.error(error instanceof Error ? error.message : t('item.reorder.error'))
       refetch() // Revert to server state
     }
   }
@@ -363,7 +364,7 @@ export default function WishlistDetailPage() {
                 className="border-slate-600 text-slate-300 hover:bg-slate-700"
               >
                 <ShareIcon className="w-4 h-4 mr-2" />
-                공유 링크 복사
+                {t('wishlist.copyShareLink')}
               </Button>
               <Button
                 variant="outline"
@@ -381,7 +382,7 @@ export default function WishlistDetailPage() {
           <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mt-6 pt-6 border-t border-slate-700/50">
             <div className="text-center">
               <div className="text-2xl font-bold text-white">{totalCount}</div>
-              <div className="text-sm text-slate-400">총 아이템</div>
+              <div className="text-sm text-slate-400">{t('wishlist.detail.totalItems')}</div>
             </div>
             <div className="text-center">
               <div className="text-2xl font-bold text-green-400">{completedCount}</div>
@@ -391,13 +392,13 @@ export default function WishlistDetailPage() {
               <div className="text-2xl font-bold text-blue-400">
                 {totalCount > 0 ? Math.round((completedCount / totalCount) * 100) : 0}%
               </div>
-              <div className="text-sm text-slate-400">{t('wishlist.status.received')} 비율</div>
+              <div className="text-sm text-slate-400">{t('wishlist.detail.receivedRatio')}</div>
             </div>
             <div className="text-center">
               <div className="text-2xl font-bold text-purple-400">
                 {totalPrice > 0 ? totalPrice.toLocaleString() : '-'}
               </div>
-              <div className="text-sm text-slate-400">총 금액</div>
+              <div className="text-sm text-slate-400">{t('wishlist.detail.totalPrice')}</div>
             </div>
             <div className="text-center">
               <div className={`inline-block px-3 py-1 rounded-full text-sm font-medium ${
@@ -407,7 +408,7 @@ export default function WishlistDetailPage() {
               }`}>
                 {wishlist.isPublic ? t('wishlist.public') : t('wishlist.private')}
               </div>
-              <div className="text-sm text-slate-400 mt-1">상태</div>
+              <div className="text-sm text-slate-400 mt-1">{t('wishlist.detail.status')}</div>
             </div>
           </div>
 
@@ -415,7 +416,7 @@ export default function WishlistDetailPage() {
           <div className="flex items-center gap-6 mt-4 pt-4 border-t border-slate-700/50 text-sm text-slate-400">
             <div className="flex items-center gap-2">
               <ClockIcon className="w-4 h-4" />
-              <span>생성: {formatRelativeTime(wishlist.createdAt)}</span>
+              <span>{t('wishlist.detail.created')}: {formatRelativeTime(wishlist.createdAt, locale as 'kr' | 'en' | 'jp')}</span>
             </div>
             {wishlist.category && (
               <div className="flex items-center gap-2">
@@ -432,7 +433,7 @@ export default function WishlistDetailPage() {
       <div className="space-y-4">
         <div className="flex items-center justify-between flex-wrap gap-4">
           <h2 className="text-2xl font-bold text-white">
-            아이템 목록 ({sortedItems.length}/{totalCount})
+            {t('wishlist.detail.itemList')} ({sortedItems.length}/{totalCount})
           </h2>
           <div className="flex items-center gap-3 flex-wrap">
             {!isSelectionMode ? (
@@ -443,11 +444,11 @@ export default function WishlistDetailPage() {
                   onChange={(e) => setSortBy(e.target.value as any)}
                   className="px-3 py-2 bg-slate-800 border border-slate-600 rounded-lg text-white text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                 >
-                  <option value="newest">최신순</option>
-                  <option value="oldest">오래된순</option>
-                  <option value="price-high">가격 높은순</option>
-                  <option value="price-low">가격 낮은순</option>
-                  <option value="name">이름순</option>
+                  <option value="newest">{t('wishlist.sort.newest')}</option>
+                  <option value="oldest">{t('wishlist.sort.oldest')}</option>
+                  <option value="price-high">{t('wishlist.sort.priceHigh')}</option>
+                  <option value="price-low">{t('wishlist.sort.priceLow')}</option>
+                  <option value="name">{t('wishlist.sort.name')}</option>
                 </select>
 
                 {/* Status Filter */}
@@ -491,7 +492,7 @@ export default function WishlistDetailPage() {
                     type="text"
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    placeholder="검색..."
+                    placeholder={t('wishlist.search.placeholder')}
                     className="pl-10 pr-4 py-2 bg-slate-800 border border-slate-600 rounded-lg text-white placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 w-64"
                   />
                 </div>
@@ -502,7 +503,7 @@ export default function WishlistDetailPage() {
                   className="border-slate-600 text-slate-300 hover:bg-slate-700"
                 >
                   <CheckIcon className="w-4 h-4 mr-2" />
-                  선택
+                  {t('wishlist.select.button')}
                 </Button>
 
                 <Button
@@ -510,14 +511,14 @@ export default function WishlistDetailPage() {
                   className="bg-blue-600 hover:bg-blue-700 text-white"
                 >
                   <PlusIcon className="w-4 h-4 mr-2" />
-                  아이템 추가
+                  {t('wishlist.addItem')}
                 </Button>
               </>
             ) : (
               <>
                 <div className="flex items-center gap-2 bg-blue-900/20 px-3 py-2 rounded-lg border border-blue-500">
                   <span className="text-blue-400 font-medium">
-                    {selectedItemIds.size}개 선택됨
+                    {t('wishlist.select.count', { count: selectedItemIds.size })}
                   </span>
                 </div>
 
@@ -527,7 +528,7 @@ export default function WishlistDetailPage() {
                   className="border-slate-600 text-slate-300 hover:bg-slate-700"
                 >
                   <CheckIcon className="w-4 h-4 mr-2" />
-                  {selectedItemIds.size === sortedItems.length ? '전체 해제' : '전체 선택'}
+                  {selectedItemIds.size === sortedItems.length ? t('wishlist.select.deselectAll') : t('wishlist.select.selectAll')}
                 </Button>
 
                 <Button
@@ -536,7 +537,7 @@ export default function WishlistDetailPage() {
                   className="bg-red-600 hover:bg-red-700 text-white disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   <TrashIconHero className="w-4 h-4 mr-2" />
-                  선택 삭제
+                  {t('wishlist.select.deleteSelected')}
                 </Button>
 
                 <Button
@@ -545,7 +546,7 @@ export default function WishlistDetailPage() {
                   className="border-slate-600 text-slate-300 hover:bg-slate-700"
                 >
                   <XMarkIcon className="w-4 h-4 mr-2" />
-                  취소
+                  {t('common.cancel')}
                 </Button>
               </>
             )}
@@ -563,7 +564,7 @@ export default function WishlistDetailPage() {
                 className="bg-blue-600 hover:bg-blue-700 text-white"
               >
                 <PlusIcon className="w-4 h-4 mr-2" />
-                첫 아이템 추가하기
+                {t('wishlist.addFirstItem')}
               </Button>
             </div>
           </Card>
@@ -571,7 +572,7 @@ export default function WishlistDetailPage() {
           <Card className="bg-slate-800/50 border-slate-700/50 backdrop-blur-sm">
             <div className="p-12 text-center">
               <p className="text-slate-400 text-lg">
-                검색 결과가 없습니다
+                {t('wishlist.search.noResults')}
               </p>
             </div>
           </Card>
@@ -595,7 +596,7 @@ export default function WishlistDetailPage() {
                           {...dragHandleProps.listeners}
                           {...dragHandleProps.attributes}
                           className="absolute top-2 left-2 z-10 p-1 rounded cursor-grab active:cursor-grabbing bg-slate-700/80 hover:bg-slate-600/80 transition-colors"
-                          title="드래그하여 순서 변경"
+                          title={t('wishlist.dragToReorder')}
                         >
                           <GripVertical className="w-4 h-4 text-slate-300" />
                         </div>
@@ -609,6 +610,7 @@ export default function WishlistDetailPage() {
                               title: item.title,
                               description: item.description,
                               productUrl: item.productUrl,
+                              imageUrl: item.imageUrl,
                               price: item.price,
                               priority: item.priority,
                             })
@@ -618,6 +620,7 @@ export default function WishlistDetailPage() {
                           isSelectionMode={isSelectionMode}
                           isSelected={selectedItemIds.has(item.id)}
                           onSelect={() => handleSelectItem(item.id)}
+                          locale={locale}
                         />
                       </div>
                     )}
@@ -649,6 +652,7 @@ export default function WishlistDetailPage() {
               title: viewingItem.title,
               description: viewingItem.description,
               productUrl: viewingItem.productUrl,
+              imageUrl: viewingItem.imageUrl,
               price: viewingItem.price,
               priority: viewingItem.priority,
             })

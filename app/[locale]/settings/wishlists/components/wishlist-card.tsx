@@ -42,7 +42,7 @@ export default function WishlistCard({ wishlist, onDelete }: WishlistCardProps) 
   const handleDelete = async (e?: React.MouseEvent) => {
     e?.stopPropagation()
 
-    if (!confirm(`"${wishlist.title}" 위시리스트를 삭제하시겠습니까?`)) {
+    if (!confirm(t('wishlist.delete.confirm', { title: wishlist.title }))) {
       return
     }
 
@@ -54,10 +54,10 @@ export default function WishlistCard({ wishlist, onDelete }: WishlistCardProps) 
       })
 
       if (!response.ok) {
-        throw new Error('삭제에 실패했습니다')
+        throw new Error(t('wishlist.delete.failed'))
       }
 
-      toast.success('위시리스트가 삭제되었습니다')
+      toast.success(t('wishlist.delete.success'))
 
       // Call parent callback to refresh the list
       if (onDelete) {
@@ -65,7 +65,7 @@ export default function WishlistCard({ wishlist, onDelete }: WishlistCardProps) 
       }
     } catch (error) {
       console.error('Failed to delete wishlist:', error)
-      toast.error(error instanceof Error ? error.message : '삭제에 실패했습니다')
+      toast.error(error instanceof Error ? error.message : t('wishlist.delete.failed'))
     } finally {
       setIsDeleting(false)
     }
@@ -146,7 +146,7 @@ export default function WishlistCard({ wishlist, onDelete }: WishlistCardProps) 
         {/* Creation Date */}
         <div className="mt-3 pt-3 border-t border-slate-700/50">
           <span className="text-xs text-slate-500">
-            {t('wishlist.created')}: {formatRelativeTime(wishlist.createdAt)}
+            {t('wishlist.created')}: {formatRelativeTime(wishlist.createdAt, locale as 'kr' | 'en' | 'jp')}
           </span>
         </div>
       </div>
