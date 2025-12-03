@@ -56,11 +56,13 @@ export default function CustomizePage() {
   // 위시리스트 선택 핸들러
   const handleWishlistSelect = (wishlist: any) => {
     setSelectedWishlist(wishlist)
-    // 해당 위시리스트의 커스터마이징이 없으면 기본값으로 초기화
+
+    // DB에서 불러온 customization이 있으면 사용, 없으면 기본값 사용
     if (!wishlistCustomizations[wishlist.id]) {
+      const savedCustomization = wishlist.customization || getDefaultCustomization(wishlist.title)
       setWishlistCustomizations(prev => ({
         ...prev,
-        [wishlist.id]: getDefaultCustomization(wishlist.title)
+        [wishlist.id]: savedCustomization
       }))
     }
   }
@@ -80,12 +82,34 @@ export default function CustomizePage() {
 
   const handleSave = async () => {
     if (!selectedWishlist) return
-    
+
     setLoading(true)
-    // TODO: API 호출로 해당 위시리스트의 커스터마이징 저장
-    console.log('Saving customization for wishlist:', selectedWishlist.id, currentCustomization)
-    await new Promise(resolve => setTimeout(resolve, 1500))
-    setLoading(false)
+    try {
+      const response = await fetch(`/api/wishlists/${selectedWishlist.id}/customization`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(currentCustomization)
+      })
+
+      if (!response.ok) {
+        throw new Error('Failed to save customization')
+      }
+
+      const data = await response.json()
+
+      // 성공 시 selectedWishlist 업데이트
+      setSelectedWishlist({
+        ...selectedWishlist,
+        customization: data.customization
+      })
+
+      alert(t('settings.customize.saveSuccess'))
+    } catch (error) {
+      console.error('Error saving customization:', error)
+      alert(t('settings.customize.saveFailed'))
+    } finally {
+      setLoading(false)
+    }
   }
 
   const updateTheme = (theme: string) => {

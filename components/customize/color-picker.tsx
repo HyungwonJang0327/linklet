@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { Card } from '@/components/ui/card'
+import { useI18n } from '@/lib/i18n/context'
 
 interface ColorPickerProps {
   colors: {
@@ -15,7 +16,7 @@ interface ColorPickerProps {
 
 const presetColors = {
   primary: [
-    '#3b82f6', '#ef4444', '#10b981', '#f59e0b', 
+    '#3b82f6', '#ef4444', '#10b981', '#f59e0b',
     '#8b5cf6', '#ec4899', '#06b6d4', '#84cc16'
   ],
   background: [
@@ -29,6 +30,7 @@ const presetColors = {
 }
 
 export function ColorPicker({ colors, onColorsChange }: ColorPickerProps) {
+  const { t } = useI18n()
   const [activeColorType, setActiveColorType] = useState<'primary' | 'background' | 'text' | 'accent'>('primary')
 
   const ColorInput = ({ 
@@ -82,46 +84,46 @@ export function ColorPicker({ colors, onColorsChange }: ColorPickerProps) {
   return (
     <Card className="bg-slate-800/50 border-slate-700/50 backdrop-blur-sm">
       <div className="p-6">
-        <h2 className="text-xl font-semibold text-white mb-4">색상 설정</h2>
+        <h2 className="text-xl font-semibold text-white mb-4">{t('settings.customize.colors.title')}</h2>
         <p className="text-slate-400 text-sm mb-6">
-          위시리스트 페이지의 색상 테마를 자유롭게 설정하세요.
+          {t('settings.customize.colors.description')}
         </p>
 
         {/* Color Categories */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
           <ColorInput
-            label="메인 색상"
+            label={t('settings.customize.colors.primary')}
             value={colors.primary}
             type="primary"
-            description="버튼, 링크 등의 주요 색상"
+            description={t('settings.customize.colors.primaryDesc')}
           />
           <ColorInput
-            label="배경 색상"
+            label={t('settings.customize.colors.background')}
             value={colors.background}
             type="background"
-            description="페이지 전체 배경색"
+            description={t('settings.customize.colors.backgroundDesc')}
           />
           <ColorInput
-            label="텍스트 색상"
+            label={t('settings.customize.colors.text')}
             value={colors.text}
             type="text"
-            description="기본 텍스트 색상"
+            description={t('settings.customize.colors.textDesc')}
           />
           <ColorInput
-            label="강조 색상"
+            label={t('settings.customize.colors.accent')}
             value={colors.accent}
             type="accent"
-            description="하이라이트 및 강조 요소"
+            description={t('settings.customize.colors.accentDesc')}
           />
         </div>
 
         {/* Preset Colors */}
         <div className="mb-6">
           <h3 className="text-lg font-medium text-white mb-4">
-            {activeColorType === 'primary' && '메인 색상 프리셋'}
-            {activeColorType === 'background' && '배경 색상 프리셋'}
-            {activeColorType === 'text' && '텍스트 색상 프리셋'}
-            {activeColorType === 'accent' && '강조 색상 프리셋'}
+            {activeColorType === 'primary' && t('settings.customize.colors.primaryPreset')}
+            {activeColorType === 'background' && t('settings.customize.colors.backgroundPreset')}
+            {activeColorType === 'text' && t('settings.customize.colors.textPreset')}
+            {activeColorType === 'accent' && t('settings.customize.colors.accentPreset')}
           </h3>
           
           <div className="grid grid-cols-8 gap-2">
@@ -146,19 +148,19 @@ export function ColorPicker({ colors, onColorsChange }: ColorPickerProps) {
 
         {/* Color Harmony Suggestions */}
         <div className="pt-6 border-t border-slate-700/50">
-          <h3 className="text-lg font-medium text-white mb-4">추천 색상 조합</h3>
-          
+          <h3 className="text-lg font-medium text-white mb-4">{t('settings.customize.colors.recommendations')}</h3>
+
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {[
-              { name: '블루 모노크롬', colors: { primary: '#3b82f6', background: '#0f172a', text: '#ffffff', accent: '#60a5fa' }},
-              { name: '선셋 그라디언트', colors: { primary: '#f59e0b', background: '#1e293b', text: '#fbbf24', accent: '#f97316' }},
-              { name: '포레스트 그린', colors: { primary: '#10b981', background: '#064e3b', text: '#ecfdf5', accent: '#34d399' }},
-              { name: '퍼플 나이트', colors: { primary: '#8b5cf6', background: '#1e1b4b', text: '#f3f4f6', accent: '#a78bfa' }},
-              { name: '미니멀 화이트', colors: { primary: '#1f2937', background: '#ffffff', text: '#111827', accent: '#6b7280' }},
-              { name: '핑크 드림', colors: { primary: '#ec4899', background: '#1f2937', text: '#fce7f3', accent: '#f472b6' }}
+              { nameKey: 'settings.customize.colors.blueMonochrome', colors: { primary: '#3b82f6', background: '#0f172a', text: '#ffffff', accent: '#60a5fa' }},
+              { nameKey: 'settings.customize.colors.sunsetGradient', colors: { primary: '#f59e0b', background: '#1e293b', text: '#fbbf24', accent: '#f97316' }},
+              { nameKey: 'settings.customize.colors.forestGreen', colors: { primary: '#10b981', background: '#064e3b', text: '#ecfdf5', accent: '#34d399' }},
+              { nameKey: 'settings.customize.colors.purpleNight', colors: { primary: '#8b5cf6', background: '#1e1b4b', text: '#f3f4f6', accent: '#a78bfa' }},
+              { nameKey: 'settings.customize.colors.minimalWhite', colors: { primary: '#1f2937', background: '#ffffff', text: '#111827', accent: '#6b7280' }},
+              { nameKey: 'settings.customize.colors.pinkDream', colors: { primary: '#ec4899', background: '#1f2937', text: '#fce7f3', accent: '#f472b6' }}
             ].map((preset) => (
               <button
-                key={preset.name}
+                key={preset.nameKey}
                 onClick={() => onColorsChange(preset.colors)}
                 className="p-3 rounded-lg border border-slate-600 hover:border-slate-500 transition-all group"
               >
@@ -172,7 +174,7 @@ export function ColorPicker({ colors, onColorsChange }: ColorPickerProps) {
                   ))}
                 </div>
                 <div className="text-slate-200 text-sm font-medium group-hover:text-white">
-                  {preset.name}
+                  {t(preset.nameKey)}
                 </div>
               </button>
             ))}
@@ -181,8 +183,8 @@ export function ColorPicker({ colors, onColorsChange }: ColorPickerProps) {
 
         {/* Advanced Options */}
         <div className="mt-6 pt-6 border-t border-slate-700/50">
-          <h3 className="text-lg font-medium text-white mb-4">고급 설정</h3>
-          
+          <h3 className="text-lg font-medium text-white mb-4">{t('settings.customize.colors.advancedSettings')}</h3>
+
           <div className="space-y-4">
             <label className="flex items-center gap-3">
               <input
@@ -190,8 +192,8 @@ export function ColorPicker({ colors, onColorsChange }: ColorPickerProps) {
                 className="w-4 h-4 text-blue-600 bg-slate-900/50 border-slate-600 rounded focus:ring-blue-500 focus:ring-2"
               />
               <div>
-                <div className="text-slate-200 font-medium">그라디언트 배경</div>
-                <div className="text-slate-400 text-sm">배경에 그라디언트 효과 적용</div>
+                <div className="text-slate-200 font-medium">{t('settings.customize.colors.gradientBackground')}</div>
+                <div className="text-slate-400 text-sm">{t('settings.customize.colors.gradientBackgroundDesc')}</div>
               </div>
             </label>
 
@@ -201,8 +203,8 @@ export function ColorPicker({ colors, onColorsChange }: ColorPickerProps) {
                 className="w-4 h-4 text-blue-600 bg-slate-900/50 border-slate-600 rounded focus:ring-blue-500 focus:ring-2"
               />
               <div>
-                <div className="text-slate-200 font-medium">다크 모드 지원</div>
-                <div className="text-slate-400 text-sm">사용자 기기 설정에 따라 자동 전환</div>
+                <div className="text-slate-200 font-medium">{t('settings.customize.colors.darkMode')}</div>
+                <div className="text-slate-400 text-sm">{t('settings.customize.colors.darkModeDesc')}</div>
               </div>
             </label>
           </div>

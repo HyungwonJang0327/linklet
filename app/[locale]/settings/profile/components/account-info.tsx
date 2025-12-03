@@ -23,7 +23,7 @@ interface AccountInfoProps {
 
 export default function AccountInfo({ userData }: AccountInfoProps) {
   const { t } = useI18n()
-  const { locale = 'kr' } = useParams() as { locale: string }
+  const { locale = 'kr' } = useParams() as { locale: 'kr' | 'en' | 'jp' }
 
   if (!userData) {
     return (

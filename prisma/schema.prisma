@@ -26,14 +26,15 @@ model User {
 }
 
 model Wishlist {
-  id          String            @id @default(cuid())
-  title       String
-  description String?
-  shareUrl    String?           @unique
-  isPublic    Boolean           @default(true)
-  category    WishlistCategory  @default(GENERAL)
-  createdAt   DateTime          @default(now())
-  updatedAt   DateTime          @updatedAt
+  id             String            @id @default(cuid())
+  title          String
+  description    String?
+  shareUrl       String?           @unique
+  isPublic       Boolean           @default(true)
+  category       WishlistCategory  @default(GENERAL)
+  customization  Json?
+  createdAt      DateTime          @default(now())
+  updatedAt      DateTime          @updatedAt
 
   userId String?
   user   User?   @relation(fields: [userId], references: [id], onDelete: SetNull)
