@@ -9,8 +9,10 @@ import { ColorPicker } from '@/components/customize/color-picker'
 import { ProfileCustomizer } from '@/components/customize/profile-customizer'
 import { SocialLinksManager } from '@/components/customize/social-links-manager'
 import { WishlistSelector } from '@/components/customize/wishlist-selector'
+import { ToastContainer } from '@/components/ui/toast'
 import { useI18n } from '@/lib/i18n/context'
 import useDebounce from '@/hooks/use-debounce'
+import { useToast } from '@/hooks/use-toast'
 import { EyeIcon } from '@heroicons/react/24/outline'
 import CustomizeHeader from './components/customize-header'
 import CustomizeTabs from './components/customize-tabs'
@@ -42,6 +44,7 @@ const getDefaultCustomization = (wishlistTitle: string = '위시리스트') => (
 
 export default function CustomizePage() {
   const { t } = useI18n()
+  const toast = useToast()
   const [selectedWishlist, setSelectedWishlist] = useState<any>(null)
   const [wishlistCustomizations, setWishlistCustomizations] = useState<Record<string, any>>({})
   const [activeTab, setActiveTab] = useState<'theme' | 'layout' | 'colors' | 'profile' | 'social'>('theme')
@@ -123,9 +126,11 @@ export default function CustomizePage() {
         }))
 
         setSaveStatus('saved')
+        toast.success(t('settings.customize.saveSuccess'), 2000)
       } catch (error) {
         console.error('Error auto-saving customization:', error)
         setSaveStatus('unsaved')
+        toast.error(t('settings.customize.saveFailed'), 3000)
       }
     }
 
@@ -155,10 +160,11 @@ export default function CustomizePage() {
         customization: data.customization
       })
 
-      alert(t('settings.customize.saveSuccess'))
+      setSaveStatus('saved')
+      toast.success(t('settings.customize.saveSuccess'), 2000)
     } catch (error) {
       console.error('Error saving customization:', error)
-      alert(t('settings.customize.saveFailed'))
+      toast.error(t('settings.customize.saveFailed'), 3000)
     } finally {
       setLoading(false)
     }
@@ -186,6 +192,9 @@ export default function CustomizePage() {
 
   return (
     <div className="max-w-7xl mx-auto">
+      {/* Toast Notifications */}
+      <ToastContainer toasts={toast.toasts} onClose={toast.removeToast} />
+
       {/* Header */}
       <CustomizeHeader
         showPreview={showPreview}
