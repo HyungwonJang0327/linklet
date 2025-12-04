@@ -13,6 +13,8 @@ export interface Wishlist {
   description: string | null
   shareUrl: string | null
   isPublic: boolean
+  category?: string
+  customization?: any
   createdAt: Date
   updatedAt: Date
   userId: string | null

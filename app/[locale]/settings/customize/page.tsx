@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { Button } from '@/components/ui/button'
 import { CustomizationPreview } from '@/components/customize/customization-preview'
 import { ThemeSelector } from '@/components/customize/theme-selector'
@@ -10,6 +10,7 @@ import { ProfileCustomizer } from '@/components/customize/profile-customizer'
 import { SocialLinksManager } from '@/components/customize/social-links-manager'
 import { WishlistSelector } from '@/components/customize/wishlist-selector'
 import { useI18n } from '@/lib/i18n/context'
+import useDebounce from '@/hooks/use-debounce'
 import { EyeIcon } from '@heroicons/react/24/outline'
 import CustomizeHeader from './components/customize-header'
 import CustomizeTabs from './components/customize-tabs'
@@ -46,11 +47,16 @@ export default function CustomizePage() {
   const [activeTab, setActiveTab] = useState<'theme' | 'layout' | 'colors' | 'profile' | 'social'>('theme')
   const [loading, setLoading] = useState(false)
   const [showPreview, setShowPreview] = useState(true)
-  
+  const [saveStatus, setSaveStatus] = useState<'saved' | 'saving' | 'unsaved'>('saved')
+  const isInitialMount = useRef(true)
+
   // 현재 선택된 위시리스트의 커스터마이징 설정
-  const currentCustomization = selectedWishlist 
+  const currentCustomization = selectedWishlist
     ? (wishlistCustomizations[selectedWishlist.id] || getDefaultCustomization(selectedWishlist.title))
     : getDefaultCustomization()
+
+  // 3초 디바운스된 커스터마이징 설정
+  const debouncedCustomization = useDebounce(currentCustomization, 3000)
 
 
   // 위시리스트 선택 핸들러
@@ -70,7 +76,8 @@ export default function CustomizePage() {
   // 현재 선택된 위시리스트의 커스터마이징 업데이트
   const updateWishlistCustomization = (updates: any) => {
     if (!selectedWishlist) return
-    
+
+    setSaveStatus('unsaved')
     setWishlistCustomizations(prev => ({
       ...prev,
       [selectedWishlist.id]: {
@@ -79,6 +86,51 @@ export default function CustomizePage() {
       }
     }))
   }
+
+  // 자동 저장 로직
+  useEffect(() => {
+    // 초기 마운트 시에는 저장하지 않음
+    if (isInitialMount.current) {
+      isInitialMount.current = false
+      return
+    }
+
+    // 위시리스트가 선택되지 않았으면 저장하지 않음
+    if (!selectedWishlist) return
+
+    // 저장 상태가 unsaved가 아니면 저장하지 않음 (이미 저장 중이거나 저장됨)
+    if (saveStatus !== 'unsaved') return
+
+    const autoSave = async () => {
+      setSaveStatus('saving')
+      try {
+        const response = await fetch(`/api/wishlists/${selectedWishlist.id}/customization`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(debouncedCustomization)
+        })
+
+        if (!response.ok) {
+          throw new Error('Failed to save customization')
+        }
+
+        const data = await response.json()
+
+        // 성공 시 selectedWishlist 업데이트
+        setSelectedWishlist((prev: any) => ({
+          ...prev,
+          customization: data.customization
+        }))
+
+        setSaveStatus('saved')
+      } catch (error) {
+        console.error('Error auto-saving customization:', error)
+        setSaveStatus('unsaved')
+      }
+    }
+
+    autoSave()
+  }, [debouncedCustomization, selectedWishlist?.id])
 
   const handleSave = async () => {
     if (!selectedWishlist) return
@@ -135,12 +187,13 @@ export default function CustomizePage() {
   return (
     <div className="max-w-7xl mx-auto">
       {/* Header */}
-      <CustomizeHeader 
+      <CustomizeHeader
         showPreview={showPreview}
         onTogglePreview={() => setShowPreview(!showPreview)}
         onSave={handleSave}
         loading={loading}
         selectedWishlist={selectedWishlist}
+        saveStatus={saveStatus}
       />
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">

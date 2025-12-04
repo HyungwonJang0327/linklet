@@ -92,7 +92,7 @@ export function WishlistItemCard({
           {item.isCompleted && !isSelectionMode && (
             <div className="absolute inset-0 bg-slate-900/40 flex items-center justify-center">
               <span className="bg-green-600 text-white px-3 py-1 rounded-full text-sm font-medium">
-                {item.received || '받음'}
+                받음
               </span>
             </div>
           )}
@@ -121,7 +121,7 @@ export function WishlistItemCard({
                   onChange={onToggleComplete}
                   onClick={(e) => e.stopPropagation()}
                   className="w-5 h-5 rounded border-slate-600 bg-slate-700 text-green-600 focus:ring-2 focus:ring-green-500 cursor-pointer flex-shrink-0"
-                  title={item.isCompleted ? item.toggleNotReceivedTitle || '받음 취소' : item.toggleReceivedTitle || '받음 처리'}
+                  title={item.isCompleted ? '받음 취소' : '받음 처리'}
                 />
               )}
               <h3 className={`font-semibold text-lg leading-tight line-clamp-2 text-white ${
@@ -182,7 +182,7 @@ export function WishlistItemCard({
             className="flex items-center gap-2 border-blue-500 text-blue-400 hover:bg-blue-500 hover:text-white"
           >
             <ExternalLinkIcon className="w-4 h-4" />
-            {item.viewProduct || '상품 보기'}
+            상품 보기
           </Button>
 
           <span className="text-xs text-slate-400">

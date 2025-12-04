@@ -50,7 +50,7 @@ describe('utils', () => {
   describe('formatRelativeTime', () => {
     it('should format recent times', () => {
       const now = new Date()
-      expect(formatRelativeTime(now)).toBe('방금 전')
+      expect(formatRelativeTime(now)).toBe('1분 미만 전')
     })
 
     it('should format minutes ago', () => {
@@ -60,7 +60,7 @@ describe('utils', () => {
 
     it('should format hours ago', () => {
       const date = new Date(Date.now() - 3 * 60 * 60 * 1000) // 3 hours ago
-      expect(formatRelativeTime(date)).toBe('3시간 전')
+      expect(formatRelativeTime(date)).toBe('약 3시간 전')
     })
 
     it('should format days ago', () => {

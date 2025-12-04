@@ -30,6 +30,7 @@ export interface UpdateWishlistData {
   description?: string
   isPublic?: boolean
   category?: WishlistCategory
+  customization?: any
 }
 
 export interface UpdateWishlistItemData {
