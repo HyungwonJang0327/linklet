@@ -154,11 +154,54 @@
       "saveSuccess": "Customization saved successfully!",
       "saveFailed": "Failed to save customization.",
       "tabs": {
+        "presets": "Presets",
         "theme": "Theme",
         "layout": "Layout",
         "colors": "Colors",
         "profile": "Profile",
         "social": "Social Links"
+      },
+      "presets": {
+        "title": "Theme Presets",
+        "description": "Choose a pre-made theme to apply all at once.",
+        "hint": "Selecting a preset will automatically apply theme, layout, and colors. You can fine-tune them in individual tabs afterwards.",
+        "applied": "Preset applied successfully!",
+        "modern-blue": {
+          "name": "Modern Blue",
+          "description": "Clean blue theme"
+        },
+        "sunset-gradient": {
+          "name": "Sunset Gradient",
+          "description": "Warm sunset colors"
+        },
+        "minimal-white": {
+          "name": "Minimal White",
+          "description": "Simple white theme"
+        },
+        "neon-purple": {
+          "name": "Neon Purple",
+          "description": "Vibrant purple theme"
+        },
+        "nature-green": {
+          "name": "Nature Green",
+          "description": "Natural green theme"
+        },
+        "warm-sunset": {
+          "name": "Warm Sunset",
+          "description": "Cozy sunset ambiance"
+        },
+        "elegant-dark": {
+          "name": "Elegant Dark",
+          "description": "Elegant dark theme"
+        },
+        "ocean-blue": {
+          "name": "Ocean Blue",
+          "description": "Fresh ocean colors"
+        },
+        "rose-pink": {
+          "name": "Rose Pink",
+          "description": "Soft pink colors"
+        }
       },
       "theme": {
         "title": "Select Theme",

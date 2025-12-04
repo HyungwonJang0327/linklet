@@ -1,24 +1,26 @@
 'use client'
 
 import { Card } from '@/components/ui/card'
-import { 
-  PaintBrushIcon, 
-  RectangleStackIcon, 
-  UserCircleIcon, 
+import {
+  PaintBrushIcon,
+  RectangleStackIcon,
+  UserCircleIcon,
   LinkIcon,
-  SwatchIcon
+  SwatchIcon,
+  SparklesIcon
 } from '@heroicons/react/24/outline'
 import { useI18n } from '@/lib/i18n/context'
 
 interface CustomizeTabsProps {
-  activeTab: 'theme' | 'layout' | 'colors' | 'profile' | 'social'
-  onTabChange: (tab: 'theme' | 'layout' | 'colors' | 'profile' | 'social') => void
+  activeTab: 'presets' | 'theme' | 'layout' | 'colors' | 'profile' | 'social'
+  onTabChange: (tab: 'presets' | 'theme' | 'layout' | 'colors' | 'profile' | 'social') => void
 }
 
 export default function CustomizeTabs({ activeTab, onTabChange }: CustomizeTabsProps) {
   const { t } = useI18n()
 
   const tabs = [
+    { id: 'presets', name: t('settings.customize.tabs.presets'), icon: SparklesIcon },
     { id: 'theme', name: t('settings.customize.tabs.theme'), icon: PaintBrushIcon },
     { id: 'layout', name: t('settings.customize.tabs.layout'), icon: RectangleStackIcon },
     { id: 'colors', name: t('settings.customize.tabs.colors'), icon: SwatchIcon },

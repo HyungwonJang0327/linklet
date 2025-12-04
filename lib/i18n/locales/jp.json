@@ -154,11 +154,54 @@
       "saveSuccess": "カスタマイズが正常に保存されました！",
       "saveFailed": "カスタマイズの保存に失敗しました。",
       "tabs": {
+        "presets": "プリセット",
         "theme": "テーマ",
         "layout": "レイアウト",
         "colors": "色",
         "profile": "プロフィール",
         "social": "ソーシャルリンク"
+      },
+      "presets": {
+        "title": "テーマプリセット",
+        "description": "事前に作成されたテーマを選択して一度に適用します。",
+        "hint": "プリセットを選択すると、テーマ、レイアウト、色が自動的に適用されます。その後、個別のタブで微調整できます。",
+        "applied": "プリセットが適用されました！",
+        "modern-blue": {
+          "name": "モダンブルー",
+          "description": "クリーンなブルーテーマ"
+        },
+        "sunset-gradient": {
+          "name": "サンセットグラデーション",
+          "description": "温かい夕焼け色"
+        },
+        "minimal-white": {
+          "name": "ミニマルホワイト",
+          "description": "シンプルなホワイトテーマ"
+        },
+        "neon-purple": {
+          "name": "ネオンパープル",
+          "description": "鮮やかな紫色"
+        },
+        "nature-green": {
+          "name": "ネイチャーグリーン",
+          "description": "自然な緑色"
+        },
+        "warm-sunset": {
+          "name": "ウォームサンセット",
+          "description": "居心地の良い夕焼け"
+        },
+        "elegant-dark": {
+          "name": "エレガントダーク",
+          "description": "上品な暗いテーマ"
+        },
+        "ocean-blue": {
+          "name": "オーシャンブルー",
+          "description": "爽やかな海の色"
+        },
+        "rose-pink": {
+          "name": "ローズピンク",
+          "description": "柔らかいピンク色"
+        }
       },
       "theme": {
         "title": "テーマを選択",

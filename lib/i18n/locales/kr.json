@@ -154,11 +154,54 @@
       "saveSuccess": "커스터마이징이 성공적으로 저장되었습니다!",
       "saveFailed": "커스터마이징 저장에 실패했습니다.",
       "tabs": {
+        "presets": "프리셋",
         "theme": "테마",
         "layout": "레이아웃",
         "colors": "색상",
         "profile": "프로필",
         "social": "소셜링크"
+      },
+      "presets": {
+        "title": "테마 프리셋",
+        "description": "미리 만들어진 테마를 선택하여 한 번에 적용하세요.",
+        "hint": "프리셋을 선택하면 테마, 레이아웃, 색상이 자동으로 적용됩니다. 이후 개별 탭에서 세부 조정이 가능합니다.",
+        "applied": "프리셋이 적용되었습니다!",
+        "modern-blue": {
+          "name": "모던 블루",
+          "description": "깔끔한 파란색 테마"
+        },
+        "sunset-gradient": {
+          "name": "썬셋 그라디언트",
+          "description": "따뜻한 석양 색상"
+        },
+        "minimal-white": {
+          "name": "미니멀 화이트",
+          "description": "심플한 화이트 테마"
+        },
+        "neon-purple": {
+          "name": "네온 퍼플",
+          "description": "생동감 있는 보라색"
+        },
+        "nature-green": {
+          "name": "네이처 그린",
+          "description": "자연스러운 녹색"
+        },
+        "warm-sunset": {
+          "name": "웜 썬셋",
+          "description": "포근한 석양 분위기"
+        },
+        "elegant-dark": {
+          "name": "엘레강트 다크",
+          "description": "우아한 어두운 테마"
+        },
+        "ocean-blue": {
+          "name": "오션 블루",
+          "description": "시원한 바다 색상"
+        },
+        "rose-pink": {
+          "name": "로즈 핑크",
+          "description": "부드러운 핑크 색상"
+        }
       },
       "theme": {
         "title": "테마 선택",

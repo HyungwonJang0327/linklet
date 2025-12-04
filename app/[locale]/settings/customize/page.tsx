@@ -10,6 +10,7 @@ import { ProfileCustomizer } from '@/components/customize/profile-customizer'
 import { SocialLinksManager } from '@/components/customize/social-links-manager'
 import { WishlistSelector } from '@/components/customize/wishlist-selector'
 import { ToastContainer } from '@/components/ui/toast'
+import { PresetSelector } from '@/components/customize/preset-selector'
 import { useI18n } from '@/lib/i18n/context'
 import useDebounce from '@/hooks/use-debounce'
 import { useToast } from '@/hooks/use-toast'
@@ -17,6 +18,7 @@ import { EyeIcon } from '@heroicons/react/24/outline'
 import CustomizeHeader from './components/customize-header'
 import CustomizeTabs from './components/customize-tabs'
 import EmptyState from './components/empty-state'
+import { CustomizationPreset } from '@/lib/constants/customization-presets'
 
 // 기본 커스터마이징 템플릿
 const getDefaultCustomization = (wishlistTitle: string = '위시리스트') => ({
@@ -47,10 +49,11 @@ export default function CustomizePage() {
   const toast = useToast()
   const [selectedWishlist, setSelectedWishlist] = useState<any>(null)
   const [wishlistCustomizations, setWishlistCustomizations] = useState<Record<string, any>>({})
-  const [activeTab, setActiveTab] = useState<'theme' | 'layout' | 'colors' | 'profile' | 'social'>('theme')
+  const [activeTab, setActiveTab] = useState<'presets' | 'theme' | 'layout' | 'colors' | 'profile' | 'social'>('presets')
   const [loading, setLoading] = useState(false)
   const [showPreview, setShowPreview] = useState(true)
   const [saveStatus, setSaveStatus] = useState<'saved' | 'saving' | 'unsaved'>('saved')
+  const [currentPresetId, setCurrentPresetId] = useState<string | null>(null)
   const isInitialMount = useRef(true)
 
   // 현재 선택된 위시리스트의 커스터마이징 설정
@@ -190,6 +193,18 @@ export default function CustomizePage() {
     updateWishlistCustomization({ socialLinks })
   }
 
+  const handlePresetSelect = (preset: CustomizationPreset) => {
+    if (!selectedWishlist) return
+
+    setCurrentPresetId(preset.id)
+    updateWishlistCustomization({
+      theme: preset.theme,
+      layout: preset.layout,
+      colors: preset.colors
+    })
+    // toast.success(t('settings.customize.presets.applied'), 2000)
+  }
+
   return (
     <div className="max-w-7xl mx-auto">
       {/* Toast Notifications */}
@@ -223,6 +238,13 @@ export default function CustomizePage() {
           {/* Tab Content - Only show when wishlist is selected */}
           {selectedWishlist && (
             <div className="space-y-6">
+              {activeTab === 'presets' && (
+                <PresetSelector
+                  onPresetSelect={handlePresetSelect}
+                  currentPresetId={currentPresetId}
+                />
+              )}
+
               {activeTab === 'theme' && (
                 <ThemeSelector
                   selectedTheme={currentCustomization.theme}
