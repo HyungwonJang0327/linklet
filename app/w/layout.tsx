@@ -10,7 +10,7 @@ export default function WishlistLayout({
 }) {
   return (
     <html style={{ margin: 0, padding: 0, height: '100%' }}>
-      <body style={{ margin: 0, padding: 0, height: '100%' }}>
+      <body style={{ margin: 0, padding: 0, height: '100%', overscrollBehavior: 'none' }}>
         <ThemeProvider>
           <QueryProvider>
             <AuthProvider>
