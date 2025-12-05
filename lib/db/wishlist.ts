@@ -167,8 +167,17 @@ export async function getUserWishlists(userId: string) {
     include: {
       items: {
         select: {
-          id: true
-        }
+          id: true,
+          title: true,
+          description: true,
+          imageUrl: true,
+          price: true,
+          productUrl: true
+        },
+        orderBy: {
+          priority: 'desc'
+        },
+        take: 10
       },
       _count: {
         select: {

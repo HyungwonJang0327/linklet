@@ -33,6 +33,14 @@ interface CustomizationPreviewProps {
       itemCount: number
       shareUrl: string
       createdAt: string
+      items?: Array<{
+        id: string
+        title: string
+        description: string | null
+        imageUrl: string | null
+        price: string | null
+        productUrl: string
+      }>
     }
   }
 }
@@ -70,7 +78,18 @@ const sampleWishlistItems = [
 
 export function CustomizationPreview({ customization }: CustomizationPreviewProps) {
   const { wishlistData } = customization
-  
+
+  // 실제 위시리스트 아이템이 있으면 사용, 없으면 샘플 데이터 사용
+  const displayItems = wishlistData?.items && wishlistData.items.length > 0
+    ? wishlistData.items.map(item => ({
+        id: item.id,
+        title: item.title,
+        description: item.description || '',
+        imageUrl: item.imageUrl || 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=300&h=300&fit=crop',
+        price: item.price || '가격 정보 없음'
+      }))
+    : sampleWishlistItems
+
   const getThemeStyles = () => {
     const { theme, colors } = customization
     
@@ -211,7 +230,7 @@ export function CustomizationPreview({ customization }: CustomizationPreviewProp
 
                 {/* Wishlist Items */}
                 <div className={getLayoutClass()}>
-                  {sampleWishlistItems.map((item, index) => {
+                  {displayItems.map((item, index) => {
                     if (customization.layout === 'carousel' && index > 1) return null
                     if (customization.layout === 'masonry' && index > 3) return null
                     if (customization.layout === 'list' && index > 2) return null
