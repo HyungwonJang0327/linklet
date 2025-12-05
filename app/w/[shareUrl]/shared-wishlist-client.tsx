@@ -50,13 +50,26 @@ export default function SharedWishlistClient({ shareUrl, dictionary, locale = 'k
   }, [wishlist])
 
   // Track click on item
-  const trackClick = (itemId: string) => {
+  const trackClick = (itemId: string, itemTitle: string, productUrl: string) => {
     if (!wishlist) return
+
+    // Track in Linklet database
     fetch(`/api/wishlists/${wishlist.id}/analytics`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ type: 'click' })
+      body: JSON.stringify({ type: 'click', itemId })
     }).catch(err => console.error('Failed to track click:', err))
+
+    // Track in Google Analytics
+    if (typeof window !== 'undefined' && (window as any).gtag) {
+      (window as any).gtag('event', 'wishlist_item_click', {
+        wishlist_id: wishlist.id,
+        wishlist_title: wishlist.title,
+        item_id: itemId,
+        item_title: itemTitle,
+        product_url: productUrl
+      })
+    }
   }
 
   if (isLoading) {
@@ -273,7 +286,7 @@ export default function SharedWishlistClient({ shareUrl, dictionary, locale = 'k
                 href={item.productUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                onClick={() => trackClick(item.id)}
+                onClick={() => trackClick(item.id, item.title, item.productUrl)}
                 className={`group rounded-lg overflow-hidden transition-all hover:scale-[1.02] ${
                   customization.layout === 'list' ? 'flex gap-3' : 'flex flex-col'
                 } ${

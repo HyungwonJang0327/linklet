@@ -58,8 +58,8 @@ export default function AnalyticsPage() {
   }
 
   // Calculate total stats
-  const totalViews = wishlists?.reduce((sum, wishlist) => sum + (wishlist.viewCount || 0), 0) || 0
-  const totalClicks = wishlists?.reduce((sum, wishlist) => sum + (wishlist.clickCount || 0), 0) || 0
+  const totalViews = wishlists?.reduce((sum, wishlist) => sum + ((wishlist as any).viewCount || 0), 0) || 0
+  const totalClicks = wishlists?.reduce((sum, wishlist) => sum + ((wishlist as any).clickCount || 0), 0) || 0
 
   return (
     <div className="max-w-4xl mx-auto space-y-8">
@@ -124,12 +124,12 @@ export default function AnalyticsPage() {
                   <div className="flex items-center gap-6 ml-4">
                     <div className="flex items-center gap-2">
                       <EyeIcon className="w-5 h-5 text-blue-400" />
-                      <span className="text-white font-medium">{(wishlist.viewCount || 0).toLocaleString()}</span>
+                      <span className="text-white font-medium">{((wishlist as any).viewCount || 0).toLocaleString()}</span>
                     </div>
 
                     <div className="flex items-center gap-2">
                       <CursorArrowRaysIcon className="w-5 h-5 text-purple-400" />
-                      <span className="text-white font-medium">{(wishlist.clickCount || 0).toLocaleString()}</span>
+                      <span className="text-white font-medium">{((wishlist as any).clickCount || 0).toLocaleString()}</span>
                     </div>
                   </div>
                 </div>

@@ -9,7 +9,7 @@ export async function POST(
 ) {
   try {
     const { id } = await params
-    const { type } = await request.json() // 'view' 또는 'click'
+    const { type, itemId } = await request.json() // 'view' 또는 'click', optional itemId
 
     if (!['view', 'click'].includes(type)) {
       return NextResponse.json(
@@ -33,7 +33,7 @@ export async function POST(
     const clientIp = getClientIp(request)
 
     // Rate limiting
-    const rateLimitKey = `${type}:${clientIp}:${id}`
+    const rateLimitKey = `${type}:${clientIp}:${id}${itemId ? ':' + itemId : ''}`
     const rateLimit = type === 'view' ? RATE_LIMITS.VIEW : RATE_LIMITS.CLICK
 
     if (!checkRateLimit(rateLimitKey, rateLimit)) {
@@ -46,25 +46,55 @@ export async function POST(
     }
 
     // Update count in database
-    const updateData = type === 'view'
-      ? { viewCount: { increment: 1 } }
-      : { clickCount: { increment: 1 } }
+    if (type === 'view') {
+      // View count: only update wishlist
+      const wishlist = await prisma.wishlist.update({
+        where: { id },
+        data: { viewCount: { increment: 1 } },
+        select: {
+          id: true,
+          viewCount: true,
+          clickCount: true
+        }
+      })
 
-    const wishlist = await prisma.wishlist.update({
-      where: { id },
-      data: updateData,
-      select: {
-        id: true,
-        viewCount: true,
-        clickCount: true
+      return NextResponse.json({
+        success: true,
+        counted: true,
+        data: wishlist
+      })
+    } else {
+      // Click count: update both wishlist and item (if itemId provided)
+      const updates: any[] = [
+        prisma.wishlist.update({
+          where: { id },
+          data: { clickCount: { increment: 1 } },
+          select: {
+            id: true,
+            viewCount: true,
+            clickCount: true
+          }
+        })
+      ]
+
+      // If itemId is provided, also update the item's click count
+      if (itemId) {
+        updates.push(
+          prisma.wishlistItem.update({
+            where: { id: itemId },
+            data: { clickCount: { increment: 1 } }
+          })
+        )
       }
-    })
 
-    return NextResponse.json({
-      success: true,
-      counted: true,
-      data: wishlist
-    })
+      const [wishlist] = await prisma.$transaction(updates)
+
+      return NextResponse.json({
+        success: true,
+        counted: true,
+        data: wishlist
+      })
+    }
   } catch (error) {
     console.error('Error updating analytics:', error)
     return NextResponse.json(

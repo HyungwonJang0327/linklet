@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server'
-import { getUserWishlists, createWishlist } from '@/lib/db/wishlist'
+import { createWishlist } from '@/lib/db/wishlist'
 import { prisma } from '@/lib/db'
 
 export async function GET(request: Request) {
