@@ -1,3 +1,4 @@
+import "../[locale]/globals.css";
 import { QueryProvider } from "@/components/providers/query-provider";
 import { AuthProvider } from "@/components/providers/auth-provider";
 import { ThemeProvider } from "@/lib/theme/theme-provider";
@@ -8,8 +9,8 @@ export default function WishlistLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html>
-      <body>
+    <html style={{ margin: 0, padding: 0, height: '100%' }}>
+      <body style={{ margin: 0, padding: 0, height: '100%' }}>
         <ThemeProvider>
           <QueryProvider>
             <AuthProvider>

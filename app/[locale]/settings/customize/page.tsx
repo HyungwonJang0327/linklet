@@ -18,7 +18,21 @@ import { EyeIcon } from '@heroicons/react/24/outline'
 import CustomizeHeader from './components/customize-header'
 import CustomizeTabs from './components/customize-tabs'
 import EmptyState from './components/empty-state'
-import { CustomizationPreset } from '@/lib/constants/customization-presets'
+import { CustomizationPreset, CUSTOMIZATION_PRESETS } from '@/lib/constants/customization-presets'
+
+// 프리셋 감지 함수
+const detectPreset = (customization: any): string | null => {
+  if (!customization) return null
+
+  return CUSTOMIZATION_PRESETS.find(preset =>
+    preset.theme === customization.theme &&
+    preset.layout === customization.layout &&
+    preset.colors.primary === customization.colors?.primary &&
+    preset.colors.background === customization.colors?.background &&
+    preset.colors.text === customization.colors?.text &&
+    preset.colors.accent === customization.colors?.accent
+  )?.id || null
+}
 
 // 기본 커스터마이징 템플릿
 const getDefaultCustomization = (wishlistTitle: string = '위시리스트') => ({
@@ -76,6 +90,14 @@ export default function CustomizePage() {
         ...prev,
         [wishlist.id]: savedCustomization
       }))
+
+      // 프리셋 감지 및 설정
+      const detectedPresetId = detectPreset(savedCustomization)
+      setCurrentPresetId(detectedPresetId)
+    } else {
+      // 이미 로드된 customization에서 프리셋 감지
+      const detectedPresetId = detectPreset(wishlistCustomizations[wishlist.id])
+      setCurrentPresetId(detectedPresetId)
     }
   }
 

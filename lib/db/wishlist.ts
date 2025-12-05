@@ -63,12 +63,43 @@ export async function createWishlist(data: CreateWishlistData) {
   // Generate unique share URL
   const shareUrl = `w/${createId()}`
 
+  // Get user info if userId is provided to set default customization
+  let defaultCustomization = null
+  if (data.userId) {
+    const user = await db.user.findUnique({
+      where: { id: data.userId },
+      select: { image: true, name: true }
+    })
+
+    if (user) {
+      defaultCustomization = {
+        theme: 'modern',
+        layout: 'grid',
+        colors: {
+          primary: '#3b82f6',
+          background: '#0f172a',
+          text: '#ffffff',
+          accent: '#6366f1'
+        },
+        profile: {
+          displayName: user.name || data.title,
+          bio: '',
+          avatar: user.image || '',
+          showItemCount: true,
+          showCreatedDate: false
+        },
+        socialLinks: []
+      }
+    }
+  }
+
   try {
     const wishlist = await db.wishlist.create({
       data: {
         ...sanitizedData,
         shareUrl,
-        category: data.category || WishlistCategory.GENERAL
+        category: data.category || WishlistCategory.GENERAL,
+        ...(defaultCustomization && { customization: defaultCustomization })
       },
       include: {
         items: true,
