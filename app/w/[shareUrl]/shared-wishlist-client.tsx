@@ -1,5 +1,6 @@
 'use client'
 
+import { useEffect, useRef } from 'react'
 import { useSharedWishlist } from '@/hooks/use-wishlists'
 import { LoadingSpinner } from '@/components/ui/loading'
 import { notFound } from 'next/navigation'
@@ -34,6 +35,29 @@ const DEFAULT_CUSTOMIZATION = {
 
 export default function SharedWishlistClient({ shareUrl, dictionary, locale = 'kr' }: SharedWishlistClientProps) {
   const { data: wishlist, isLoading, error } = useSharedWishlist(shareUrl)
+  const viewTracked = useRef(false)
+
+  // Track view count when wishlist loads
+  useEffect(() => {
+    if (wishlist && !viewTracked.current) {
+      viewTracked.current = true
+      fetch(`/api/wishlists/${wishlist.id}/analytics`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ type: 'view' })
+      }).catch(err => console.error('Failed to track view:', err))
+    }
+  }, [wishlist])
+
+  // Track click on item
+  const trackClick = (itemId: string) => {
+    if (!wishlist) return
+    fetch(`/api/wishlists/${wishlist.id}/analytics`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ type: 'click' })
+    }).catch(err => console.error('Failed to track click:', err))
+  }
 
   if (isLoading) {
     return (
@@ -249,6 +273,7 @@ export default function SharedWishlistClient({ shareUrl, dictionary, locale = 'k
                 href={item.productUrl}
                 target="_blank"
                 rel="noopener noreferrer"
+                onClick={() => trackClick(item.id)}
                 className={`group rounded-lg overflow-hidden transition-all hover:scale-[1.02] ${
                   customization.layout === 'list' ? 'flex gap-3' : 'flex flex-col'
                 } ${

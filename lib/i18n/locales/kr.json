@@ -113,6 +113,20 @@
       "promotions": "프로모션 및 할인 정보",
       "comments": "댓글 알림"
     },
+    "analytics": {
+      "title": "분석",
+      "description": "위시리스트 조회수 및 클릭 통계를 확인하세요",
+      "authRequired": "로그인이 필요합니다",
+      "authRequiredDesc": "분석 데이터를 보려면 로그인해주세요",
+      "failedToLoad": "데이터를 불러오는데 실패했습니다",
+      "retry": "다시 시도",
+      "totalViews": "총 조회수",
+      "totalClicks": "총 클릭수",
+      "wishlistStats": "위시리스트별 통계",
+      "noWishlists": "아직 위시리스트가 없습니다",
+      "infoTitle": "분석 정보",
+      "infoDescription": "조회수는 위시리스트 페이지가 열릴 때마다 증가하며, 클릭수는 사용자가 아이템을 클릭할 때 증가합니다."
+    },
     "appearance": {
       "title": "테마 설정",
       "description": "앱의 모양과 느낌을 사용자 취향에 맞게 설정하세요",
@@ -323,10 +337,6 @@
         "pageTop": "페이지 상단",
         "pageBottom": "페이지 하단"
       }
-    },
-    "analytics": {
-      "title": "분석",
-      "description": "위시리스트 데이터와 인사이트를 분석합니다"
     },
     "pricing": {
       "title": "요금제",

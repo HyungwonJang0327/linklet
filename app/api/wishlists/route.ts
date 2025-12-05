@@ -6,13 +6,39 @@ export async function GET(request: Request) {
   try {
     const { searchParams } = new URL(request.url)
     const userId = searchParams.get('userId')
-    
+
     if (userId) {
-      // Get user's wishlists using the enhanced function
-      const wishlists = await getUserWishlists(userId)
+      // Get user's wishlists with viewCount and clickCount
+      const wishlists = await prisma.wishlist.findMany({
+        where: { userId },
+        include: {
+          items: {
+            select: {
+              id: true,
+              title: true,
+              description: true,
+              imageUrl: true,
+              price: true,
+              productUrl: true
+            },
+            orderBy: {
+              priority: 'desc'
+            },
+            take: 10
+          },
+          _count: {
+            select: {
+              items: true
+            }
+          }
+        },
+        orderBy: {
+          updatedAt: 'desc'
+        }
+      })
       return NextResponse.json(wishlists)
     }
-    
+
     // Get public wishlists for browsing
     const wishlists = await prisma.wishlist.findMany({
       where: { isPublic: true },
@@ -30,12 +56,12 @@ export async function GET(request: Request) {
       orderBy: { createdAt: 'desc' },
       take: 20 // Limit for performance
     })
-    
+
     return NextResponse.json(wishlists)
   } catch (error) {
     console.error('Error fetching wishlists:', error)
     return NextResponse.json(
-      { error: 'Failed to fetch wishlists' }, 
+      { error: 'Failed to fetch wishlists' },
       { status: 500 }
     )
   }

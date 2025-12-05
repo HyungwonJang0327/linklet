@@ -113,6 +113,20 @@
       "promotions": "Promotions and Discounts",
       "comments": "Comment Notifications"
     },
+    "analytics": {
+      "title": "Analytics",
+      "description": "View your wishlist views and click statistics",
+      "authRequired": "Login Required",
+      "authRequiredDesc": "Please login to view analytics data",
+      "failedToLoad": "Failed to load data",
+      "retry": "Retry",
+      "totalViews": "Total Views",
+      "totalClicks": "Total Clicks",
+      "wishlistStats": "Wishlist Statistics",
+      "noWishlists": "No wishlists yet",
+      "infoTitle": "Analytics Information",
+      "infoDescription": "View count increases each time the wishlist page is opened, and click count increases when users click on items."
+    },
     "appearance": {
       "title": "Appearance Settings",
       "description": "Customize the look and feel of the app",
@@ -323,10 +337,6 @@
         "pageTop": "Page Top",
         "pageBottom": "Page Bottom"
       }
-    },
-    "analytics": {
-      "title": "Analytics",
-      "description": "Analyze your wishlist data and insights"
     },
     "pricing": {
       "title": "Pricing",

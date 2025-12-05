@@ -113,6 +113,20 @@
       "promotions": "プロモーションと割引情報",
       "comments": "コメント通知"
     },
+    "analytics": {
+      "title": "分析",
+      "description": "ウィッシュリストの閲覧数とクリック統計を確認してください",
+      "authRequired": "ログインが必要です",
+      "authRequiredDesc": "分析データを表示するにはログインしてください",
+      "failedToLoad": "データの読み込みに失敗しました",
+      "retry": "再試行",
+      "totalViews": "総閲覧数",
+      "totalClicks": "総クリック数",
+      "wishlistStats": "ウィッシュリスト別統計",
+      "noWishlists": "まだウィッシュリストがありません",
+      "infoTitle": "分析情報",
+      "infoDescription": "閲覧数はウィッシュリストページが開かれるたびに増加し、クリック数はユーザーがアイテムをクリックすると増加します。"
+    },
     "appearance": {
       "title": "テーマ設定",
       "description": "アプリの外観をお好みに合わせて設定してください",
@@ -323,10 +337,6 @@
         "pageTop": "ページ上部",
         "pageBottom": "ページ下部"
       }
-    },
-    "analytics": {
-      "title": "分析",
-      "description": "ウィッシュリストデータとインサイトを分析します"
     },
     "pricing": {
       "title": "料金",
