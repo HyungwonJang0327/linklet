@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { usePathname, useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { useI18n } from '@/lib/i18n/context'
@@ -15,7 +15,8 @@ import {
   ListBulletIcon,
   RectangleStackIcon,
   ChartBarIcon,
-  CreditCardIcon
+  CreditCardIcon,
+  TrashIcon
 } from '@heroicons/react/24/outline'
 import { LogOut } from 'lucide-react'
 import { Button } from '../ui'
@@ -51,6 +52,39 @@ export function SettingsSidebar({ collapsed = false, onToggleCollapse }: Setting
   const [expandedMenus, setExpandedMenus] = useState<Record<string, boolean>>({
     wishlists: true
   })
+  const [isAdmin, setIsAdmin] = useState(false)
+  const [isCleaningUp, setIsCleaningUp] = useState(false)
+
+  // Check admin status from localStorage
+  useEffect(() => {
+    const adminKey = localStorage.getItem('linklet-admin-button')
+    const isValidAdmin = adminKey === process.env.NEXT_PUBLIC_ADMIN_BUTTON_KEY
+    setIsAdmin(isValidAdmin)
+  }, [])
+
+  const handleCleanupSessions = async () => {
+    if (!confirm('만료된 세션을 모두 삭제하시겠습니까?')) return
+
+    setIsCleaningUp(true)
+    try {
+      const response = await fetch(
+        `/api/auth/cleanup-sessions?token=${process.env.NEXT_PUBLIC_REVALIDATE_SECRET_TOKEN || 'OxByV6xQHrnUsCqfBtkrVPc5bzlvX5ri'}`,
+        { method: 'POST' }
+      )
+      const data = await response.json()
+
+      if (response.ok) {
+        alert(`✅ ${data.message}`)
+      } else {
+        alert(`❌ ${data.error}`)
+      }
+    } catch (error) {
+      alert('❌ 세션 정리 중 오류가 발생했습니다.')
+      console.error('Cleanup error:', error)
+    } finally {
+      setIsCleaningUp(false)
+    }
+  }
 
   const navigationItems: MenuListType[] = [
     {
@@ -306,8 +340,26 @@ export function SettingsSidebar({ collapsed = false, onToggleCollapse }: Setting
         </nav>
       </div>
 
+      {/* Admin Cleanup Button */}
+      {isAdmin && (
+        <div className={`${collapsed ? 'p-3' : 'p-6'} pb-3 transition-all duration-300`}>
+          <Button
+            size="md"
+            fullWidth
+            variant="outline"
+            onClick={handleCleanupSessions}
+            disabled={isCleaningUp}
+          >
+            <TrashIcon className={`w-5 h-5 ${collapsed ? '' : 'mr-2'} flex-shrink-0`} />
+            {!collapsed && (
+              isCleaningUp ? '정리 중...' : '만료 세션 정리'
+            )}
+          </Button>
+        </div>
+      )}
+
       {/* Logout Button */}
-      <div className={`${collapsed ? 'p-3' : 'p-6'} pt-0 transition-all duration-300`}>
+      <div className={`${collapsed ? 'p-3' : 'p-6'} ${isAdmin ? 'pt-0' : ''} transition-all duration-300`}>
         <Button
           size="md"
           fullWidth
@@ -317,7 +369,7 @@ export function SettingsSidebar({ collapsed = false, onToggleCollapse }: Setting
             router.push(`/${locale}`)
           }}
         >
-          <LogOut className={`w-5 h-5 mr-2 ${collapsed ? '' : 'mt-0.5'} flex-shrink-0`} />
+          <LogOut className={`w-5 h-5 ${collapsed ? '' : 'mr-2 mt-0.5'} flex-shrink-0`} />
           {!collapsed && (
             t('navigation.logout')
           )}

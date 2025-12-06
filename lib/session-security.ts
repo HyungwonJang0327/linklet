@@ -143,3 +143,22 @@ export async function updateSessionMetadata(
   //   }
   // })
 }
+
+/**
+ * Delete all expired sessions from database
+ * Should be run periodically (e.g., daily cron job)
+ */
+export async function deleteExpiredSessions() {
+  const result = await prisma.session.deleteMany({
+    where: {
+      expires: {
+        lt: new Date()  // expires < now()
+      }
+    }
+  })
+
+  return {
+    deletedCount: result.count,
+    deletedAt: new Date()
+  }
+}
