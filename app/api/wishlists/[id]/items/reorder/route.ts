@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server'
 import { reorderWishlistItems } from '@/lib/db/wishlist'
 import { prisma } from '@/lib/db'
 import { revalidateSharedWishlist } from '@/lib/revalidation'
+import { requireAuth, verifyWishlistOwnership } from '@/lib/auth-helpers'
 
 export async function POST(
   request: Request,
@@ -9,6 +10,14 @@ export async function POST(
 ) {
   try {
     const { id } = await params
+
+    // Authentication and ownership check
+    const auth = await requireAuth()
+    if (auth.error) return auth.error
+
+    const ownership = await verifyWishlistOwnership(id, auth.session!.user.id)
+    if (ownership.error) return ownership.error
+
     const { itemIds } = await request.json()
 
     if (!Array.isArray(itemIds) || itemIds.length === 0) {

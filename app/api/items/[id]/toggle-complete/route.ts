@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 import { getWishlistItem, updateWishlistItem } from '@/lib/db/wishlist'
 import { revalidateSharedWishlist } from '@/lib/revalidation'
+import { requireAuth, verifyItemOwnership } from '@/lib/auth-helpers'
 
 export async function POST(
   request: Request,
@@ -8,6 +9,13 @@ export async function POST(
 ) {
   try {
     const { id } = await params
+
+    // Authentication and ownership check
+    const auth = await requireAuth()
+    if (auth.error) return auth.error
+
+    const ownership = await verifyItemOwnership(id, auth.session!.user.id)
+    if (ownership.error) return ownership.error
 
     // Get current item to toggle its completion status
     const currentItem = await getWishlistItem(id)

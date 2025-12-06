@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server'
 import { updateWishlist } from '@/lib/db/wishlist'
+import { requireAuth, verifyWishlistOwnership } from '@/lib/auth-helpers'
 
 export async function PUT(
   request: Request,
@@ -7,6 +8,14 @@ export async function PUT(
 ) {
   try {
     const { id } = await params
+
+    // Authentication and ownership check
+    const auth = await requireAuth()
+    if (auth.error) return auth.error
+
+    const ownership = await verifyWishlistOwnership(id, auth.session!.user.id)
+    if (ownership.error) return ownership.error
+
     const customization = await request.json()
 
     // Validate customization data

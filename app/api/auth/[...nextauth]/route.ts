@@ -31,6 +31,8 @@ const handler = NextAuth({
   },
   session: {
     strategy: 'database',
+    maxAge: 3 * 24 * 60 * 60, // 3 days - Session expires after 3 days of inactivity
+    updateAge: 24 * 60 * 60, // 1 day - Session is updated every 24 hours
   },
 })
 

@@ -133,5 +133,10 @@ export const RATE_LIMITS = {
   CLICK: {
     limit: 5,
     windowMs: 5 * 60 * 1000 // 5 minutes
+  },
+  // Shared wishlist viewing: 10 per minute per IP per shareUrl (prevents abuse while allowing normal usage)
+  SHARED_WISHLIST: {
+    limit: 10,
+    windowMs: 60 * 1000 // 1 minute
   }
 } as const

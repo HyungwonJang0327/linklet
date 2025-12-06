@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 import { createWishlist } from '@/lib/db/wishlist'
 import { prisma } from '@/lib/db'
+import { requireAuth } from '@/lib/auth-helpers'
 
 export async function GET(request: Request) {
   try {
@@ -8,6 +9,18 @@ export async function GET(request: Request) {
     const userId = searchParams.get('userId')
 
     if (userId) {
+      // Require authentication for user-specific wishlists
+      const auth = await requireAuth()
+      if (auth.error) return auth.error
+
+      // Users can only view their own wishlists
+      if (userId !== auth.session!.user.id) {
+        return NextResponse.json(
+          { error: 'You can only view your own wishlists' },
+          { status: 403 }
+        )
+      }
+
       // Get user's wishlists with viewCount and clickCount
       const wishlists = await prisma.wishlist.findMany({
         where: { userId },
@@ -68,30 +81,35 @@ export async function GET(request: Request) {
 }
 
 export async function POST(request: Request) {
+  // Require authentication
+  const auth = await requireAuth()
+  if (auth.error) return auth.error
+
   try {
-    const { title, description, isPublic, category, userId, productLinks } = await request.json()
-    
+    const { title, description, isPublic, category, productLinks } = await request.json()
+
     if (!title) {
       return NextResponse.json(
-        { error: 'Title is required' }, 
+        { error: 'Title is required' },
         { status: 400 }
       )
     }
 
+    // Use authenticated user's ID (ignore userId from request body for security)
     const wishlist = await createWishlist({
       title,
       description,
       isPublic: isPublic ?? false,
       category,
-      userId: userId || undefined,
+      userId: auth.session!.user.id,
       productLinks: productLinks || []
     })
-    
+
     return NextResponse.json(wishlist, { status: 201 })
   } catch (error) {
     console.error('Error creating wishlist:', error)
     return NextResponse.json(
-      { error: 'Failed to create wishlist' }, 
+      { error: 'Failed to create wishlist' },
       { status: 500 }
     )
   }

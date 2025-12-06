@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useSharedWishlist } from '@/hooks/use-wishlists'
 import { LoadingSpinner } from '@/components/ui/loading'
 import { notFound } from 'next/navigation'
@@ -9,9 +9,34 @@ import { UserCircleIcon } from '@heroicons/react/24/outline'
 
 interface SharedWishlistClientProps {
   shareUrl: string
-  dictionary: any
-  locale?: string
 }
+
+// Translations for UI elements
+const translations = {
+  kr: {
+    items: '개 항목',
+    noItems: '이 위시리스트에 아이템이 없습니다',
+    private: '비공개 위시리스트',
+    privateMessage: '이 위시리스트는 비공개이며 볼 수 없습니다.',
+    error: '오류'
+  },
+  en: {
+    items: 'items',
+    noItems: 'No items in this wishlist',
+    private: 'Private Wishlist',
+    privateMessage: 'This wishlist is private and cannot be viewed.',
+    error: 'Error'
+  },
+  jp: {
+    items: '個のアイテム',
+    noItems: 'このウィッシュリストにアイテムがありません',
+    private: 'プライベートウィッシュリスト',
+    privateMessage: 'このウィッシュリストは非公開で閲覧できません。',
+    error: 'エラー'
+  }
+}
+
+type Locale = 'kr' | 'en' | 'jp'
 
 // 기본 커스터마이징 설정
 const DEFAULT_CUSTOMIZATION = {
@@ -33,9 +58,28 @@ const DEFAULT_CUSTOMIZATION = {
   socialLinks: []
 }
 
-export default function SharedWishlistClient({ shareUrl, dictionary, locale = 'kr' }: SharedWishlistClientProps) {
+export default function SharedWishlistClient({ shareUrl }: SharedWishlistClientProps) {
   const { data: wishlist, isLoading, error } = useSharedWishlist(shareUrl)
   const viewTracked = useRef(false)
+  const [locale, setLocale] = useState<Locale>('en')
+  const [t, setT] = useState(translations.en)
+
+  // Detect browser language
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const browserLang = navigator.language.toLowerCase()
+      let detectedLocale: Locale = 'en'
+
+      if (browserLang.startsWith('ko')) {
+        detectedLocale = 'kr'
+      } else if (browserLang.startsWith('ja')) {
+        detectedLocale = 'jp'
+      }
+
+      setLocale(detectedLocale)
+      setT(translations[detectedLocale])
+    }
+  }, [])
 
   // Track view count when wishlist loads
   useEffect(() => {
@@ -90,10 +134,10 @@ export default function SharedWishlistClient({ shareUrl, dictionary, locale = 'k
         <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-indigo-900 flex items-center justify-center">
           <div className="text-center">
             <h1 className="text-2xl font-bold mb-2 text-white">
-              {dictionary.wishlist?.shared?.private || 'Private Wishlist'}
+              {t.private}
             </h1>
             <p className="text-slate-300">
-              {dictionary.wishlist?.shared?.privateMessage || 'This wishlist is private and cannot be viewed.'}
+              {t.privateMessage}
             </p>
           </div>
         </div>
@@ -104,7 +148,7 @@ export default function SharedWishlistClient({ shareUrl, dictionary, locale = 'k
       <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-indigo-900 flex items-center justify-center">
         <div className="text-center">
           <h1 className="text-2xl font-bold mb-2 text-white">
-            {dictionary.wishlist?.shared?.error || 'Error'}
+            {t.error}
           </h1>
           <p className="text-slate-300">{error.message}</p>
         </div>
@@ -269,7 +313,7 @@ export default function SharedWishlistClient({ shareUrl, dictionary, locale = 'k
 
           <div className="flex items-center justify-center gap-4 text-xs opacity-70">
             {customization.profile.showItemCount && (
-              <span>{wishlist.items?.length || 0} {dictionary.wishlist?.items || 'items'}</span>
+              <span>{wishlist.items?.length || 0} {t.items}</span>
             )}
             {customization.profile.showCreatedDate && (
               <span>{formatDate(wishlist.createdAt)}</span>
@@ -366,7 +410,7 @@ export default function SharedWishlistClient({ shareUrl, dictionary, locale = 'k
               className="text-lg opacity-70"
               style={{ color: customization.colors.text }}
             >
-              {dictionary.wishlist?.noItems || 'No items in this wishlist'}
+              {t.noItems}
             </p>
           </div>
         )}

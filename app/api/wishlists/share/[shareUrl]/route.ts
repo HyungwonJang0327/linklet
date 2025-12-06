@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server'
 import { getWishlistByShareUrl } from '@/lib/db/wishlist'
+import { checkRateLimit, getClientIp, isLikelyBot, RATE_LIMITS } from '@/lib/rate-limit'
 
 export async function GET(
   request: Request,
@@ -7,6 +8,28 @@ export async function GET(
 ) {
   try {
     const { shareUrl } = await params
+
+    // Bot detection
+    const userAgent = request.headers.get('user-agent')
+    if (isLikelyBot(userAgent)) {
+      return NextResponse.json(
+        { error: 'Automated requests are not allowed' },
+        { status: 403 }
+      )
+    }
+
+    // Get client IP for rate limiting
+    const clientIp = getClientIp(request)
+
+    // Rate limiting: prevent abuse from same IP
+    const rateLimitKey = `shared-wishlist:${clientIp}:${shareUrl}`
+    if (!checkRateLimit(rateLimitKey, RATE_LIMITS.SHARED_WISHLIST)) {
+      return NextResponse.json(
+        { error: 'Too many requests. Please try again later.' },
+        { status: 429 }
+      )
+    }
+
     const wishlist = await getWishlistByShareUrl(shareUrl)
     
     if (!wishlist) {

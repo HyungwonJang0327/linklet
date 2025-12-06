@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server'
 import { addWishlistItem } from '@/lib/db/wishlist'
 import { prisma } from '@/lib/db'
 import { revalidateSharedWishlist } from '@/lib/revalidation'
+import { requireAuth, verifyWishlistOwnership } from '@/lib/auth-helpers'
 
 export async function GET(
   request: Request,
@@ -13,12 +14,12 @@ export async function GET(
       where: { wishlistId: id },
       orderBy: { createdAt: 'desc' }
     })
-    
+
     return NextResponse.json(items)
   } catch (error) {
     console.error('Error fetching wishlist items:', error)
     return NextResponse.json(
-      { error: 'Failed to fetch wishlist items' }, 
+      { error: 'Failed to fetch wishlist items' },
       { status: 500 }
     )
   }
@@ -30,6 +31,14 @@ export async function POST(
 ) {
   try {
     const { id } = await params
+
+    // Authentication and ownership check
+    const auth = await requireAuth()
+    if (auth.error) return auth.error
+
+    const ownership = await verifyWishlistOwnership(id, auth.session!.user.id)
+    if (ownership.error) return ownership.error
+
     const { title, description, productUrl, imageUrl, price, priority } = await request.json()
 
     if (!title || !productUrl) {
@@ -53,16 +62,16 @@ export async function POST(
       where: { id },
       select: { shareUrl: true }
     })
-    
+
     if (wishlist?.shareUrl) {
       await revalidateSharedWishlist(wishlist.shareUrl)
     }
-    
+
     return NextResponse.json(item, { status: 201 })
   } catch (error) {
     console.error('Error creating wishlist item:', error)
     return NextResponse.json(
-      { error: 'Failed to create wishlist item' }, 
+      { error: 'Failed to create wishlist item' },
       { status: 500 }
     )
   }

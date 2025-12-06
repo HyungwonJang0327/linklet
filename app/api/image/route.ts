@@ -1,5 +1,6 @@
 import { PutObjectCommand, S3Client } from '@aws-sdk/client-s3'
 import { NextRequest } from 'next/server'
+import { requireAuth } from '@/lib/auth-helpers'
 
 const Bucket = process.env?.AMPLIFY_BUCKET || 'linklet-image'
 const Region = process.env?.AWS_REGION || 'ap-northeast-2'
@@ -13,6 +14,10 @@ const s3 = new S3Client({
 
 export async function POST(req: NextRequest) {
     try {
+        // Authentication check
+        const auth = await requireAuth()
+        if (auth.error) return auth.error
+
         const formData = await req.formData()
         const files = formData.getAll('img') as File[]
 
