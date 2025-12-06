@@ -1,13 +1,14 @@
 import { NextResponse } from 'next/server'
 import { getServerSession } from 'next-auth'
 import { prisma } from '@/lib/db/client'
+import { authOptions } from '@/lib/auth-config'
 
 /**
  * Server-side authentication helper
  * Returns session or throws 401 error
  */
 export async function requireAuth() {
-  const session = await getServerSession()
+  const session = await getServerSession(authOptions)
 
   if (!session || !session.user) {
     return {
