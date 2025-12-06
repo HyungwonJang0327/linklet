@@ -1,7 +1,6 @@
 'use client'
 
 import { useMutation, useQueryClient, useQuery } from '@tanstack/react-query'
-import type { CreateWishlistData } from '@/lib/db/wishlist'
 import type { ProductMetadata } from '@/lib/services/url-metadata'
 
 interface CreateWishlistRequest {

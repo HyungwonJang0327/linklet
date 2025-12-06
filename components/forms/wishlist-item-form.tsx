@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Card } from '@/components/ui/card'
 import { isValidUrl } from '@/lib/utils'
-import { formatNumberInput, parseFormattedNumber } from '@/lib/utils/format'
+import { formatNumberInput } from '@/lib/utils/format'
 import type { CreateWishlistItemRequest, WishlistItem } from '@/lib/types'
 
 interface WishlistItemFormProps {

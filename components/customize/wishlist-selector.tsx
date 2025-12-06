@@ -14,7 +14,6 @@ import { useAuth } from '@/components/providers/auth-provider'
 import { useWishlists } from '@/hooks/use-wishlists'
 import { Loading } from '@/components/ui/loading'
 import { useRouter, useParams } from 'next/navigation'
-import { formatRelativeTime } from '@/lib/utils'
 import { useI18n } from '@/lib/i18n/context'
 
 interface WishlistSelectorProps {

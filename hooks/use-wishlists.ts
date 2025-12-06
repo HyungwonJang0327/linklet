@@ -2,8 +2,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import type {
   Wishlist,
   CreateWishlistRequest,
-  CreateWishlistItemRequest,
-  ApiResponse
+  CreateWishlistItemRequest
 } from '@/lib/types'
 
 // Query Keys

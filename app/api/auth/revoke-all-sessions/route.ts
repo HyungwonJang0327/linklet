@@ -6,7 +6,7 @@ import { prisma } from '@/lib/db/client'
  * Revoke all sessions for the current user
  * Use case: "Log out from all devices" or suspected token theft
  */
-export async function POST(request: Request) {
+export async function POST() {
   // Require authentication
   const auth = await requireAuth()
   if (auth.error) return auth.error

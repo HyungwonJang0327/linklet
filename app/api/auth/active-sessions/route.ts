@@ -6,7 +6,7 @@ import { getUserActiveSessions } from '@/lib/session-security'
  * Get all active sessions for the current user
  * Used in Settings > Security page
  */
-export async function GET(request: Request) {
+export async function GET() {
   const auth = await requireAuth()
   if (auth.error) return auth.error
 
