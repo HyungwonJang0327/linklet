@@ -134,8 +134,8 @@ export default function InquiriesPage() {
       {/* Header */}
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-2xl font-bold text-white">문의 및 피드백</h1>
-          <p className="text-sm text-slate-400 mt-1">궁금한 사항이나 의견을 남겨주세요</p>
+          <h1 className="text-2xl font-bold text-white">헬프 센터</h1>
+          <p className="text-sm text-slate-400 mt-1">궁금한 점이나 문제가 있으신가요? 도움을 받아보세요</p>
         </div>
         <Button onClick={() => setShowForm(!showForm)}>
           <PlusIcon className="w-4 h-4 mr-2" />

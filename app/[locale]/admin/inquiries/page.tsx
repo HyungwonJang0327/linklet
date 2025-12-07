@@ -167,8 +167,8 @@ export default function AdminInquiriesPage() {
     <div className="space-y-6">
       {/* Header */}
       <div>
-        <h1 className="text-2xl font-bold text-white">문의 및 피드백 관리</h1>
-        <p className="text-sm text-slate-400 mt-1">사용자 문의 및 피드백 관리</p>
+        <h1 className="text-2xl font-bold text-white">헬프 센터 관리</h1>
+        <p className="text-sm text-slate-400 mt-1">사용자 문의 및 지원 요청 관리</p>
       </div>
 
       {/* Filters */}

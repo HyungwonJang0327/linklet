@@ -89,7 +89,7 @@ export default function AdminLayout({
     { name: '시스템 설정', href: `/${locale}/admin/settings`, icon: Cog6ToothIcon },
     { name: '컨텐츠 관리', href: `/${locale}/admin/content`, icon: GiftIcon },
     { name: '에러 로그', href: `/${locale}/admin/errors`, icon: ExclamationTriangleIcon, badge: stats.pendingErrors > 0 ? stats.pendingErrors : undefined },
-    { name: '문의 및 피드백', href: `/${locale}/admin/inquiries`, icon: ChatBubbleLeftRightIcon, badge: stats.pendingFeedback > 0 ? stats.pendingFeedback : undefined },
+    { name: '헬프 센터', href: `/${locale}/admin/inquiries`, icon: ChatBubbleLeftRightIcon, badge: stats.pendingFeedback > 0 ? stats.pendingFeedback : undefined },
   ]
 
   const isActive = (href: string) => {
