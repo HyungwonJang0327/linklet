@@ -36,6 +36,7 @@ export default function AdminLayout({
   const { user, isLoading } = useAuth()
   const [sidebarOpen, setSidebarOpen] = useState(false)
   const [isChecking, setIsChecking] = useState(true)
+  const [stats, setStats] = useState({ totalUsers: 0, totalWishlists: 0, pendingErrors: 0, pendingFeedback: 0 })
 
   // Check admin access
   useEffect(() => {
@@ -49,9 +50,23 @@ export default function AdminLayout({
       } else {
         // Admin access granted
         setIsChecking(false)
+        fetchStats()
       }
     }
   }, [user, isLoading, router, locale])
+
+  // Fetch admin stats
+  const fetchStats = async () => {
+    try {
+      const response = await fetch('/api/admin/stats')
+      if (response.ok) {
+        const data = await response.json()
+        setStats(data)
+      }
+    } catch (error) {
+      console.error('Error fetching admin stats:', error)
+    }
+  }
 
   // Show loading state while checking
   if (isLoading || isChecking) {
@@ -73,8 +88,8 @@ export default function AdminLayout({
     { name: '통계 분석', href: `/${locale}/admin/analytics`, icon: ChartBarIcon },
     { name: '시스템 설정', href: `/${locale}/admin/settings`, icon: Cog6ToothIcon },
     { name: '컨텐츠 관리', href: `/${locale}/admin/content`, icon: GiftIcon },
-    { name: '에러 로그', href: `/${locale}/admin/errors`, icon: ExclamationTriangleIcon, badge: 12 },
-    { name: '피드백 처리', href: `/${locale}/admin/feedback`, icon: ChatBubbleLeftRightIcon, badge: 5 },
+    { name: '에러 로그', href: `/${locale}/admin/errors`, icon: ExclamationTriangleIcon, badge: stats.pendingErrors > 0 ? stats.pendingErrors : undefined },
+    { name: '피드백 처리', href: `/${locale}/admin/feedback`, icon: ChatBubbleLeftRightIcon, badge: stats.pendingFeedback > 0 ? stats.pendingFeedback : undefined },
   ]
 
   const isActive = (href: string) => {
@@ -195,10 +210,10 @@ export default function AdminLayout({
             {/* Quick stats or notifications can go here */}
             <div className="hidden md:flex items-center gap-6 text-sm">
               <div className="text-slate-400">
-                총 사용자: <span className="text-white font-semibold">1,234</span>
+                총 사용자: <span className="text-white font-semibold">{stats.totalUsers.toLocaleString()}</span>
               </div>
               <div className="text-slate-400">
-                위시리스트: <span className="text-white font-semibold">5,678</span>
+                위시리스트: <span className="text-white font-semibold">{stats.totalWishlists.toLocaleString()}</span>
               </div>
             </div>
           </div>
