@@ -52,13 +52,36 @@ interface DashboardData {
   }>
 }
 
+interface HealthStatus {
+  status: 'healthy' | 'unhealthy'
+  services: {
+    api: {
+      status: 'operational' | 'error'
+      message: string
+    }
+    database: {
+      status: 'operational' | 'error'
+      message: string
+      responseTime: string
+    }
+  }
+  responseTime: string
+}
+
 export default function AdminDashboard() {
   const [data, setData] = useState<DashboardData | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const [healthStatus, setHealthStatus] = useState<HealthStatus | null>(null)
 
   useEffect(() => {
     fetchDashboardData()
+    fetchHealthStatus()
+
+    // Refresh health status every 5 minutes
+    const healthInterval = setInterval(fetchHealthStatus, 300000)
+
+    return () => clearInterval(healthInterval)
   }, [])
 
   const fetchDashboardData = async () => {
@@ -80,6 +103,31 @@ export default function AdminDashboard() {
       setError(error instanceof Error ? error.message : 'Failed to load dashboard data')
     } finally {
       setLoading(false)
+    }
+  }
+
+  const fetchHealthStatus = async () => {
+    try {
+      const response = await fetch('/api/health')
+      const health = await response.json()
+      setHealthStatus(health)
+    } catch (error) {
+      console.error('Error fetching health status:', error)
+      setHealthStatus({
+        status: 'unhealthy',
+        services: {
+          api: {
+            status: 'error',
+            message: 'Failed to connect'
+          },
+          database: {
+            status: 'error',
+            message: 'Failed to connect',
+            responseTime: 'N/A'
+          }
+        },
+        responseTime: 'N/A'
+      })
     }
   }
 
@@ -311,20 +359,42 @@ export default function AdminDashboard() {
           <div className="flex items-center justify-between p-4 bg-slate-700/30 rounded-lg">
             <span className="text-sm text-slate-300">API 상태</span>
             <span className="flex items-center gap-2 text-sm">
-              <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse" />
-              <span className="text-green-400 font-medium">정상</span>
+              <div className={`w-2 h-2 rounded-full ${
+                healthStatus?.services.api.status === 'operational'
+                  ? 'bg-green-400 animate-pulse'
+                  : 'bg-red-400'
+              }`} />
+              <span className={`font-medium ${
+                healthStatus?.services.api.status === 'operational'
+                  ? 'text-green-400'
+                  : 'text-red-400'
+              }`}>
+                {healthStatus?.services.api.status === 'operational' ? '정상' : '오류'}
+              </span>
             </span>
           </div>
           <div className="flex items-center justify-between p-4 bg-slate-700/30 rounded-lg">
             <span className="text-sm text-slate-300">데이터베이스</span>
             <span className="flex items-center gap-2 text-sm">
-              <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse" />
-              <span className="text-green-400 font-medium">정상</span>
+              <div className={`w-2 h-2 rounded-full ${
+                healthStatus?.services.database.status === 'operational'
+                  ? 'bg-green-400 animate-pulse'
+                  : 'bg-red-400'
+              }`} />
+              <span className={`font-medium ${
+                healthStatus?.services.database.status === 'operational'
+                  ? 'text-green-400'
+                  : 'text-red-400'
+              }`}>
+                {healthStatus?.services.database.status === 'operational' ? '정상' : '오류'}
+              </span>
             </span>
           </div>
           <div className="flex items-center justify-between p-4 bg-slate-700/30 rounded-lg">
             <span className="text-sm text-slate-300">서버 응답시간</span>
-            <span className="text-white font-medium">24ms</span>
+            <span className="text-white font-medium">
+              {healthStatus?.responseTime || 'N/A'}
+            </span>
           </div>
         </div>
       </div>
