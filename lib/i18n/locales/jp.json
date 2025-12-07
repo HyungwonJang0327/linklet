@@ -21,10 +21,19 @@
   "navigation": {
     "home": "ホーム",
     "wishlists": "ウィッシュリスト",
+    "notices": "お知らせ",
     "settings": "設定",
     "login": "ログイン",
     "logout": "ログアウト",
     "logoutDesc": "ログアウトしてホームに移動"
+  },
+  "notices": {
+    "title": "お知らせ",
+    "description": "Linkletの最新ニュースとアップデートをご確認ください",
+    "empty": "お知らせがありません",
+    "pinned": "ピン留め",
+    "new": "新着",
+    "date": "投稿日"
   },
   "login": {
     "title": "ログイン",

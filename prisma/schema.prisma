@@ -107,6 +107,18 @@ model VerificationToken {
   @@map("verification_tokens")
 }
 
+model Notice {
+  id          String   @id @default(cuid())
+  title       String
+  content     String   @db.Text
+  isPublished Boolean  @default(false)
+  isPinned    Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("notices")
+}
+
 enum WishlistCategory {
   GENERAL
   BIRTHDAY

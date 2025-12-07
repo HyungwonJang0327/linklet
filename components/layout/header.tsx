@@ -14,9 +14,28 @@ export function Header() {
   return (
     <header className="border-b border-slate-700/50 bg-slate-900/80 backdrop-blur-sm sticky top-0 z-50">
       <div className="container mx-auto px-4 h-16 flex items-center justify-between">
-        <Link href={`/${locale}`} className="text-2xl font-bold text-blue-400 hover:text-blue-300 transition-colors">
-          Linklet
-        </Link>
+        <div className="flex items-center gap-8">
+          <Link href={`/${locale}`} className="text-2xl font-bold text-blue-400 hover:text-blue-300 transition-colors">
+            Linklet
+          </Link>
+
+          <nav className="hidden md:flex items-center gap-6">
+            <Link
+              href={`/${locale}/notices`}
+              className="text-sm font-medium text-slate-300 hover:text-white transition-colors"
+            >
+              {t('navigation.notices')}
+            </Link>
+            {/* {isAuthenticated && (
+              <Link
+                href={`/${locale}/settings`}
+                className="text-sm font-medium text-slate-300 hover:text-white transition-colors"
+              >
+                {t('navigation.settings')}
+              </Link>
+            )} */}
+          </nav>
+        </div>
 
         <div className="flex items-center gap-4">
           {isAuthenticated && user ? (

@@ -21,10 +21,19 @@
   "navigation": {
     "home": "Home",
     "wishlists": "Wishlists",
+    "notices": "Notices",
     "settings": "Settings",
     "login": "Login",
     "logout": "Logout",
     "logoutDesc": "Logout and go to home"
+  },
+  "notices": {
+    "title": "Notices",
+    "description": "Check out the latest news and updates for Linklet",
+    "empty": "No notices available",
+    "pinned": "Pinned",
+    "new": "New",
+    "date": "Posted"
   },
   "login": {
     "title": "Login",
