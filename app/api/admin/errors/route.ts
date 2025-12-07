@@ -29,11 +29,33 @@ export async function GET(request: NextRequest) {
     const limit = parseInt(searchParams.get('limit') || '20')
     const statusCode = searchParams.get('statusCode')
     const method = searchParams.get('method')
-    const startDate = searchParams.get('startDate')
-    const endDate = searchParams.get('endDate')
+    const search = searchParams.get('search') || ''
+    const timeRange = searchParams.get('timeRange') || '24h'
+
+    // Calculate time filter
+    const now = new Date()
+    let startTime = new Date()
+    switch (timeRange) {
+      case '1h':
+        startTime = new Date(now.getTime() - 60 * 60 * 1000)
+        break
+      case '24h':
+        startTime = new Date(now.getTime() - 24 * 60 * 60 * 1000)
+        break
+      case '7d':
+        startTime = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000)
+        break
+      case '30d':
+        startTime = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000)
+        break
+    }
 
     // Build filter conditions
-    const where: any = {}
+    const where: any = {
+      createdAt: {
+        gte: startTime
+      }
+    }
 
     if (statusCode) {
       where.statusCode = parseInt(statusCode)
@@ -43,14 +65,12 @@ export async function GET(request: NextRequest) {
       where.method = method
     }
 
-    if (startDate || endDate) {
-      where.createdAt = {}
-      if (startDate) {
-        where.createdAt.gte = new Date(startDate)
-      }
-      if (endDate) {
-        where.createdAt.lte = new Date(endDate)
-      }
+    if (search) {
+      where.OR = [
+        { endpoint: { contains: search, mode: 'insensitive' } },
+        { message: { contains: search, mode: 'insensitive' } },
+        { method: { contains: search, mode: 'insensitive' } }
+      ]
     }
 
     // Calculate pagination
@@ -69,23 +89,72 @@ export async function GET(request: NextRequest) {
       prisma.errorLog.count({ where })
     ])
 
-    // Get statistics
+    // Get user info for error logs with userId
+    const userIds = errors
+      .map(log => log.userId)
+      .filter((id): id is string => id !== null)
+
+    const users = userIds.length > 0
+      ? await prisma.user.findMany({
+          where: { id: { in: userIds } },
+          select: { id: true, email: true, name: true }
+        })
+      : []
+
+    const userMap = new Map(users.map(u => [u.id, u]))
+
+    // Enrich error logs with user data
+    const enrichedErrors = errors.map(log => ({
+      ...log,
+      user: log.userId ? userMap.get(log.userId) : null
+    }))
+
+    // Get enhanced statistics
+    const statsWhere = {
+      createdAt: {
+        gte: startTime
+      }
+    }
+
     const stats = await prisma.errorLog.groupBy({
       by: ['statusCode'],
+      where: statsWhere,
       _count: {
-        statusCode: true
+        id: true
+      }
+    })
+
+    const total5xxErrors = stats.reduce((sum, s) =>
+      s.statusCode >= 500 ? sum + s._count.id : sum, 0
+    )
+    const status500Errors = stats.find(s => s.statusCode === 500)?._count.id || 0
+    const status503Errors = stats.find(s => s.statusCode === 503)?._count.id || 0
+
+    // Calculate endpoint distribution
+    const endpointStats = await prisma.errorLog.groupBy({
+      by: ['endpoint'],
+      where: statsWhere,
+      _count: {
+        id: true
       },
       orderBy: {
         _count: {
-          statusCode: 'desc'
+          id: 'desc'
         }
-      }
+      },
+      take: 5
     })
+
+    const errorsByEndpoint = endpointStats.map(stat => ({
+      endpoint: stat.endpoint,
+      count: stat._count.id,
+      percentage: total5xxErrors > 0 ? Math.round((stat._count.id / total5xxErrors) * 100) : 0
+    }))
 
     const totalPages = Math.ceil(totalCount / limit)
 
     return NextResponse.json({
-      errors,
+      errors: enrichedErrors,
       pagination: {
         page,
         limit,
@@ -94,10 +163,12 @@ export async function GET(request: NextRequest) {
         hasNextPage: page < totalPages,
         hasPreviousPage: page > 1
       },
-      stats: stats.map(stat => ({
-        statusCode: stat.statusCode,
-        count: stat._count.statusCode
-      }))
+      stats: {
+        total5xxErrors,
+        status500Errors,
+        status503Errors
+      },
+      errorsByEndpoint
     })
   } catch (error) {
     console.error('[Errors API] Error fetching error logs:', error)
