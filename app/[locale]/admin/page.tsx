@@ -202,20 +202,24 @@ export default function AdminDashboard() {
         <div className="bg-slate-800/50 backdrop-blur-sm border border-slate-700/50 rounded-xl p-6">
           <h2 className="text-lg font-semibold text-white mb-4">최근 문의사항</h2>
           <div className="space-y-3">
-            {data.qnaList.map((qna) => (
-              <div
-                key={qna.id}
-                className="flex items-center justify-between py-2 border-b border-slate-700/50 last:border-0"
-              >
-                <div className="flex-1 min-w-0">
-                  <p className="text-sm font-medium text-white truncate">{qna.question}</p>
-                  <p className="text-xs text-slate-400">{qna.user}</p>
+            {data.qnaList.length > 0 ? (
+              data.qnaList.map((qna) => (
+                <div
+                  key={qna.id}
+                  className="flex items-center justify-between py-2 border-b border-slate-700/50 last:border-0"
+                >
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-medium text-white truncate">{qna.question}</p>
+                    <p className="text-xs text-slate-400">{qna.user}</p>
+                  </div>
+                  <span className="px-2 py-1 text-xs font-medium bg-yellow-500/20 text-yellow-400 rounded">
+                    대기중
+                  </span>
                 </div>
-                <span className="px-2 py-1 text-xs font-medium bg-yellow-500/20 text-yellow-400 rounded">
-                  대기중
-                </span>
-              </div>
-            ))}
+              ))
+            ) : (
+              <p className="text-sm text-slate-400 text-center py-4">현재 처리할 문의사항이 없습니다</p>
+            )}
           </div>
         </div>
 
@@ -223,22 +227,26 @@ export default function AdminDashboard() {
         <div className="bg-slate-800/50 backdrop-blur-sm border border-slate-700/50 rounded-xl p-6">
           <h2 className="text-lg font-semibold text-white mb-4">최근 5xx 에러</h2>
           <div className="space-y-3">
-            {data.recentErrors.map((error) => (
-              <div
-                key={error.id}
-                className="flex items-start justify-between py-2 border-b border-slate-700/50 last:border-0"
-              >
-                <div className="flex-1 min-w-0">
-                  <p className="text-sm font-medium text-white">
-                    {error.method} {error.endpoint}
-                  </p>
-                  <p className="text-xs text-slate-400 truncate">{error.message}</p>
+            {data.recentErrors.length > 0 ? (
+              data.recentErrors.map((error) => (
+                <div
+                  key={error.id}
+                  className="flex items-start justify-between py-2 border-b border-slate-700/50 last:border-0"
+                >
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-medium text-white">
+                      {error.method} {error.endpoint}
+                    </p>
+                    <p className="text-xs text-slate-400 truncate">{error.message}</p>
+                  </div>
+                  <span className="px-2 py-1 text-xs font-medium bg-red-500/20 text-red-400 rounded ml-2">
+                    {error.statusCode}
+                  </span>
                 </div>
-                <span className="px-2 py-1 text-xs font-medium bg-red-500/20 text-red-400 rounded ml-2">
-                  {error.statusCode}
-                </span>
-              </div>
-            ))}
+              ))
+            ) : (
+              <p className="text-sm text-slate-400 text-center py-4">최근 에러가 없습니다</p>
+            )}
           </div>
         </div>
 
@@ -246,18 +254,22 @@ export default function AdminDashboard() {
         <div className="bg-slate-800/50 backdrop-blur-sm border border-slate-700/50 rounded-xl p-6">
           <h2 className="text-lg font-semibold text-white mb-4">최근 활동</h2>
           <div className="space-y-3">
-            {recentActivities.map((activity, index) => (
-              <div
-                key={index}
-                className="flex items-center justify-between py-2 border-b border-slate-700/50 last:border-0"
-              >
-                <div className="flex-1 min-w-0">
-                  <p className="text-sm font-medium text-white truncate">{activity.user}</p>
-                  <p className="text-xs text-slate-400">{activity.action}</p>
+            {recentActivities.length > 0 ? (
+              recentActivities.map((activity, index) => (
+                <div
+                  key={index}
+                  className="flex items-center justify-between py-2 border-b border-slate-700/50 last:border-0"
+                >
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-medium text-white truncate">{activity.user}</p>
+                    <p className="text-xs text-slate-400">{activity.action}</p>
+                  </div>
+                  <span className="text-xs text-slate-500">{activity.time}</span>
                 </div>
-                <span className="text-xs text-slate-500">{activity.time}</span>
-              </div>
-            ))}
+              ))
+            ) : (
+              <p className="text-sm text-slate-400 text-center py-4">최근 활동이 없습니다</p>
+            )}
           </div>
         </div>
 

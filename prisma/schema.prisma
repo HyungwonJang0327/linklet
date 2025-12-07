@@ -22,6 +22,7 @@ model User {
   wishlists Wishlist[]
   accounts  Account[]
   sessions  Session[]
+  qnas      QnA[]
 
   @@map("users")
 }
@@ -117,6 +118,19 @@ model Notice {
   updatedAt   DateTime @updatedAt
 
   @@map("notices")
+}
+
+model QnA {
+  id        String   @id @default(cuid())
+  question  String   @db.Text
+  answer    String?  @db.Text
+  status    String   @default("pending") // pending, answered, closed
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("qnas")
 }
 
 enum WishlistCategory {

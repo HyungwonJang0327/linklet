@@ -37,7 +37,8 @@ export async function GET() {
       activeUsers,
       recentActivities,
       categoryStats,
-      popularWishlists
+      popularWishlists,
+      pendingQnAs
     ] = await Promise.all([
       // Total users count
       prisma.user.count(),
@@ -121,6 +122,25 @@ export async function GET() {
             }
           }
         }
+      }),
+
+      // Pending QnA questions
+      prisma.qnA.findMany({
+        where: {
+          status: 'pending'
+        },
+        take: 5,
+        orderBy: {
+          createdAt: 'desc'
+        },
+        include: {
+          user: {
+            select: {
+              email: true,
+              name: true
+            }
+          }
+        }
       })
     ])
 
@@ -150,13 +170,16 @@ export async function GET() {
       createdAt: wishlist.createdAt
     }))
 
-    // Mock data for QnA and errors (to be implemented later)
-    const mockQnA = [
-      { id: '1', question: '위시리스트 공유가 안돼요', user: 'user1@example.com', status: 'pending', createdAt: new Date() },
-      { id: '2', question: '아이템 추가 방법 문의', user: 'user2@example.com', status: 'pending', createdAt: new Date() },
-      { id: '3', question: '계정 삭제 요청', user: 'user3@example.com', status: 'pending', createdAt: new Date() }
-    ]
+    // Format QnA list
+    const formattedQnAList = pendingQnAs.map(qna => ({
+      id: qna.id,
+      question: qna.question,
+      user: qna.user?.email || qna.user?.name || 'Unknown User',
+      status: qna.status,
+      createdAt: qna.createdAt
+    }))
 
+    // Mock data for errors (to be implemented later)
     const mockErrors = [
       { id: '1', endpoint: '/api/wishlists', method: 'POST', statusCode: 500, message: 'Database connection failed', timestamp: new Date() },
       { id: '2', endpoint: '/api/items/123', method: 'PUT', statusCode: 503, message: 'Service unavailable', timestamp: new Date() },
@@ -174,7 +197,7 @@ export async function GET() {
       recentActivities: formattedActivities,
       categoryStats: formattedCategoryStats,
       popularWishlists: formattedPopularWishlists,
-      qnaList: mockQnA,
+      qnaList: formattedQnAList,
       recentErrors: mockErrors
     })
   } catch (error) {
