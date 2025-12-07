@@ -89,14 +89,18 @@ export default function UsersPage() {
   }
 
   const renderPaginationButtons = () => {
-    if (!pagination) return null
+    if (!pagination || pagination.totalPages === 0) return null
 
     const buttons = []
     const maxButtons = 5
-    let startPage = Math.max(1, currentPage - Math.floor(maxButtons / 2))
-    let endPage = Math.min(pagination.totalPages, startPage + maxButtons - 1)
+    const totalPages = pagination.totalPages
 
-    if (endPage - startPage < maxButtons - 1) {
+    // Calculate start and end pages
+    let startPage = Math.max(1, currentPage - Math.floor(maxButtons / 2))
+    const endPage = Math.min(totalPages, startPage + maxButtons - 1)
+
+    // Adjust startPage if we're near the end
+    if (endPage - startPage + 1 < maxButtons) {
       startPage = Math.max(1, endPage - maxButtons + 1)
     }
 
