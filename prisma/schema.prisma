@@ -15,6 +15,7 @@ model User {
   bio           String?
   image         String?   // Changed from avatar to match NextAuth
   locale        String    @default("kr")
+  isAdmin       Boolean   @default(false)
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
 

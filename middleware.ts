@@ -15,6 +15,23 @@ export async function middleware(request: NextRequest) {
   // Cast to extended interface
   const req = request as ExtendedNextRequest
 
+  // Check admin authentication for admin routes
+  // Note: Actual admin check is done in the layout, middleware only checks for login
+  if (pathname.match(/^\/(kr|en|jp)\/admin/)) {
+    // Check for session cookie
+    const sessionToken = request.cookies.get('next-auth.session-token')?.value ||
+                        request.cookies.get('__Secure-next-auth.session-token')?.value
+
+    if (!sessionToken) {
+      // Not logged in - redirect to login
+      const locale = pathname.split('/')[1]
+      const loginUrl = new URL(`/${locale}/login`, request.url)
+      return NextResponse.redirect(loginUrl)
+    }
+
+    // Session exists, let the layout handle admin verification
+  }
+
   // Check authentication for settings routes
   if (pathname.match(/^\/(kr|en|jp)\/settings/)) {
     // Check for session cookie
@@ -61,6 +78,7 @@ export async function middleware(request: NextRequest) {
 export const config = {
   matcher: [
     '/w/:path*',  // Wishlist sharing routes
-    '/(kr|en|jp)/settings/:path*'  // Settings routes (all locales)
+    '/(kr|en|jp)/settings/:path*',  // Settings routes (all locales)
+    '/(kr|en|jp)/admin/:path*'  // Admin routes (all locales)
   ]
 }

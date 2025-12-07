@@ -8,6 +8,7 @@ interface User {
   name?: string | null
   email?: string | null
   image?: string | null
+  isAdmin?: boolean
 }
 
 interface AuthContextType {
@@ -27,6 +28,7 @@ function AuthContextProvider({ children }: { children: React.ReactNode }) {
     name: session.user.name,
     email: session.user.email,
     image: session.user.image,
+    isAdmin: (session.user as any).isAdmin || false,
   } : null
 
   const logout = async () => {

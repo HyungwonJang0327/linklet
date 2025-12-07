@@ -14,7 +14,7 @@ import {
   XMarkIcon,
   Cog6ToothIcon
 } from '@heroicons/react/24/outline'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useAuth } from '@/components/providers/auth-provider'
 
 interface NavItem {
@@ -32,8 +32,37 @@ export default function AdminLayout({
   const pathname = usePathname()
   const router = useRouter()
   const { locale = 'kr' } = useParams()
-  const { user } = useAuth()
+  const { user, isLoading } = useAuth()
   const [sidebarOpen, setSidebarOpen] = useState(false)
+  const [isChecking, setIsChecking] = useState(true)
+
+  // Check admin access
+  useEffect(() => {
+    if (!isLoading) {
+      if (!user) {
+        // Not logged in
+        router.push(`/${locale}/login`)
+      } else if (!user.isAdmin) {
+        // Not an admin
+        router.push(`/${locale}/settings`)
+      } else {
+        // Admin access granted
+        setIsChecking(false)
+      }
+    }
+  }, [user, isLoading, router, locale])
+
+  // Show loading state while checking
+  if (isLoading || isChecking) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-16 h-16 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mx-auto mb-4" />
+          <p className="text-slate-400">권한 확인 중...</p>
+        </div>
+      </div>
+    )
+  }
 
   const navigation: NavItem[] = [
     { name: '대시보드', href: `/${locale}/admin`, icon: HomeIcon },
