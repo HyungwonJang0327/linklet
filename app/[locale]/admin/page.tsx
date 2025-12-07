@@ -1,5 +1,6 @@
 'use client'
 
+import { useState, useEffect } from 'react'
 import {
   UsersIcon,
   GiftIcon,
@@ -9,11 +10,95 @@ import {
   ArrowTrendingDownIcon
 } from '@heroicons/react/24/outline'
 
+interface DashboardData {
+  stats: {
+    totalUsers: number
+    totalWishlists: number
+    activeUsers: number
+  }
+  recentActivities: Array<{
+    user: string
+    action: string
+    time: string
+  }>
+}
+
 export default function AdminDashboard() {
+  const [data, setData] = useState<DashboardData | null>(null)
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+
+  useEffect(() => {
+    fetchDashboardData()
+  }, [])
+
+  const fetchDashboardData = async () => {
+    try {
+      const response = await fetch('/api/admin/dashboard', {
+        credentials: 'include'
+      })
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({ error: 'Unknown error' }))
+        throw new Error(errorData.error || `HTTP error! status: ${response.status}`)
+      }
+
+      const dashboardData = await response.json()
+      setData(dashboardData)
+      setError(null)
+    } catch (error) {
+      console.error('Error fetching dashboard data:', error)
+      setError(error instanceof Error ? error.message : 'Failed to load dashboard data')
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-[400px]">
+        <div className="text-center">
+          <div className="w-16 h-16 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mx-auto mb-4" />
+          <p className="text-slate-400">데이터를 불러오는 중...</p>
+        </div>
+      </div>
+    )
+  }
+
+  if (error) {
+    return (
+      <div className="flex items-center justify-center min-h-[400px]">
+        <div className="bg-red-500/10 border border-red-500/50 rounded-xl p-6 max-w-md">
+          <div className="flex items-center gap-3 mb-3">
+            <ExclamationTriangleIcon className="w-6 h-6 text-red-400" />
+            <h3 className="text-lg font-semibold text-red-400">데이터 로드 실패</h3>
+          </div>
+          <p className="text-slate-300 mb-4">{error}</p>
+          <button
+            onClick={fetchDashboardData}
+            className="w-full px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors"
+          >
+            다시 시도
+          </button>
+        </div>
+      </div>
+    )
+  }
+
+  if (!data) {
+    return (
+      <div className="flex items-center justify-center min-h-[400px]">
+        <div className="text-center text-slate-400">
+          <p>데이터가 없습니다</p>
+        </div>
+      </div>
+    )
+  }
+
   const stats = [
     {
       name: '총 사용자',
-      value: '1,234',
+      value: data.stats.totalUsers.toLocaleString(),
       change: '+12.3%',
       trend: 'up',
       icon: UsersIcon,
@@ -21,7 +106,7 @@ export default function AdminDashboard() {
     },
     {
       name: '총 위시리스트',
-      value: '5,678',
+      value: data.stats.totalWishlists.toLocaleString(),
       change: '+8.1%',
       trend: 'up',
       icon: GiftIcon,
@@ -29,7 +114,7 @@ export default function AdminDashboard() {
     },
     {
       name: '활성 사용자 (30일)',
-      value: '892',
+      value: data.stats.activeUsers.toLocaleString(),
       change: '+15.2%',
       trend: 'up',
       icon: ChartBarIcon,
@@ -45,13 +130,7 @@ export default function AdminDashboard() {
     }
   ]
 
-  const recentActivities = [
-    { user: 'user@example.com', action: '새 위시리스트 생성', time: '5분 전' },
-    { user: 'test@example.com', action: '회원가입', time: '12분 전' },
-    { user: 'admin@example.com', action: '위시리스트 공유', time: '23분 전' },
-    { user: 'demo@example.com', action: '아이템 추가', time: '1시간 전' },
-    { user: 'sample@example.com', action: '프로필 업데이트', time: '2시간 전' },
-  ]
+  const recentActivities = data.recentActivities
 
   const colorClasses = {
     blue: 'bg-blue-500/10 text-blue-400 border-blue-500/20',
