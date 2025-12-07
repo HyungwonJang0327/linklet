@@ -12,7 +12,8 @@ import {
   ArrowLeftOnRectangleIcon,
   Bars3Icon,
   XMarkIcon,
-  Cog6ToothIcon
+  Cog6ToothIcon,
+  MegaphoneIcon
 } from '@heroicons/react/24/outline'
 import { useState, useEffect } from 'react'
 import { useAuth } from '@/components/providers/auth-provider'
@@ -68,6 +69,7 @@ export default function AdminLayout({
     { name: '대시보드', href: `/${locale}/admin`, icon: HomeIcon },
     { name: '사용자 관리', href: `/${locale}/admin/users`, icon: UsersIcon },
     { name: '위시리스트 관리', href: `/${locale}/admin/wishlists`, icon: GiftIcon },
+    { name: '공지사항 관리', href: `/${locale}/admin/notices`, icon: MegaphoneIcon },
     { name: '통계 분석', href: `/${locale}/admin/analytics`, icon: ChartBarIcon },
     { name: '시스템 설정', href: `/${locale}/admin/settings`, icon: Cog6ToothIcon },
     { name: '컨텐츠 관리', href: `/${locale}/admin/content`, icon: GiftIcon },

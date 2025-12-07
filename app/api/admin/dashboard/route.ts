@@ -35,7 +35,9 @@ export async function GET() {
       totalUsers,
       totalWishlists,
       activeUsers,
-      recentActivities
+      recentActivities,
+      categoryStats,
+      popularWishlists
     ] = await Promise.all([
       // Total users count
       prisma.user.count(),
@@ -83,6 +85,42 @@ export async function GET() {
             }
           }
         }
+      }),
+
+      // Category statistics
+      prisma.wishlist.groupBy({
+        by: ['category'],
+        _count: {
+          category: true
+        },
+        orderBy: {
+          _count: {
+            category: 'desc'
+          }
+        }
+      }),
+
+      // Popular wishlists (by item count)
+      prisma.wishlist.findMany({
+        take: 5,
+        orderBy: {
+          items: {
+            _count: 'desc'
+          }
+        },
+        include: {
+          user: {
+            select: {
+              name: true,
+              email: true
+            }
+          },
+          _count: {
+            select: {
+              items: true
+            }
+          }
+        }
       })
     ])
 
@@ -96,6 +134,35 @@ export async function GET() {
       timestamp: wishlist.createdAt
     }))
 
+    // Format category stats
+    const formattedCategoryStats = categoryStats.map(stat => ({
+      category: stat.category,
+      count: stat._count.category
+    }))
+
+    // Format popular wishlists
+    const formattedPopularWishlists = popularWishlists.map(wishlist => ({
+      id: wishlist.id,
+      title: wishlist.title,
+      category: wishlist.category,
+      userName: wishlist.user?.name || wishlist.user?.email || 'Unknown',
+      itemCount: wishlist._count.items,
+      createdAt: wishlist.createdAt
+    }))
+
+    // Mock data for QnA and errors (to be implemented later)
+    const mockQnA = [
+      { id: '1', question: '위시리스트 공유가 안돼요', user: 'user1@example.com', status: 'pending', createdAt: new Date() },
+      { id: '2', question: '아이템 추가 방법 문의', user: 'user2@example.com', status: 'pending', createdAt: new Date() },
+      { id: '3', question: '계정 삭제 요청', user: 'user3@example.com', status: 'pending', createdAt: new Date() }
+    ]
+
+    const mockErrors = [
+      { id: '1', endpoint: '/api/wishlists', method: 'POST', statusCode: 500, message: 'Database connection failed', timestamp: new Date() },
+      { id: '2', endpoint: '/api/items/123', method: 'PUT', statusCode: 503, message: 'Service unavailable', timestamp: new Date() },
+      { id: '3', endpoint: '/api/users', method: 'GET', statusCode: 500, message: 'Internal server error', timestamp: new Date() }
+    ]
+
     console.log('[Dashboard API] Dashboard data fetched successfully')
 
     return NextResponse.json({
@@ -104,7 +171,11 @@ export async function GET() {
         totalWishlists,
         activeUsers
       },
-      recentActivities: formattedActivities
+      recentActivities: formattedActivities,
+      categoryStats: formattedCategoryStats,
+      popularWishlists: formattedPopularWishlists,
+      qnaList: mockQnA,
+      recentErrors: mockErrors
     })
   } catch (error) {
     console.error('[Dashboard API] Error fetching dashboard data:', error)

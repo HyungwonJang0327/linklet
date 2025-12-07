@@ -21,6 +21,30 @@ interface DashboardData {
     action: string
     time: string
   }>
+  categoryStats: Array<{
+    category: string
+    count: number
+  }>
+  popularWishlists: Array<{
+    id: string
+    title: string
+    category: string
+    userName: string
+    itemCount: number
+  }>
+  qnaList: Array<{
+    id: string
+    question: string
+    user: string
+    status: string
+  }>
+  recentErrors: Array<{
+    id: string
+    endpoint: string
+    method: string
+    statusCode: number
+    message: string
+  }>
 }
 
 export default function AdminDashboard() {
@@ -172,18 +196,63 @@ export default function AdminDashboard() {
         })}
       </div>
 
+      {/* Grid Layout for Multiple Sections */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* QnA List */}
+        <div className="bg-slate-800/50 backdrop-blur-sm border border-slate-700/50 rounded-xl p-6">
+          <h2 className="text-lg font-semibold text-white mb-4">최근 문의사항</h2>
+          <div className="space-y-3">
+            {data.qnaList.map((qna) => (
+              <div
+                key={qna.id}
+                className="flex items-center justify-between py-2 border-b border-slate-700/50 last:border-0"
+              >
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm font-medium text-white truncate">{qna.question}</p>
+                  <p className="text-xs text-slate-400">{qna.user}</p>
+                </div>
+                <span className="px-2 py-1 text-xs font-medium bg-yellow-500/20 text-yellow-400 rounded">
+                  대기중
+                </span>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Recent Errors */}
+        <div className="bg-slate-800/50 backdrop-blur-sm border border-slate-700/50 rounded-xl p-6">
+          <h2 className="text-lg font-semibold text-white mb-4">최근 5xx 에러</h2>
+          <div className="space-y-3">
+            {data.recentErrors.map((error) => (
+              <div
+                key={error.id}
+                className="flex items-start justify-between py-2 border-b border-slate-700/50 last:border-0"
+              >
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm font-medium text-white">
+                    {error.method} {error.endpoint}
+                  </p>
+                  <p className="text-xs text-slate-400 truncate">{error.message}</p>
+                </div>
+                <span className="px-2 py-1 text-xs font-medium bg-red-500/20 text-red-400 rounded ml-2">
+                  {error.statusCode}
+                </span>
+              </div>
+            ))}
+          </div>
+        </div>
+
         {/* Recent Activities */}
         <div className="bg-slate-800/50 backdrop-blur-sm border border-slate-700/50 rounded-xl p-6">
           <h2 className="text-lg font-semibold text-white mb-4">최근 활동</h2>
-          <div className="space-y-4">
+          <div className="space-y-3">
             {recentActivities.map((activity, index) => (
               <div
                 key={index}
-                className="flex items-center justify-between py-3 border-b border-slate-700/50 last:border-0"
+                className="flex items-center justify-between py-2 border-b border-slate-700/50 last:border-0"
               >
-                <div className="flex-1">
-                  <p className="text-sm font-medium text-white">{activity.user}</p>
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm font-medium text-white truncate">{activity.user}</p>
                   <p className="text-xs text-slate-400">{activity.action}</p>
                 </div>
                 <span className="text-xs text-slate-500">{activity.time}</span>
@@ -192,22 +261,28 @@ export default function AdminDashboard() {
           </div>
         </div>
 
-        {/* Quick Actions */}
+        {/* Popular Wishlists */}
         <div className="bg-slate-800/50 backdrop-blur-sm border border-slate-700/50 rounded-xl p-6">
-          <h2 className="text-lg font-semibold text-white mb-4">빠른 작업</h2>
+          <h2 className="text-lg font-semibold text-white mb-4">인기 위시리스트</h2>
           <div className="space-y-3">
-            <button className="w-full px-4 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors text-sm font-medium">
-              신규 사용자 추가
-            </button>
-            <button className="w-full px-4 py-3 bg-slate-700 hover:bg-slate-600 text-white rounded-lg transition-colors text-sm font-medium">
-              공지사항 작성
-            </button>
-            <button className="w-full px-4 py-3 bg-slate-700 hover:bg-slate-600 text-white rounded-lg transition-colors text-sm font-medium">
-              리포트 생성
-            </button>
-            <button className="w-full px-4 py-3 bg-slate-700 hover:bg-slate-600 text-white rounded-lg transition-colors text-sm font-medium">
-              백업 실행
-            </button>
+            {data.popularWishlists.length > 0 ? (
+              data.popularWishlists.map((wishlist) => (
+                <div
+                  key={wishlist.id}
+                  className="flex items-center justify-between py-2 border-b border-slate-700/50 last:border-0"
+                >
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-medium text-white truncate">{wishlist.title}</p>
+                    <p className="text-xs text-slate-400">{wishlist.userName}</p>
+                  </div>
+                  <span className="text-xs font-medium text-blue-400 ml-2">
+                    {wishlist.itemCount}개
+                  </span>
+                </div>
+              ))
+            ) : (
+              <p className="text-sm text-slate-400 text-center py-4">데이터가 없습니다</p>
+            )}
           </div>
         </div>
       </div>
