@@ -133,6 +133,23 @@ model QnA {
   @@map("qnas")
 }
 
+model ErrorLog {
+  id         String   @id @default(cuid())
+  endpoint   String
+  method     String
+  statusCode Int
+  message    String   @db.Text
+  stack      String?  @db.Text
+  userId     String?
+  ip         String?
+  userAgent  String?  @db.Text
+  createdAt  DateTime @default(now())
+
+  @@map("error_logs")
+  @@index([createdAt])
+  @@index([statusCode])
+}
+
 enum WishlistCategory {
   GENERAL
   BIRTHDAY

@@ -30,6 +30,18 @@ export async function GET() {
     const thirtyDaysAgo = new Date()
     thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30)
 
+    // Get dates for comparison (60 days ago for calculating trends)
+    const sixtyDaysAgo = new Date()
+    sixtyDaysAgo.setDate(sixtyDaysAgo.getDate() - 60)
+
+    // Get 24 hours ago for error stats
+    const twentyFourHoursAgo = new Date()
+    twentyFourHoursAgo.setHours(twentyFourHoursAgo.getHours() - 24)
+
+    // Get 48 hours ago for error comparison
+    const fortyEightHoursAgo = new Date()
+    fortyEightHoursAgo.setHours(fortyEightHoursAgo.getHours() - 48)
+
     // Fetch all statistics in parallel
     const [
       totalUsers,
@@ -38,7 +50,13 @@ export async function GET() {
       recentActivities,
       categoryStats,
       popularWishlists,
-      pendingQnAs
+      pendingQnAs,
+      recentErrors,
+      previousPeriodUsers,
+      previousPeriodWishlists,
+      previousPeriodActiveUsers,
+      errorsLast24Hours,
+      errorsPrevious24Hours
     ] = await Promise.all([
       // Total users count
       prisma.user.count(),
@@ -141,10 +159,109 @@ export async function GET() {
             }
           }
         }
+      }),
+
+      // Recent error logs (5xx errors only)
+      prisma.errorLog.findMany({
+        where: {
+          statusCode: {
+            gte: 500
+          }
+        },
+        take: 5,
+        orderBy: {
+          createdAt: 'desc'
+        }
+      }),
+
+      // Previous period users (30-60 days ago) for trend calculation
+      prisma.user.count({
+        where: {
+          createdAt: {
+            gte: sixtyDaysAgo,
+            lt: thirtyDaysAgo
+          }
+        }
+      }),
+
+      // Previous period wishlists (30-60 days ago) for trend calculation
+      prisma.wishlist.count({
+        where: {
+          createdAt: {
+            gte: sixtyDaysAgo,
+            lt: thirtyDaysAgo
+          }
+        }
+      }),
+
+      // Previous period active users (30-60 days ago)
+      prisma.user.count({
+        where: {
+          OR: [
+            {
+              wishlists: {
+                some: {
+                  createdAt: {
+                    gte: sixtyDaysAgo,
+                    lt: thirtyDaysAgo
+                  }
+                }
+              }
+            },
+            {
+              wishlists: {
+                some: {
+                  updatedAt: {
+                    gte: sixtyDaysAgo,
+                    lt: thirtyDaysAgo
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }),
+
+      // Errors in last 24 hours
+      prisma.errorLog.count({
+        where: {
+          statusCode: {
+            gte: 500
+          },
+          createdAt: {
+            gte: twentyFourHoursAgo
+          }
+        }
+      }),
+
+      // Errors in previous 24 hours (24-48 hours ago)
+      prisma.errorLog.count({
+        where: {
+          statusCode: {
+            gte: 500
+          },
+          createdAt: {
+            gte: fortyEightHoursAgo,
+            lt: twentyFourHoursAgo
+          }
+        }
       })
     ])
 
     console.log('[Dashboard API] Stats fetched:', { totalUsers, totalWishlists, activeUsers })
+
+    // Calculate percentage changes
+    const calculateChange = (current: number, previous: number): string => {
+      if (previous === 0) return current > 0 ? '+100%' : '0%'
+      const change = ((current - previous) / previous) * 100
+      const sign = change >= 0 ? '+' : ''
+      return `${sign}${change.toFixed(1)}%`
+    }
+
+    const userChange = calculateChange(totalUsers, totalUsers - previousPeriodUsers)
+    const wishlistChange = calculateChange(totalWishlists, totalWishlists - previousPeriodWishlists)
+    const activeUserChange = calculateChange(activeUsers, previousPeriodActiveUsers)
+    const errorChange = calculateChange(errorsLast24Hours, errorsPrevious24Hours)
 
     // Format recent activities
     const formattedActivities = recentActivities.map(wishlist => ({
@@ -179,12 +296,15 @@ export async function GET() {
       createdAt: qna.createdAt
     }))
 
-    // Mock data for errors (to be implemented later)
-    const mockErrors = [
-      { id: '1', endpoint: '/api/wishlists', method: 'POST', statusCode: 500, message: 'Database connection failed', timestamp: new Date() },
-      { id: '2', endpoint: '/api/items/123', method: 'PUT', statusCode: 503, message: 'Service unavailable', timestamp: new Date() },
-      { id: '3', endpoint: '/api/users', method: 'GET', statusCode: 500, message: 'Internal server error', timestamp: new Date() }
-    ]
+    // Format recent errors
+    const formattedErrors = recentErrors.map(error => ({
+      id: error.id,
+      endpoint: error.endpoint,
+      method: error.method,
+      statusCode: error.statusCode,
+      message: error.message,
+      timestamp: error.createdAt
+    }))
 
     console.log('[Dashboard API] Dashboard data fetched successfully')
 
@@ -192,13 +312,18 @@ export async function GET() {
       stats: {
         totalUsers,
         totalWishlists,
-        activeUsers
+        activeUsers,
+        errorsLast24Hours,
+        userChange,
+        wishlistChange,
+        activeUserChange,
+        errorChange
       },
       recentActivities: formattedActivities,
       categoryStats: formattedCategoryStats,
       popularWishlists: formattedPopularWishlists,
       qnaList: formattedQnAList,
-      recentErrors: mockErrors
+      recentErrors: formattedErrors
     })
   } catch (error) {
     console.error('[Dashboard API] Error fetching dashboard data:', error)

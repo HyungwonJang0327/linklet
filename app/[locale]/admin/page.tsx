@@ -15,6 +15,11 @@ interface DashboardData {
     totalUsers: number
     totalWishlists: number
     activeUsers: number
+    errorsLast24Hours: number
+    userChange: string
+    wishlistChange: string
+    activeUserChange: string
+    errorChange: string
   }
   recentActivities: Array<{
     user: string
@@ -123,32 +128,32 @@ export default function AdminDashboard() {
     {
       name: '총 사용자',
       value: data.stats.totalUsers.toLocaleString(),
-      change: '+12.3%',
-      trend: 'up',
+      change: data.stats.userChange,
+      trend: data.stats.userChange.startsWith('-') ? 'down' : 'up',
       icon: UsersIcon,
       color: 'blue'
     },
     {
       name: '총 위시리스트',
       value: data.stats.totalWishlists.toLocaleString(),
-      change: '+8.1%',
-      trend: 'up',
+      change: data.stats.wishlistChange,
+      trend: data.stats.wishlistChange.startsWith('-') ? 'down' : 'up',
       icon: GiftIcon,
       color: 'purple'
     },
     {
       name: '활성 사용자 (30일)',
       value: data.stats.activeUsers.toLocaleString(),
-      change: '+15.2%',
-      trend: 'up',
+      change: data.stats.activeUserChange,
+      trend: data.stats.activeUserChange.startsWith('-') ? 'down' : 'up',
       icon: ChartBarIcon,
       color: 'green'
     },
     {
       name: '5xx 에러 (24h)',
-      value: '12',
-      change: '-25.0%',
-      trend: 'down',
+      value: data.stats.errorsLast24Hours.toLocaleString(),
+      change: data.stats.errorChange,
+      trend: data.stats.errorChange.startsWith('-') ? 'down' : 'up',
       icon: ExclamationTriangleIcon,
       color: 'red'
     }
