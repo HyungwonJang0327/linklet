@@ -151,6 +151,10 @@
       "title": "Contact Us",
       "description": "Ask questions and receive answers"
     },
+    "inquiries": {
+      "title": "Inquiries & Feedback",
+      "description": "Leave your questions or suggestions"
+    },
     "customize": {
       "title": "Wishlist Customization",
       "description": "Freely customize the look and feel of your shared wishlist pages.",

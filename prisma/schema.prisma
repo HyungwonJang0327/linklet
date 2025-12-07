@@ -19,10 +19,11 @@ model User {
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
 
-  wishlists Wishlist[]
-  accounts  Account[]
-  sessions  Session[]
-  qnas      QnA[]
+  wishlists  Wishlist[]
+  accounts   Account[]
+  sessions   Session[]
+  qnas       QnA[]
+  inquiries  UserInquiry[]
 
   @@map("users")
 }
@@ -150,6 +151,28 @@ model ErrorLog {
   @@index([statusCode])
 }
 
+model UserInquiry {
+  id          String       @id @default(cuid())
+  type        InquiryType  @default(QUESTION)
+  subject     String
+  content     String       @db.Text
+  response    String?      @db.Text
+  status      InquiryStatus @default(PENDING)
+  priority    Priority?
+  category    String?
+  userId      String
+  user        User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt   DateTime     @default(now())
+  respondedAt DateTime?
+  updatedAt   DateTime     @updatedAt
+
+  @@map("user_inquiries")
+  @@index([userId])
+  @@index([status])
+  @@index([type])
+  @@index([createdAt])
+}
+
 enum WishlistCategory {
   GENERAL
   BIRTHDAY
@@ -161,4 +184,25 @@ enum WishlistCategory {
   BOOKS
   TRAVEL
   HOME
+}
+
+enum InquiryType {
+  QUESTION        // 문의사항 (답변 필수)
+  FEEDBACK        // 일반 피드백
+  BUG_REPORT      // 버그 제보
+  FEATURE_REQUEST // 기능 제안
+}
+
+enum InquiryStatus {
+  PENDING     // 대기중
+  IN_PROGRESS // 처리중
+  ANSWERED    // 답변완료
+  CLOSED      // 종료
+}
+
+enum Priority {
+  LOW
+  MEDIUM
+  HIGH
+  URGENT
 }

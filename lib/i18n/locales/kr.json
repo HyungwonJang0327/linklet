@@ -151,6 +151,10 @@
       "title": "문의하기",
       "description": "궁금한 사항을 문의하고 답변을 받아보세요"
     },
+    "inquiries": {
+      "title": "문의 및 피드백",
+      "description": "궁금한 사항이나 의견을 남겨주세요"
+    },
     "customize": {
       "title": "위시리스트 커스터마이징",
       "description": "공유 위시리스트 페이지의 모양과 느낌을 자유롭게 꾸며보세요.",

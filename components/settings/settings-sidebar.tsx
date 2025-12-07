@@ -140,11 +140,11 @@ export function SettingsSidebar({ collapsed = false, onToggleCollapse }: Setting
     //   descriptionKey: 'settings.notifications.description'
     // },
     {
-      nameKey: 'settings.qna.title',
-      href: `/${locale}/settings/qna`,
+      nameKey: 'settings.inquiries.title',
+      href: `/${locale}/settings/inquiries`,
       icon: ChatBubbleLeftRightIcon,
-      menuId: 'qna',
-      descriptionKey: 'settings.qna.description'
+      menuId: 'inquiries',
+      descriptionKey: 'settings.inquiries.description'
     },
     {
       nameKey: 'settings.profile.title',
