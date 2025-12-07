@@ -118,6 +118,4 @@ enum WishlistCategory {
   BOOKS
   TRAVEL
   HOME
-
-  @@map("wishlist_category")
 }
