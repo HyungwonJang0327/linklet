@@ -147,6 +147,10 @@
       "fontSize": "Font Size",
       "compactMode": "Compact Mode"
     },
+    "qna": {
+      "title": "Contact Us",
+      "description": "Ask questions and receive answers"
+    },
     "customize": {
       "title": "Wishlist Customization",
       "description": "Freely customize the look and feel of your shared wishlist pages.",

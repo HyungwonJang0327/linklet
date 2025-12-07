@@ -16,7 +16,8 @@ import {
   RectangleStackIcon,
   ChartBarIcon,
   CreditCardIcon,
-  TrashIcon
+  TrashIcon,
+  ChatBubbleLeftRightIcon
 } from '@heroicons/react/24/outline'
 import { LogOut } from 'lucide-react'
 import { Button } from '../ui'
@@ -138,6 +139,13 @@ export function SettingsSidebar({ collapsed = false, onToggleCollapse }: Setting
     //   menuId: 'notifications',
     //   descriptionKey: 'settings.notifications.description'
     // },
+    {
+      nameKey: 'settings.qna.title',
+      href: `/${locale}/settings/qna`,
+      icon: ChatBubbleLeftRightIcon,
+      menuId: 'qna',
+      descriptionKey: 'settings.qna.description'
+    },
     {
       nameKey: 'settings.profile.title',
       href: `/${locale}/settings/profile`,
