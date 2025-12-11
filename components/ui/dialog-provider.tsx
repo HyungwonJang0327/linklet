@@ -10,6 +10,7 @@ import React, {
 
 import { Button } from '@/components/ui/button'
 import { CustomDialog } from './dialog'
+import { useI18n } from '@/lib/i18n/context'
 
 export interface DialogConfig {
   id?: string
@@ -135,6 +136,8 @@ interface DialogComponentProps {
 }
 
 function DialogComponent({ dialog, onClose }: DialogComponentProps) {
+  const { t } = useI18n()
+
   const handleClose = () => {
     try {
       if (dialog.onClose) {
@@ -172,7 +175,7 @@ function DialogComponent({ dialog, onClose }: DialogComponentProps) {
           onClick={handleConfirm}
           className="w-full"
         >
-          {dialog?.confirmText || '확인'}
+          {dialog?.confirmText || t('common.confirm')}
         </Button>
       )
     }
@@ -185,7 +188,7 @@ function DialogComponent({ dialog, onClose }: DialogComponentProps) {
           onClick={handleClose}
           className="flex-1 border-slate-600 text-slate-300 hover:bg-slate-700"
         >
-          {dialog?.cancelText || '취소'}
+          {dialog?.cancelText || t('common.cancel')}
         </Button>
         <Button
           variant="primary"
@@ -196,7 +199,7 @@ function DialogComponent({ dialog, onClose }: DialogComponentProps) {
             : ''
             }`}
         >
-          {dialog?.confirmText || '확인'}
+          {dialog?.confirmText || t('common.confirm')}
         </Button>
       </div>
     )
@@ -303,12 +306,13 @@ export const dialogClear = () => {
 
 
 // Convenience functions - all use dialogOpen for consistency
+// Note: These functions don't have access to i18n context, so default text is handled in DialogComponent
 export const dialogAlert = (title: string, message?: string, confirmText?: string) => {
   return dialogOpen({
     type: 'alert',
     title,
     description: message,
-    confirmText: confirmText || '확인',
+    confirmText,
   })
 }
 
@@ -341,6 +345,6 @@ export const dialogDestructive = (
     title,
     description: message,
     onConfirm,
-    confirmText: confirmText || '삭제',
+    confirmText,
   })
 }

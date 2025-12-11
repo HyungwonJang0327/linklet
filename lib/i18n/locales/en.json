@@ -16,7 +16,11 @@
     "select": "Please select",
     "back": "Back",
     "example": "e.g.",
-    "optional": "Optional"
+    "optional": "Optional",
+    "confirm": "Confirm",
+    "priceNotAvailable": "Price not available",
+    "currency": "$",
+    "uploadError": "An error occurred while uploading the file."
   },
   "navigation": {
     "home": "Home",
@@ -153,7 +157,28 @@
     },
     "inquiries": {
       "title": "Help Center",
-      "description": "Have questions or issues? Get help here"
+      "description": "Have questions or issues? Get help here",
+      "newInquiry": "New Inquiry",
+      "type": "Type",
+      "subject": "Subject",
+      "content": "Content",
+      "submitting": "Submitting...",
+      "submit": "Submit",
+      "all": "All",
+      "empty": "No inquiries yet",
+      "response": "Response",
+      "types": {
+        "QUESTION": "Question",
+        "FEEDBACK": "Feedback",
+        "BUG_REPORT": "Bug Report",
+        "FEATURE_REQUEST": "Feature Request"
+      },
+      "status": {
+        "PENDING": "Pending",
+        "IN_PROGRESS": "In Progress",
+        "ANSWERED": "Answered",
+        "CLOSED": "Closed"
+      }
     },
     "customize": {
       "title": "Wishlist Customization",

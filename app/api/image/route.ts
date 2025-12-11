@@ -47,7 +47,7 @@ export async function POST(req: NextRequest) {
     } catch (error) {
         console.error('Error uploading files:', error);
         return new Response(
-            JSON.stringify({ message: '파일 업로드 중 오류가 발생했습니다.' }),
+            JSON.stringify({ message: 'An error occurred while uploading the file.' }),
             { status: 500 },
         );
     }

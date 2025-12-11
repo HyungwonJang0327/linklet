@@ -94,7 +94,7 @@ export default function WishlistCard({ wishlist, onDelete }: WishlistCardProps) 
               size="sm"
               onClick={handleEdit}
               className="text-slate-400 hover:text-white hover:bg-slate-700"
-              title={t('common.edit') || '편집'}
+              title={t('common.edit')}
             >
               <PencilIcon className="w-4 h-4" />
             </Button>
@@ -104,7 +104,7 @@ export default function WishlistCard({ wishlist, onDelete }: WishlistCardProps) 
               onClick={handleDelete}
               disabled={isDeleting}
               className="text-slate-400 hover:text-red-400 hover:bg-red-500/10 disabled:opacity-50"
-              title={t('common.delete') || '삭제'}
+              title={t('common.delete')}
             >
               <TrashIcon className="w-4 h-4" />
             </Button>

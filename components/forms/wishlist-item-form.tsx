@@ -7,6 +7,7 @@ import { Input } from '@/components/ui/input'
 import { Card } from '@/components/ui/card'
 import { isValidUrl } from '@/lib/utils'
 import { formatNumberInput } from '@/lib/utils/format'
+import { useI18n } from '@/lib/i18n/context'
 import type { CreateWishlistItemRequest, WishlistItem } from '@/lib/types'
 
 interface WishlistItemFormProps {
@@ -20,8 +21,9 @@ export function WishlistItemForm({
   onSubmit,
   initialData = {},
   loading = false,
-  submitText = '아이템 추가'
+  submitText
 }: WishlistItemFormProps) {
+  const { t } = useI18n()
   const [formData, setFormData] = useState({
     title: initialData.title || '',
     description: initialData.description || '',
@@ -39,17 +41,17 @@ export function WishlistItemForm({
     const newErrors: Record<string, string> = {}
 
     if (!formData.title.trim()) {
-      newErrors.title = '상품명을 입력해주세요'
+      newErrors.title = t('item.form.productNameRequired')
     }
 
     if (!formData.productUrl.trim()) {
-      newErrors.productUrl = '상품 링크를 입력해주세요'
+      newErrors.productUrl = t('item.form.productLinkRequired')
     } else if (!isValidUrl(formData.productUrl)) {
-      newErrors.productUrl = '올바른 URL 형식을 입력해주세요'
+      newErrors.productUrl = t('item.form.productLinkInvalid')
     }
 
     if (formData.imageUrl && !isValidUrl(formData.imageUrl)) {
-      newErrors.imageUrl = '올바른 이미지 URL 형식을 입력해주세요'
+      newErrors.imageUrl = t('item.form.imageUrlInvalid')
     }
     
     if (Object.keys(newErrors).length > 0) {
@@ -92,17 +94,17 @@ export function WishlistItemForm({
           </div>
           <div>
             <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
-              새 아이템 추가
+              {t('item.form.newItemTitle')}
             </h3>
             <p className="text-sm text-gray-600 dark:text-gray-300">
-              위시리스트에 추가할 상품 정보를 입력해주세요
+              {t('item.form.newItemSubtitle')}
             </p>
           </div>
         </div>
 
         <Input
-          label="상품명"
-          placeholder="예: iPhone 15 Pro"
+          label={t('item.form.productName')}
+          placeholder={t('item.form.titlePlaceholder')}
           value={formData.title}
           onChange={(value: string) => setFormData(prev => ({ ...prev, title: value }))}
           required
@@ -114,12 +116,12 @@ export function WishlistItemForm({
           <div className="flex items-center gap-2 mb-2">
             <LinkIcon className="w-4 h-4 text-gray-500" />
             <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
-              상품 링크 <span className="text-red-500">*</span>
+              {t('item.form.productLink')} <span className="text-red-500">*</span>
             </label>
           </div>
           <Input
             type="url"
-            placeholder="https://example.com/product"
+            placeholder={t('item.form.urlPlaceholder')}
             value={formData.productUrl}
             onChange={(value: string) => setFormData(prev => ({ ...prev, productUrl: value }))}
             required
@@ -129,8 +131,8 @@ export function WishlistItemForm({
         </div>
 
         <Input
-          label="설명 (선택사항)"
-          placeholder="상품에 대한 간단한 설명"
+          label={t('item.form.descriptionOptional')}
+          placeholder={t('item.form.descriptionPlaceholder')}
           value={formData.description}
           onChange={(value: string) => setFormData(prev => ({ ...prev, description: value }))}
           disabled={loading}
@@ -138,9 +140,9 @@ export function WishlistItemForm({
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <Input
-            label="이미지 URL (선택사항)"
+            label={t('item.form.imageUrlOptional')}
             type="url"
-            placeholder="https://example.com/image.jpg"
+            placeholder={t('item.form.imagePlaceholder')}
             value={formData.imageUrl}
             onChange={(value: string) => setFormData(prev => ({ ...prev, imageUrl: value }))}
             error={errors.imageUrl}
@@ -148,8 +150,8 @@ export function WishlistItemForm({
           />
 
           <Input
-            label="가격 (선택사항)"
-            placeholder="예: 999000"
+            label={t('item.form.priceOptional')}
+            placeholder={t('item.form.pricePlaceholder')}
             value={formData.price}
             onChange={(value: string) => {
               // Format as user types - only allow numbers and auto-format with commas
@@ -166,7 +168,7 @@ export function WishlistItemForm({
           className="w-full"
         >
           <Plus className="w-4 h-4 mr-2" />
-          {submitText}
+          {submitText || t('item.form.submitText')}
         </Button>
       </form>
     </Card>

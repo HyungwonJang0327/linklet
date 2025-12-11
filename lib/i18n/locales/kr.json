@@ -16,7 +16,11 @@
     "select": "선택하세요",
     "back": "돌아가기",
     "example": "예",
-    "optional": "선택사항"
+    "optional": "선택사항",
+    "confirm": "확인",
+    "priceNotAvailable": "가격 정보 없음",
+    "currency": "원",
+    "uploadError": "파일 업로드 중 오류가 발생했습니다."
   },
   "navigation": {
     "home": "홈",
@@ -153,7 +157,28 @@
     },
     "inquiries": {
       "title": "헬프 센터",
-      "description": "궁금한 점이나 문제가 있으신가요? 도움을 받아보세요"
+      "description": "궁금한 점이나 문제가 있으신가요? 도움을 받아보세요",
+      "newInquiry": "새 문의 작성",
+      "type": "유형",
+      "subject": "제목",
+      "content": "내용",
+      "submitting": "제출 중...",
+      "submit": "제출",
+      "all": "전체",
+      "empty": "문의 내역이 없습니다",
+      "response": "답변",
+      "types": {
+        "QUESTION": "문의사항",
+        "FEEDBACK": "피드백",
+        "BUG_REPORT": "버그 제보",
+        "FEATURE_REQUEST": "기능 제안"
+      },
+      "status": {
+        "PENDING": "대기중",
+        "IN_PROGRESS": "처리중",
+        "ANSWERED": "답변완료",
+        "CLOSED": "종료"
+      }
     },
     "customize": {
       "title": "위시리스트 커스터마이징",

@@ -84,11 +84,10 @@ export default function WishlistsManagePage() {
       // Show success message with guidance for manual editing if metadata failed
       if (metadataFailed) {
         toast.success(
-          t('item.add.successWithoutMetadata') ||
-          '상품이 추가되었습니다. 상품 정보를 수동으로 입력해주세요.',
+          t('item.add.successWithoutMetadata'),
           {
             action: {
-              label: t('common.view') || '보기',
+              label: t('common.view'),
               onClick: () => router.push(`/${locale}/settings/wishlists/${selectedWishlistId}`)
             },
             duration: 5000

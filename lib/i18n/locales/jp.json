@@ -16,7 +16,11 @@
     "select": "選択してください",
     "back": "戻る",
     "example": "例",
-    "optional": "任意"
+    "optional": "任意",
+    "confirm": "確認",
+    "priceNotAvailable": "価格情報なし",
+    "currency": "¥",
+    "uploadError": "ファイルのアップロード中にエラーが発生しました。"
   },
   "navigation": {
     "home": "ホーム",
@@ -153,7 +157,28 @@
     },
     "inquiries": {
       "title": "ヘルプセンター",
-      "description": "ご質問や問題がありますか？サポートを受けましょう"
+      "description": "ご質問や問題がありますか？サポートを受けましょう",
+      "newInquiry": "新規お問い合わせ",
+      "type": "種類",
+      "subject": "件名",
+      "content": "内容",
+      "submitting": "送信中...",
+      "submit": "送信",
+      "all": "すべて",
+      "empty": "お問い合わせ履歴がありません",
+      "response": "回答",
+      "types": {
+        "QUESTION": "お問い合わせ",
+        "FEEDBACK": "フィードバック",
+        "BUG_REPORT": "バグ報告",
+        "FEATURE_REQUEST": "機能提案"
+      },
+      "status": {
+        "PENDING": "待機中",
+        "IN_PROGRESS": "処理中",
+        "ANSWERED": "回答済み",
+        "CLOSED": "終了"
+      }
     },
     "customize": {
       "title": "ウィッシュリストカスタマイズ",

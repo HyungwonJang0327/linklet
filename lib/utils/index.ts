@@ -10,8 +10,18 @@ export function cn(...inputs: ClassValue[]) {
 export { formatDate, formatRelativeTime, formatFullDate, isValidDate } from './date'
 
 // Price formatter
-export function formatPrice(price: string | null): string {
-  if (!price) return '가격 정보 없음'
+export function formatPrice(
+  price: string | null,
+  locale: string = 'kr',
+  options?: {
+    notAvailableText?: string
+    currency?: string
+  }
+): string {
+  const notAvailable = options?.notAvailableText || (locale === 'en' ? 'Price not available' : locale === 'jp' ? '価格情報なし' : '가격 정보 없음')
+  const currency = options?.currency || (locale === 'en' ? '$' : locale === 'jp' ? '¥' : '원')
+
+  if (!price) return notAvailable
 
   // Remove non-numeric characters except for dots and commas
   const numericPrice = price.replace(/[^\d.,]/g, '')
@@ -19,7 +29,13 @@ export function formatPrice(price: string | null): string {
 
   if (isNaN(numberValue)) return price
 
-  return numberValue.toLocaleString('ko-KR') + '원'
+  const localeMap: Record<string, string> = {
+    'kr': 'ko-KR',
+    'en': 'en-US',
+    'jp': 'ja-JP'
+  }
+
+  return numberValue.toLocaleString(localeMap[locale] || 'ko-KR') + currency
 }
 
 // URL validation

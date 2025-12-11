@@ -6,37 +6,25 @@ import { LoadingSpinner } from '@/components/ui/loading'
 import { notFound } from 'next/navigation'
 import Image from 'next/image'
 import { UserCircleIcon } from '@heroicons/react/24/outline'
+import { I18nProvider, useI18n } from '@/lib/i18n/context'
+import { getDictionary } from '@/lib/i18n/dictionary'
+import { type Locale } from '@/lib/i18n/config'
 
 interface SharedWishlistClientProps {
   shareUrl: string
 }
 
-// Translations for UI elements
-const translations = {
-  kr: {
-    items: '개 항목',
-    noItems: '이 위시리스트에 아이템이 없습니다',
-    private: '비공개 위시리스트',
-    privateMessage: '이 위시리스트는 비공개이며 볼 수 없습니다.',
-    error: '오류'
-  },
-  en: {
-    items: 'items',
-    noItems: 'No items in this wishlist',
-    private: 'Private Wishlist',
-    privateMessage: 'This wishlist is private and cannot be viewed.',
-    error: 'Error'
-  },
-  jp: {
-    items: '個のアイテム',
-    noItems: 'このウィッシュリストにアイテムがありません',
-    private: 'プライベートウィッシュリスト',
-    privateMessage: 'このウィッシュリストは非公開で閲覧できません。',
-    error: 'エラー'
-  }
-}
+// Detect browser language
+const detectBrowserLocale = (): Locale => {
+  if (typeof window === 'undefined') return 'en'
 
-type Locale = 'kr' | 'en' | 'jp'
+  const browserLang = navigator.language.toLowerCase()
+
+  if (browserLang.startsWith('ko')) return 'kr'
+  if (browserLang.startsWith('ja')) return 'jp'
+
+  return 'en'
+}
 
 // 기본 커스터마이징 설정
 const DEFAULT_CUSTOMIZATION = {
@@ -58,28 +46,41 @@ const DEFAULT_CUSTOMIZATION = {
   socialLinks: []
 }
 
+// Wrapper component with I18nProvider
 export default function SharedWishlistClient({ shareUrl }: SharedWishlistClientProps) {
-  const { data: wishlist, isLoading, error } = useSharedWishlist(shareUrl)
-  const viewTracked = useRef(false)
   const [locale, setLocale] = useState<Locale>('en')
-  const [t, setT] = useState(translations.en)
+  const [dictionary, setDictionary] = useState<any>(null)
 
-  // Detect browser language
   useEffect(() => {
-    if (typeof window !== 'undefined') {
-      const browserLang = navigator.language.toLowerCase()
-      let detectedLocale: Locale = 'en'
-
-      if (browserLang.startsWith('ko')) {
-        detectedLocale = 'kr'
-      } else if (browserLang.startsWith('ja')) {
-        detectedLocale = 'jp'
-      }
-
+    const loadDictionary = async () => {
+      const detectedLocale = detectBrowserLocale()
       setLocale(detectedLocale)
-      setT(translations[detectedLocale])
+      const dict = await getDictionary(detectedLocale)
+      setDictionary(dict)
     }
+    loadDictionary()
   }, [])
+
+  if (!dictionary) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-indigo-900 flex items-center justify-center">
+        <LoadingSpinner />
+      </div>
+    )
+  }
+
+  return (
+    <I18nProvider locale={locale} dictionary={dictionary}>
+      <SharedWishlistContent shareUrl={shareUrl} locale={locale} />
+    </I18nProvider>
+  )
+}
+
+// Main component
+function SharedWishlistContent({ shareUrl, locale }: SharedWishlistClientProps & { locale: Locale }) {
+  const { data: wishlist, isLoading, error } = useSharedWishlist(shareUrl)
+  const { t } = useI18n()
+  const viewTracked = useRef(false)
 
   // Track view count when wishlist loads
   useEffect(() => {
@@ -134,10 +135,10 @@ export default function SharedWishlistClient({ shareUrl }: SharedWishlistClientP
         <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-indigo-900 flex items-center justify-center">
           <div className="text-center">
             <h1 className="text-2xl font-bold mb-2 text-white">
-              {t.private}
+              {t('wishlist.shared.private')}
             </h1>
             <p className="text-slate-300">
-              {t.privateMessage}
+              {t('wishlist.shared.privateMessage')}
             </p>
           </div>
         </div>
@@ -148,7 +149,7 @@ export default function SharedWishlistClient({ shareUrl }: SharedWishlistClientP
       <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-indigo-900 flex items-center justify-center">
         <div className="text-center">
           <h1 className="text-2xl font-bold mb-2 text-white">
-            {t.error}
+            {t('wishlist.shared.error')}
           </h1>
           <p className="text-slate-300">{error.message}</p>
         </div>
@@ -313,7 +314,7 @@ export default function SharedWishlistClient({ shareUrl }: SharedWishlistClientP
 
           <div className="flex items-center justify-center gap-4 text-xs opacity-70">
             {customization.profile.showItemCount && (
-              <span>{wishlist.items?.length || 0} {t.items}</span>
+              <span>{wishlist.items?.length || 0} {t('wishlist.items')}</span>
             )}
             {customization.profile.showCreatedDate && (
               <span>{formatDate(wishlist.createdAt)}</span>
@@ -410,7 +411,7 @@ export default function SharedWishlistClient({ shareUrl }: SharedWishlistClientP
               className="text-lg opacity-70"
               style={{ color: customization.colors.text }}
             >
-              {t.noItems}
+              {t('wishlist.noItems')}
             </p>
           </div>
         )}

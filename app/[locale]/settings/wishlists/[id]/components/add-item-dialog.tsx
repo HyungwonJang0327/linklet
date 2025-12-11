@@ -29,7 +29,7 @@ export function AddItemDialog({ wishlistId, isOpen, onClose, onSuccess }: AddIte
     }
 
     if (!productTitle.trim()) {
-      toast.error(t('item.productTitleRequired') || '상품명을 입력해주세요')
+      toast.error(t('item.productTitleRequired'))
       return
     }
 
@@ -82,8 +82,7 @@ export function AddItemDialog({ wishlistId, isOpen, onClose, onSuccess }: AddIte
       // Show success message with guidance for manual editing if metadata failed
       if (metadataFailed) {
         toast.success(
-          t('item.add.successWithoutMetadata') ||
-          '상품이 추가되었습니다. 상품 정보를 수동으로 입력해주세요.',
+          t('item.add.successWithoutMetadata'),
           { duration: 5000 }
         )
       } else {

@@ -1,6 +1,9 @@
+'use client'
+
 import React from 'react'
 import { Loader2 } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { useI18n } from '@/lib/i18n/context'
 
 interface LoadingProps {
   size?: 'sm' | 'md' | 'lg'
@@ -33,10 +36,12 @@ export function LoadingSpinner({ size = 'md', className }: Omit<LoadingProps, 't
   )
 }
 
-export function LoadingPage({ text = '로딩 중...' }: { text?: string }) {
+export function LoadingPage({ text }: { text?: string }) {
+  const { t } = useI18n()
+
   return (
     <div className="min-h-screen flex items-center justify-center">
-      <Loading size="lg" text={text} />
+      <Loading size="lg" text={text || t('common.loading')} />
     </div>
   )
 }

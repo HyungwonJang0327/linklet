@@ -12,6 +12,7 @@ import {
   ClockIcon,
   XCircleIcon
 } from '@heroicons/react/24/outline'
+import { useI18n } from '@/lib/i18n/context'
 
 interface Inquiry {
   id: string
@@ -27,6 +28,7 @@ interface Inquiry {
 }
 
 export default function InquiriesPage() {
+  const { t } = useI18n()
   const [inquiries, setInquiries] = useState<Inquiry[]>([])
   const [loading, setLoading] = useState(true)
   const [filter, setFilter] = useState<string>('all')
@@ -99,12 +101,7 @@ export default function InquiriesPage() {
   }
 
   const getTypeLabel = (type: Inquiry['type']) => {
-    switch (type) {
-      case 'QUESTION': return '문의사항'
-      case 'FEEDBACK': return '피드백'
-      case 'BUG_REPORT': return '버그 제보'
-      case 'FEATURE_REQUEST': return '기능 제안'
-    }
+    return t(`settings.inquiries.types.${type}`)
   }
 
   const getStatusBadge = (status: Inquiry['status']) => {
@@ -115,16 +112,9 @@ export default function InquiriesPage() {
       CLOSED: 'bg-gray-500/10 text-gray-400 border-gray-500/20'
     }
 
-    const labels = {
-      PENDING: '대기중',
-      IN_PROGRESS: '처리중',
-      ANSWERED: '답변완료',
-      CLOSED: '종료'
-    }
-
     return (
       <span className={`px-2 py-1 text-xs font-medium border rounded ${styles[status]}`}>
-        {labels[status]}
+        {t(`settings.inquiries.status.${status}`)}
       </span>
     )
   }
@@ -134,12 +124,12 @@ export default function InquiriesPage() {
       {/* Header */}
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-2xl font-bold text-white">헬프 센터</h1>
-          <p className="text-sm text-slate-400 mt-1">궁금한 점이나 문제가 있으신가요? 도움을 받아보세요</p>
+          <h1 className="text-2xl font-bold text-white">{t('settings.inquiries.title')}</h1>
+          <p className="text-sm text-slate-400 mt-1">{t('settings.inquiries.description')}</p>
         </div>
         <Button onClick={() => setShowForm(!showForm)}>
           <PlusIcon className="w-4 h-4 mr-2" />
-          새 문의 작성
+          {t('settings.inquiries.newInquiry')}
         </Button>
       </div>
 
@@ -148,21 +138,21 @@ export default function InquiriesPage() {
         <div className="bg-slate-800/50 backdrop-blur-sm border border-slate-700/50 rounded-xl p-6">
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-slate-300 mb-2">유형</label>
+              <label className="block text-sm font-medium text-slate-300 mb-2">{t('settings.inquiries.type')}</label>
               <select
                 value={formData.type}
                 onChange={(e) => setFormData({ ...formData, type: e.target.value as Inquiry['type'] })}
                 className="w-full px-4 py-2 bg-slate-700/50 border border-slate-600 rounded-lg text-white focus:outline-none focus:border-blue-500"
               >
-                <option value="QUESTION">문의사항</option>
-                <option value="FEEDBACK">피드백</option>
-                <option value="BUG_REPORT">버그 제보</option>
-                <option value="FEATURE_REQUEST">기능 제안</option>
+                <option value="QUESTION">{t('settings.inquiries.types.QUESTION')}</option>
+                <option value="FEEDBACK">{t('settings.inquiries.types.FEEDBACK')}</option>
+                <option value="BUG_REPORT">{t('settings.inquiries.types.BUG_REPORT')}</option>
+                <option value="FEATURE_REQUEST">{t('settings.inquiries.types.FEATURE_REQUEST')}</option>
               </select>
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-slate-300 mb-2">제목</label>
+              <label className="block text-sm font-medium text-slate-300 mb-2">{t('settings.inquiries.subject')}</label>
               <input
                 type="text"
                 value={formData.subject}
@@ -173,7 +163,7 @@ export default function InquiriesPage() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-slate-300 mb-2">내용</label>
+              <label className="block text-sm font-medium text-slate-300 mb-2">{t('settings.inquiries.content')}</label>
               <textarea
                 value={formData.content}
                 onChange={(e) => setFormData({ ...formData, content: e.target.value })}
@@ -185,10 +175,10 @@ export default function InquiriesPage() {
 
             <div className="flex gap-3">
               <Button type="submit" disabled={submitting}>
-                {submitting ? '제출 중...' : '제출'}
+                {submitting ? t('settings.inquiries.submitting') : t('settings.inquiries.submit')}
               </Button>
               <Button type="button" variant="secondary" onClick={() => setShowForm(false)}>
-                취소
+                {t('common.cancel')}
               </Button>
             </div>
           </form>
@@ -207,7 +197,7 @@ export default function InquiriesPage() {
                 : 'bg-slate-700/50 text-slate-300 hover:bg-slate-700'
             }`}
           >
-            {type === 'all' ? '전체' : getTypeLabel(type as Inquiry['type'])}
+            {type === 'all' ? t('settings.inquiries.all') : getTypeLabel(type as Inquiry['type'])}
           </button>
         ))}
       </div>
@@ -220,7 +210,7 @@ export default function InquiriesPage() {
           </div>
         ) : inquiries.length === 0 ? (
           <div className="bg-slate-800/50 backdrop-blur-sm border border-slate-700/50 rounded-xl p-12 text-center">
-            <p className="text-slate-400">문의 내역이 없습니다</p>
+            <p className="text-slate-400">{t('settings.inquiries.empty')}</p>
           </div>
         ) : (
           inquiries.map((inquiry) => (
@@ -254,7 +244,7 @@ export default function InquiriesPage() {
                 <div className="bg-slate-700/30 border border-slate-600/50 rounded-lg p-4 mt-4">
                   <div className="flex items-center gap-2 mb-2">
                     <CheckCircleIcon className="w-4 h-4 text-green-400" />
-                    <span className="text-sm font-medium text-green-400">답변</span>
+                    <span className="text-sm font-medium text-green-400">{t('settings.inquiries.response')}</span>
                     {inquiry.respondedAt && (
                       <span className="text-xs text-slate-400">
                         {new Date(inquiry.respondedAt).toLocaleDateString('ko-KR')}
