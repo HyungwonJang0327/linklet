@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server'
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth-config'
 import { prisma } from '@/lib/db/client'
+import { checkRateLimit, getClientIp, RATE_LIMITS } from '@/lib/rate-limit'
 
 // GET /api/qna - Get user's questions
 export async function GET() {
@@ -43,6 +44,15 @@ export async function POST(request: Request) {
       return NextResponse.json(
         { error: 'Authentication required' },
         { status: 401 }
+      )
+    }
+
+    // Rate limiting to prevent spam
+    const clientIp = getClientIp(request)
+    if (!checkRateLimit(`qna:${clientIp}`, RATE_LIMITS.INQUIRY)) {
+      return NextResponse.json(
+        { error: 'Rate limit exceeded. Please try again later.' },
+        { status: 429 }
       )
     }
 

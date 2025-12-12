@@ -1,42 +1,18 @@
 import { NextResponse } from 'next/server'
 import { extractUrlMetadata } from '@/lib/services/url-metadata'
+import { checkRateLimit, getClientIp } from '@/lib/rate-limit'
 
-// Rate limiting simple implementation
-const rateLimitMap = new Map<string, { count: number; resetTime: number }>()
-const RATE_LIMIT_WINDOW = 60 * 1000 // 1 minute
-const RATE_LIMIT_MAX_REQUESTS = 10 // 10 requests per minute per IP
-
-function checkRateLimit(ip: string): boolean {
-  const now = Date.now()
-  const userLimit = rateLimitMap.get(ip)
-
-  if (!userLimit) {
-    rateLimitMap.set(ip, { count: 1, resetTime: now + RATE_LIMIT_WINDOW })
-    return true
-  }
-
-  if (now > userLimit.resetTime) {
-    // Reset the limit
-    rateLimitMap.set(ip, { count: 1, resetTime: now + RATE_LIMIT_WINDOW })
-    return true
-  }
-
-  if (userLimit.count >= RATE_LIMIT_MAX_REQUESTS) {
-    return false
-  }
-
-  userLimit.count++
-  return true
+// Rate limit for metadata extraction: 10 requests per minute per IP
+const METADATA_RATE_LIMIT = {
+  limit: 10,
+  windowMs: 60 * 1000 // 1 minute
 }
 
 export async function POST(request: Request) {
   try {
-    // Get client IP for rate limiting
-    const forwarded = request.headers.get('x-forwarded-for')
-    const ip = forwarded ? forwarded.split(/, /)[0]?.trim() : 'unknown'
-
-    // Check rate limit
-    if (!checkRateLimit(ip)) {
+    // Rate limiting
+    const clientIp = getClientIp(request)
+    if (!checkRateLimit(`metadata:${clientIp}`, METADATA_RATE_LIMIT)) {
       return NextResponse.json(
         { error: 'Rate limit exceeded. Please try again later.' },
         { status: 429 }
@@ -84,22 +60,52 @@ export async function POST(request: Request) {
       )
     }
 
-    // Check if URL is from a supported domain (optional security measure)
+    // SSRF Protection: Block private IPs, localhost, and cloud metadata endpoints
     const hostname = parsedUrl.hostname?.toLowerCase() || ''
-    const blockedDomains = [
+
+    // Check for blocked hostnames
+    const blockedHostnames = [
       'localhost',
-      '127.0.0.1',
-      '0.0.0.0',
-      '10.',
-      '192.168.',
-      '172.'
+      'metadata.google.internal', // GCP metadata
+      'instance-data', // AWS
+      'metadata', // General metadata
     ]
 
-    const isBlocked = blockedDomains.some(blocked =>
-      hostname.includes(blocked) || hostname.startsWith(blocked)
+    if (blockedHostnames.includes(hostname)) {
+      return NextResponse.json(
+        { error: 'URL not allowed for security reasons' },
+        { status: 400 }
+      )
+    }
+
+    // Check for IPv4 private ranges and cloud metadata
+    const ipv4Patterns = [
+      /^127\./,                    // Loopback
+      /^0\./,                      // Current network
+      /^10\./,                     // Private Class A
+      /^172\.(1[6-9]|2\d|3[01])\./, // Private Class B (172.16.0.0 - 172.31.255.255)
+      /^192\.168\./,               // Private Class C
+      /^169\.254\./,               // Link-local / AWS metadata
+      /^224\./,                    // Multicast
+      /^255\.255\.255\.255$/,      // Broadcast
+    ]
+
+    // Check for IPv6 private ranges and localhost
+    const ipv6Patterns = [
+      /^::1$/,                     // IPv6 loopback
+      /^::/,                       // IPv6 unspecified
+      /^::ffff:127\./,             // IPv4-mapped IPv6 loopback
+      /^fe80:/,                    // Link-local
+      /^fc00:/,                    // Unique local addresses
+      /^fd00:/,                    // Unique local addresses (subset)
+      /^ff00:/,                    // Multicast
+    ]
+
+    const isBlockedIp = [...ipv4Patterns, ...ipv6Patterns].some(pattern =>
+      pattern.test(hostname)
     )
 
-    if (isBlocked) {
+    if (isBlockedIp) {
       return NextResponse.json(
         { error: 'URL not allowed for security reasons' },
         { status: 400 }
@@ -197,14 +203,27 @@ export async function POST(request: Request) {
   }
 }
 
-// Handle preflight requests for CORS if needed
-export async function OPTIONS() {
+// Handle preflight requests for CORS
+export async function OPTIONS(request: Request) {
+  const origin = request.headers.get('origin')
+  const allowedOrigins = process.env.NEXT_PUBLIC_APP_URL
+    ? [process.env.NEXT_PUBLIC_APP_URL]
+    : ['http://localhost:3000']
+
+  const headers: Record<string, string> = {
+    'Access-Control-Allow-Methods': 'POST, OPTIONS',
+    'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+    'Access-Control-Max-Age': '86400', // 24 hours
+  }
+
+  // Only allow specific origins
+  if (origin && allowedOrigins.includes(origin)) {
+    headers['Access-Control-Allow-Origin'] = origin
+    headers['Access-Control-Allow-Credentials'] = 'true'
+  }
+
   return new NextResponse(null, {
-    status: 200,
-    headers: {
-      'Access-Control-Allow-Origin': '*',
-      'Access-Control-Allow-Methods': 'POST, OPTIONS',
-      'Access-Control-Allow-Headers': 'Content-Type',
-    },
+    status: 204,
+    headers,
   })
 }

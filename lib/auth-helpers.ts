@@ -108,3 +108,38 @@ export async function verifyItemOwnership(itemId: string, userId: string) {
     item
   }
 }
+
+/**
+ * Require admin authentication
+ * Returns user if authenticated and is admin, otherwise returns error
+ */
+export async function requireAdmin() {
+  const auth = await requireAuth()
+
+  if (auth.error) {
+    return auth
+  }
+
+  // Fetch full user data to check admin status
+  const user = await prisma.user.findUnique({
+    where: { id: auth.session!.user.id },
+    select: { id: true, email: true, name: true, isAdmin: true }
+  })
+
+  if (!user || !user.isAdmin) {
+    return {
+      error: NextResponse.json(
+        { error: 'Admin access required' },
+        { status: 403 }
+      ),
+      session: null,
+      user: null
+    }
+  }
+
+  return {
+    error: null,
+    session: auth.session,
+    user
+  }
+}

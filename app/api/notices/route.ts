@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/db/client'
+import { requireAdmin } from '@/lib/auth-helpers'
 
 // GET /api/notices - Get all published notices
 export async function GET() {
@@ -31,6 +32,10 @@ export async function GET() {
 // POST /api/notices - Create new notice (admin only)
 export async function POST(request: NextRequest) {
   try {
+    // Require admin authentication
+    const auth = await requireAdmin()
+    if (auth.error) return auth.error
+
     const body = await request.json()
     const { title, content, isPinned = false } = body
 

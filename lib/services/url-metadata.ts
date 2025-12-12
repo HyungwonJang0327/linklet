@@ -46,6 +46,52 @@ export async function extractUrlMetadata(url: string, retryCount = 0): Promise<M
       throw new Error('Invalid domain format')
     }
 
+    // SSRF Protection: Block private IPs, localhost, and cloud metadata endpoints
+    const hostname = parsedUrl.hostname.toLowerCase()
+
+    // Check for blocked hostnames
+    const blockedHostnames = [
+      'localhost',
+      'metadata.google.internal',
+      'instance-data',
+      'metadata',
+    ]
+
+    if (blockedHostnames.includes(hostname)) {
+      throw new Error('URL not allowed for security reasons')
+    }
+
+    // Check for IPv4 private ranges and cloud metadata
+    const ipv4Patterns = [
+      /^127\./,                    // Loopback
+      /^0\./,                      // Current network
+      /^10\./,                     // Private Class A
+      /^172\.(1[6-9]|2\d|3[01])\./, // Private Class B (172.16.0.0 - 172.31.255.255)
+      /^192\.168\./,               // Private Class C
+      /^169\.254\./,               // Link-local / AWS metadata
+      /^224\./,                    // Multicast
+      /^255\.255\.255\.255$/,      // Broadcast
+    ]
+
+    // Check for IPv6 private ranges and localhost
+    const ipv6Patterns = [
+      /^::1$/,                     // IPv6 loopback
+      /^::/,                       // IPv6 unspecified
+      /^::ffff:127\./,             // IPv4-mapped IPv6 loopback
+      /^fe80:/,                    // Link-local
+      /^fc00:/,                    // Unique local addresses
+      /^fd00:/,                    // Unique local addresses (subset)
+      /^ff00:/,                    // Multicast
+    ]
+
+    const isBlockedIp = [...ipv4Patterns, ...ipv6Patterns].some(pattern =>
+      pattern.test(hostname)
+    )
+
+    if (isBlockedIp) {
+      throw new Error('URL not allowed for security reasons')
+    }
+
     const response = await fetch(url, {
       headers: {
         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',

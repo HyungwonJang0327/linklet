@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth-config'
 import { prisma } from '@/lib/db/client'
+import { checkRateLimit, getClientIp, RATE_LIMITS } from '@/lib/rate-limit'
 
 // GET - 사용자의 문의/피드백 목록 조회
 export async function GET(request: NextRequest) {
@@ -60,6 +61,15 @@ export async function POST(request: NextRequest) {
       return NextResponse.json(
         { error: 'Authentication required' },
         { status: 401 }
+      )
+    }
+
+    // Rate limiting to prevent spam
+    const clientIp = getClientIp(request)
+    if (!checkRateLimit(`inquiry:${clientIp}`, RATE_LIMITS.INQUIRY)) {
+      return NextResponse.json(
+        { error: 'Rate limit exceeded. Please try again later.' },
+        { status: 429 }
       )
     }
 

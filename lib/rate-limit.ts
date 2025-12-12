@@ -121,7 +121,7 @@ export function isLikelyBot(userAgent: string | null): boolean {
 }
 
 /**
- * Rate limit configurations for different analytics events
+ * Rate limit configurations for different analytics events and API endpoints
  */
 export const RATE_LIMITS = {
   // View count: 1 per hour per IP per wishlist
@@ -137,6 +137,21 @@ export const RATE_LIMITS = {
   // Shared wishlist viewing: 10 per minute per IP per shareUrl (prevents abuse while allowing normal usage)
   SHARED_WISHLIST: {
     limit: 10,
+    windowMs: 60 * 1000 // 1 minute
+  },
+  // File uploads: 5 per minute per IP (prevents abuse of storage)
+  FILE_UPLOAD: {
+    limit: 5,
+    windowMs: 60 * 1000 // 1 minute
+  },
+  // Inquiry submissions: 3 per hour per IP (prevents spam)
+  INQUIRY: {
+    limit: 3,
+    windowMs: 60 * 60 * 1000 // 1 hour
+  },
+  // General API: 100 per minute per IP (generous limit for authenticated APIs)
+  API: {
+    limit: 100,
     windowMs: 60 * 1000 // 1 minute
   }
 } as const

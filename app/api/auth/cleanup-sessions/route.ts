@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server'
 import { deleteExpiredSessions } from '@/lib/session-security'
+import { requireAdmin } from '@/lib/auth-helpers'
 
 /**
  * Delete all expired sessions from the database
@@ -7,23 +8,30 @@ import { deleteExpiredSessions } from '@/lib/session-security'
  * This endpoint should be called periodically (e.g., daily cron job)
  * to keep the sessions table clean and maintain database performance.
  *
- * Security: Protected by secret token to prevent unauthorized cleanup
+ * Security: Protected by admin authentication
  *
  * Usage:
- * - Manual: POST /api/auth/cleanup-sessions?token=YOUR_SECRET
- * - Cron job: curl -X POST "https://your-domain.com/api/auth/cleanup-sessions?token=YOUR_SECRET"
+ * - Manual: POST /api/auth/cleanup-sessions (requires admin session)
+ * - Cron job: Can use REVALIDATE_SECRET_TOKEN query parameter for automated jobs
  */
 export async function POST(request: Request) {
   try {
-    // Verify secret token for security
+    // Support both admin auth and secret token for cron jobs
     const { searchParams } = new URL(request.url)
     const token = searchParams.get('token')
 
-    if (!token || token !== process.env.REVALIDATE_SECRET_TOKEN) {
-      return NextResponse.json(
-        { error: 'Unauthorized - Invalid or missing token' },
-        { status: 401 }
-      )
+    // If token is provided, validate it (for cron jobs)
+    if (token) {
+      if (token !== process.env.REVALIDATE_SECRET_TOKEN) {
+        return NextResponse.json(
+          { error: 'Unauthorized - Invalid token' },
+          { status: 401 }
+        )
+      }
+    } else {
+      // Otherwise require admin authentication
+      const auth = await requireAdmin()
+      if (auth.error) return auth.error
     }
 
     // Delete all expired sessions

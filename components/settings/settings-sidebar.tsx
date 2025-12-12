@@ -49,29 +49,22 @@ export function SettingsSidebar({ collapsed = false, onToggleCollapse }: Setting
   const pathname = usePathname()
   const router = useRouter()
   const { t, locale } = useI18n()
-  const { logout } = useAuth()
+  const { logout, user } = useAuth()
   const [expandedMenus, setExpandedMenus] = useState<Record<string, boolean>>({
     wishlists: true
   })
-  const [isAdmin, setIsAdmin] = useState(false)
   const [isCleaningUp, setIsCleaningUp] = useState(false)
 
-  // Check admin status from localStorage
-  useEffect(() => {
-    const adminKey = localStorage.getItem('linklet-admin-button')
-    const isValidAdmin = adminKey === process.env.NEXT_PUBLIC_ADMIN_BUTTON_KEY
-    setIsAdmin(isValidAdmin)
-  }, [])
+  // Get admin status from session
+  const isAdmin = user?.isAdmin || false
 
   const handleCleanupSessions = async () => {
     if (!confirm('만료된 세션을 모두 삭제하시겠습니까?')) return
 
     setIsCleaningUp(true)
     try {
-      const response = await fetch(
-        `/api/auth/cleanup-sessions?token=${process.env.NEXT_PUBLIC_REVALIDATE_SECRET_TOKEN || 'OxByV6xQHrnUsCqfBtkrVPc5bzlvX5ri'}`,
-        { method: 'POST' }
-      )
+      // No token in query string - server will validate admin status from session
+      const response = await fetch('/api/auth/cleanup-sessions', { method: 'POST' })
       const data = await response.json()
 
       if (response.ok) {
