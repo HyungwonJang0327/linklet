@@ -26,6 +26,7 @@ interface CustomizationPreviewProps {
       url: string
       enabled: boolean
     }>
+    backgroundImageUrl?: string
     wishlistData?: {
       id: string
       title: string
@@ -158,11 +159,27 @@ export function CustomizationPreview({ customization }: CustomizationPreviewProp
         {/* Mobile Frame */}
         <div className="mx-auto max-w-sm">
           <div className="bg-slate-900 rounded-xl p-2 shadow-xl">
-            <div 
-              className="rounded-lg overflow-hidden min-h-[400px]"
+            <div
+              className="rounded-lg overflow-hidden min-h-[400px] relative"
               style={getThemeStyles()}
             >
-              <div className="p-4">
+              {/* Background Image */}
+              {customization.backgroundImageUrl && (
+                <div className="absolute inset-0">
+                  <Image
+                    key={customization.backgroundImageUrl}
+                    src={customization.backgroundImageUrl}
+                    alt="Background"
+                    fill
+                    className="object-cover"
+                    unoptimized
+                    priority
+                  />
+                  <div className="absolute inset-0 bg-black/40" />
+                </div>
+              )}
+
+              <div className="p-4 relative z-10">
                 {/* Profile Section */}
                 <div className="text-center mb-6">
                   <div className="w-16 h-16 mx-auto mb-3 rounded-full overflow-hidden">

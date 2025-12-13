@@ -43,7 +43,8 @@ const DEFAULT_CUSTOMIZATION = {
     showItemCount: true,
     showCreatedDate: false
   },
-  socialLinks: []
+  socialLinks: [],
+  backgroundImageUrl: ''
 }
 
 // Wrapper component with I18nProvider
@@ -240,10 +241,26 @@ function SharedWishlistContent({ shareUrl, locale }: SharedWishlistClientProps &
 
   return (
     <div
-      className="min-h-screen flex items-center justify-center"
+      className="min-h-screen flex items-center justify-center relative"
       style={getThemeStyles()}
     >
-      <div className="mx-auto py-8 px-4" style={{ maxWidth: '720px' }}>
+      {/* Background Image */}
+      {customization.backgroundImageUrl && (
+        <div className="absolute inset-0">
+          <Image
+            key={customization.backgroundImageUrl}
+            src={customization.backgroundImageUrl}
+            alt="Background"
+            fill
+            className="object-cover"
+            unoptimized
+            priority
+          />
+          <div className="absolute inset-0 bg-black/40" />
+        </div>
+      )}
+
+      <div className="mx-auto py-8 px-4 relative z-10" style={{ maxWidth: '720px' }}>
         {/* Profile Section */}
         <div className="text-center mb-8">
           <div className="w-20 h-20 mx-auto mb-4 rounded-full overflow-hidden">

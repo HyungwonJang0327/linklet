@@ -25,7 +25,7 @@ export default function CustomizeTabs({ activeTab, onTabChange }: CustomizeTabsP
     { id: 'layout', name: t('settings.customize.tabs.layout'), icon: RectangleStackIcon },
     { id: 'colors', name: t('settings.customize.tabs.colors'), icon: SwatchIcon },
     { id: 'profile', name: t('settings.customize.tabs.profile'), icon: UserCircleIcon },
-    { id: 'social', name: t('settings.customize.tabs.social'), icon: LinkIcon }
+    // { id: 'social', name: t('settings.customize.tabs.social'), icon: LinkIcon }
   ]
 
   return (

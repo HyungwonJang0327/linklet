@@ -149,9 +149,7 @@ export async function POST(req: NextRequest) {
                 })
             )
 
-            return [
-                `https://${Bucket}.s3.${Region}.amazonaws.com/${Key}`
-            ]
+            return `https://${Bucket}.s3.${Region}.amazonaws.com/${Key}`
         })
 
         const imageUrls = await Promise.all(uploadPromises)

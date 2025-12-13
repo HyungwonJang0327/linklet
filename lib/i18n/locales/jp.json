@@ -273,7 +273,29 @@
         "nature": "ナチュラル",
         "natureDesc": "自然で温かみのある色合い",
         "sunset": "サンセット",
-        "sunsetDesc": "夕焼けのような温かい色合い"
+        "sunsetDesc": "夕焼けのような温かい色合い",
+        "backgroundImage": {
+          "title": "背景画像",
+          "description": "ウィッシュリストページの背景として使用する画像をアップロードしてください",
+          "upload": "画像をアップロード",
+          "change": "画像を変更",
+          "remove": "削除",
+          "uploading": "アップロード中...",
+          "uploadPrompt": "クリックして画像を選択してください",
+          "maxSize": "最大10MB",
+          "supportedFormats": "JPG、PNG、GIF、WebP、SVG",
+          "success": "背景画像がアップロードされました",
+          "removed": "背景画像が削除されました",
+          "errors": {
+            "fileSize": "画像サイズは10MB以下である必要があります",
+            "emptyFile": "空のファイルはアップロードできません",
+            "fileType": "JPG、PNG、GIF、WebP、SVGファイルのみアップロード可能です",
+            "rateLimit": "アップロード回数制限を超えました。しばらくしてから再試行してください",
+            "authRequired": "ログインが必要です",
+            "uploadFailed": "画像のアップロードに失敗しました",
+            "networkError": "ネットワークエラーが発生しました。再試行してください"
+          }
+        }
       },
       "layout": {
         "title": "レイアウト",

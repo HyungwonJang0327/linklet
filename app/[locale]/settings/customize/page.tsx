@@ -40,7 +40,7 @@ const getDefaultCustomization = (wishlistTitle: string = '위시리스트') => (
   layout: 'grid',
   colors: {
     primary: '#3b82f6',
-    background: '#0f172a', 
+    background: '#0f172a',
     text: '#ffffff',
     accent: '#6366f1'
   },
@@ -55,7 +55,8 @@ const getDefaultCustomization = (wishlistTitle: string = '위시리스트') => (
     { platform: 'instagram', url: '', enabled: false },
     { platform: 'twitter', url: '', enabled: false },
     { platform: 'youtube', url: '', enabled: false }
-  ]
+  ],
+  backgroundImageUrl: ''
 })
 
 export default function CustomizePage() {
@@ -215,6 +216,10 @@ export default function CustomizePage() {
     updateWishlistCustomization({ socialLinks })
   }
 
+  const updateBackgroundImage = (backgroundImageUrl: string) => {
+    updateWishlistCustomization({ backgroundImageUrl })
+  }
+
   const handlePresetSelect = (preset: CustomizationPreset) => {
     if (!selectedWishlist) return
 
@@ -271,6 +276,8 @@ export default function CustomizePage() {
                 <ThemeSelector
                   selectedTheme={currentCustomization.theme}
                   onThemeChange={updateTheme}
+                  backgroundImageUrl={currentCustomization.backgroundImageUrl || ''}
+                  onBackgroundImageChange={updateBackgroundImage}
                 />
               )}
 
@@ -295,12 +302,12 @@ export default function CustomizePage() {
                 />
               )}
 
-              {activeTab === 'social' && (
+              {/* {activeTab === 'social' && (
                 <SocialLinksManager
                   socialLinks={currentCustomization.socialLinks}
                   onSocialLinksChange={updateSocialLinks}
                 />
-              )}
+              )} */}
             </div>
           )}
 

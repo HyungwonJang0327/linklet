@@ -273,7 +273,29 @@
         "nature": "자연",
         "natureDesc": "자연스럽고 따뜻한 색감",
         "sunset": "선셋",
-        "sunsetDesc": "노을 같은 따뜻한 색감"
+        "sunsetDesc": "노을 같은 따뜻한 색감",
+        "backgroundImage": {
+          "title": "배경 이미지",
+          "description": "위시리스트 페이지의 배경으로 사용할 이미지를 업로드하세요",
+          "upload": "이미지 업로드",
+          "change": "이미지 변경",
+          "remove": "제거",
+          "uploading": "업로드 중...",
+          "uploadPrompt": "클릭하여 이미지를 선택하세요",
+          "maxSize": "최대 10MB",
+          "supportedFormats": "JPG, PNG, GIF, WebP, SVG",
+          "success": "배경 이미지가 업로드되었습니다",
+          "removed": "배경 이미지가 제거되었습니다",
+          "errors": {
+            "fileSize": "이미지 크기는 10MB 이하여야 합니다",
+            "emptyFile": "빈 파일은 업로드할 수 없습니다",
+            "fileType": "JPG, PNG, GIF, WebP, SVG 파일만 업로드 가능합니다",
+            "rateLimit": "업로드 횟수 제한을 초과했습니다. 잠시 후 다시 시도해주세요",
+            "authRequired": "로그인이 필요합니다",
+            "uploadFailed": "이미지 업로드에 실패했습니다",
+            "networkError": "네트워크 오류가 발생했습니다. 다시 시도해주세요"
+          }
+        }
       },
       "layout": {
         "title": "레이아웃",

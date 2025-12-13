@@ -273,7 +273,29 @@
         "nature": "Nature",
         "natureDesc": "Natural and warm colors",
         "sunset": "Sunset",
-        "sunsetDesc": "Warm sunset-like colors"
+        "sunsetDesc": "Warm sunset-like colors",
+        "backgroundImage": {
+          "title": "Background Image",
+          "description": "Upload an image to use as the background for your wishlist page",
+          "upload": "Upload Image",
+          "change": "Change Image",
+          "remove": "Remove",
+          "uploading": "Uploading...",
+          "uploadPrompt": "Click to select an image",
+          "maxSize": "Max 10MB",
+          "supportedFormats": "JPG, PNG, GIF, WebP, SVG",
+          "success": "Background image uploaded successfully",
+          "removed": "Background image removed",
+          "errors": {
+            "fileSize": "Image size must be 10MB or less",
+            "emptyFile": "Cannot upload empty file",
+            "fileType": "Only JPG, PNG, GIF, WebP, SVG files are allowed",
+            "rateLimit": "Upload rate limit exceeded. Please try again later",
+            "authRequired": "Login required",
+            "uploadFailed": "Image upload failed",
+            "networkError": "Network error occurred. Please try again"
+          }
+        }
       },
       "layout": {
         "title": "Layout",
