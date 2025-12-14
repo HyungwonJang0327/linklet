@@ -20,11 +20,7 @@ const requiredEnvVars = [
   'NEXT_PUBLIC_APP_NAME',
 ];
 
-const optionalEnvVars = [
-  'NEXT_PUBLIC_STACK_PROJECT_ID',
-  'NEXT_PUBLIC_STACK_PUBLISHABLE_CLIENT_KEY',
-  'STACK_SECRET_SERVER_KEY',
-];
+const optionalEnvVars = [];
 
 console.log('🔍 Checking production environment variables...\n');
 
@@ -48,19 +44,21 @@ requiredEnvVars.forEach(varName => {
 });
 
 // Check optional vars
-console.log('\n⚠️  Optional variables:');
-optionalEnvVars.forEach(varName => {
-  const value = process.env[varName];
-  if (!value || value.includes('your_') || value.includes('generate_')) {
-    console.log(`   ⚠️  ${varName}: Not set (optional)`);
-    hasWarnings = true;
-  } else {
-    const masked = value.length > 10
-      ? `${value.substring(0, 10)}...`
-      : '***';
-    console.log(`   ✅ ${varName}: ${masked}`);
-  }
-});
+if (optionalEnvVars.length > 0) {
+  console.log('\n⚠️  Optional variables:');
+  optionalEnvVars.forEach(varName => {
+    const value = process.env[varName];
+    if (!value || value.includes('your_') || value.includes('generate_')) {
+      console.log(`   ⚠️  ${varName}: Not set (optional)`);
+      hasWarnings = true;
+    } else {
+      const masked = value.length > 10
+        ? `${value.substring(0, 10)}...`
+        : '***';
+      console.log(`   ✅ ${varName}: ${masked}`);
+    }
+  });
+}
 
 // Security checks
 console.log('\n🔐 Security checks:');
