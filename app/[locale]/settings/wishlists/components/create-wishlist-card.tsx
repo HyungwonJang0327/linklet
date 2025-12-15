@@ -5,7 +5,11 @@ import { Button } from '@/components/ui/button'
 import { PlusIcon } from '@heroicons/react/24/outline'
 import { useI18n } from '@/lib/i18n/context'
 
-export default function CreateWishlistCard() {
+interface CreateWishlistCardProps {
+  onClick?: () => void
+}
+
+export default function CreateWishlistCard({ onClick }: CreateWishlistCardProps) {
   const { t } = useI18n()
 
   return (
@@ -20,7 +24,10 @@ export default function CreateWishlistCard() {
         <p className="text-sm text-slate-400 mb-4">
           {t('wishlist.createNewCard')}
         </p>
-        <Button className="bg-blue-600 hover:bg-blue-700 text-white">
+        <Button
+          className="bg-blue-600 hover:bg-blue-700 text-white"
+          onClick={onClick}
+        >
           <PlusIcon className="w-4 h-4 mr-2" />
           {t('common.add')}
         </Button>

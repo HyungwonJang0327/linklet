@@ -78,7 +78,7 @@ export default function ImageUpload({
       }
 
       // Get the S3 URL from the response
-      const s3Url = result.data?.[0]
+      const s3Url = result.data
       if (!s3Url) {
         throw new Error('No URL returned from server')
       }

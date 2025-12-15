@@ -2,11 +2,13 @@
 
 import { useState } from 'react'
 import { useParams, useRouter } from 'next/navigation'
+import { toast } from 'sonner'
 import { useI18n } from '@/lib/i18n/context'
 import { useAuth } from '@/components/providers/auth-provider'
 import { useCreateWishlist } from '@/hooks/use-wishlist'
 import { isValidUrl } from '@/lib/utils/url-validator'
 import { RateLimitProvider } from '@/contexts/rate-limit-context'
+import { APP_CONFIG } from '@/lib/constants'
 import type { ProductMetadata } from '@/lib/services/url-metadata'
 import CreateHeader from './components/create-header'
 import BasicInformation from './components/basic-information'
@@ -144,9 +146,26 @@ export default function CreateWishlistPage() {
       router.push(`/${locale}/settings/wishlists`)
     } catch (error) {
       console.error('Failed to create wishlist:', error)
-      setErrors({
-        submit: error instanceof Error ? error.message : 'Failed to create wishlist'
-      })
+
+      // Check if it's a wishlist limit error
+      const errorMessage = error instanceof Error ? error.message : 'Failed to create wishlist'
+
+      if (errorMessage.includes('WISHLIST_LIMIT_REACHED')) {
+        const limit = APP_CONFIG.maxWishlistsPerUser.free
+        const localizedMessage = t('wishlist.create.errors.wishlistLimitReached')?.replace('{limit}', String(limit))
+          || `위시리스트는 최대 ${limit}개까지만 만들 수 있습니다`
+
+        toast.error(localizedMessage, { duration: 4000 })
+
+        // Redirect back to wishlists page
+        setTimeout(() => {
+          router.push(`/${locale}/settings/wishlists`)
+        }, 1500)
+      } else {
+        setErrors({
+          submit: errorMessage
+        })
+      }
     } finally {
       setIsSubmitting(false)
     }

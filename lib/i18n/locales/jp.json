@@ -558,7 +558,8 @@
         "duplicateUrl": "重複したURLです",
         "productLinksRequired": "少なくとも1つの商品リンクを追加してください",
         "invalidLinksFound": "入力したリンクのうち{count}個が無効です。リンクを確認してください。",
-        "metadataExtractingOrFailed": "{count}個のリンクのメタデータがまだ抽出されていません。抽出が完了するまでお待ちいただくか、手動で入力してください。"
+        "metadataExtractingOrFailed": "{count}個のリンクのメタデータがまだ抽出されていません。抽出が完了するまでお待ちいただくか、手動で入力してください。",
+        "wishlistLimitReached": "ウィッシュリストは最大{limit}個まで作成できます"
       }
     },
     "shared": {

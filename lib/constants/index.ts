@@ -3,7 +3,7 @@ export const APP_CONFIG = {
   description: 'Your Personal Wishlist Manager',
   url: process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000',
   maxWishlistsPerUser: {
-    free: 3,
+    free: 2,
     pro: Infinity
   },
   maxItemsPerWishlist: Infinity,

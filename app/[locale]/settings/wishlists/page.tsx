@@ -12,6 +12,7 @@ import CreateWishlistCard from './components/create-wishlist-card'
 import { useParams, useRouter } from 'next/navigation'
 import { toast } from 'sonner'
 import { useQueryClient } from '@tanstack/react-query'
+import { APP_CONFIG } from '@/lib/constants'
 
 export default function WishlistsManagePage() {
   const { t } = useI18n()
@@ -22,6 +23,22 @@ export default function WishlistsManagePage() {
 
   // Fetch user's wishlists using TanStack Query
   const { data: wishlists, isLoading, error, refetch } = useWishlists(user?.id)
+
+  // Check wishlist limit and navigate to create page
+  const handleCreateWishlist = () => {
+    const currentCount = wishlists?.length || 0
+    const maxWishlists = APP_CONFIG.maxWishlistsPerUser.free
+
+    if (currentCount >= maxWishlists) {
+      const errorMessage = t('wishlist.create.errors.wishlistLimitReached')?.replace('{limit}', String(maxWishlists))
+        || `위시리스트는 최대 ${maxWishlists}개까지만 만들 수 있습니다`
+
+      toast.error(errorMessage, { duration: 4000 })
+      return
+    }
+
+    router.push(`/${locale}/settings/wishlists/create`)
+  }
 
   const handleAddProductFromUrl = async (
     productUrl: string,
@@ -152,10 +169,10 @@ export default function WishlistsManagePage() {
 
         <Button
           className="bg-blue-600 hover:bg-blue-700 text-white"
-          onClick={() => router.push(`/${locale}/settings/wishlists/create`)}
+          onClick={handleCreateWishlist}
         >
           <PlusIcon className="w-4 h-4 mr-2" />
-{t('wishlist.createButton')}
+          {t('wishlist.createButton')}
         </Button>
       </div>
 
@@ -175,14 +192,14 @@ export default function WishlistsManagePage() {
                 onDelete={() => refetch()}
               />
             ))}
-            <CreateWishlistCard />
+            <CreateWishlistCard onClick={handleCreateWishlist} />
           </>
         ) : (
           <div className="col-span-full text-center py-12">
             <p className="text-slate-400 mb-6">
               {t('wishlist.noWishlists')}
             </p>
-            <CreateWishlistCard />
+            <CreateWishlistCard onClick={handleCreateWishlist} />
           </div>
         )}
       </div>

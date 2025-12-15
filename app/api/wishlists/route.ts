@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server'
 import { createWishlist } from '@/lib/db/wishlist'
 import { prisma } from '@/lib/db'
 import { requireAuth } from '@/lib/auth-helpers'
+import { APP_CONFIG } from '@/lib/constants'
 
 export async function GET(request: Request) {
   try {
@@ -92,6 +93,27 @@ export async function POST(request: Request) {
       return NextResponse.json(
         { error: 'Title is required' },
         { status: 400 }
+      )
+    }
+
+    // Check wishlist limit for free users
+    const userId = auth.session!.user.id
+    const existingWishlistCount = await prisma.wishlist.count({
+      where: { userId }
+    })
+
+    // For now, all users are considered free tier
+    const maxWishlists = APP_CONFIG.maxWishlistsPerUser.free
+
+    if (existingWishlistCount >= maxWishlists) {
+      return NextResponse.json(
+        {
+          error: 'WISHLIST_LIMIT_REACHED',
+          message: `You can only create up to ${maxWishlists} wishlists`,
+          limit: maxWishlists,
+          current: existingWishlistCount
+        },
+        { status: 403 }
       )
     }
 

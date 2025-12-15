@@ -558,7 +558,8 @@
         "duplicateUrl": "Duplicate URL",
         "productLinksRequired": "Please add at least one product link",
         "invalidLinksFound": "{count} of your links are invalid. Please check your links.",
-        "metadataExtractingOrFailed": "Metadata for {count} links has not been extracted yet. Please wait for extraction to complete or enter manually."
+        "metadataExtractingOrFailed": "Metadata for {count} links has not been extracted yet. Please wait for extraction to complete or enter manually.",
+        "wishlistLimitReached": "You can only create up to {limit} wishlists"
       }
     },
     "shared": {
