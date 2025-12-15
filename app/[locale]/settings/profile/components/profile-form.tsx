@@ -34,17 +34,15 @@ export default function ProfileForm({ userData, onUserUpdate }: ProfileFormProps
   const [success, setSuccess] = useState<string | null>(null)
   const [formData, setFormData] = useState({
     name: '',
-    bio: '',
-    locale: 'kr'
+    bio: ''
   })
 
-  // Update form data when userData or importedData changes
+  // Update form data when userData changes
   useEffect(() => {
     if (userData) {
       setFormData({
         name: userData.name || '',
-        bio: userData.bio || '',
-        locale: userData.locale || 'kr'
+        bio: userData.bio || ''
       })
     }
   }, [userData])
@@ -135,26 +133,6 @@ export default function ProfileForm({ userData, onUserUpdate }: ProfileFormProps
             className="bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 opacity-60"
           />
           <div className="text-slate-500 text-xs mt-1">{t('settings.profile.emailCannotChange')}</div>
-        </div>
-
-        {/* Language */}
-        <div>
-          <label className="block text-sm font-medium text-slate-300 mb-2">
-{t('settings.profile.language')}
-          </label>
-          <select
-            value={formData.locale}
-            onChange={(e) => setFormData(prev => ({ ...prev, locale: e.target.value }))}
-            disabled={updateUserMutation.isPending}
-            className="w-full px-3 py-2 bg-slate-900/50 border border-slate-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
-          >
-            <option value="kr">한국어</option>
-            <option value="en">English</option>
-            <option value="jp">日本語</option>
-          </select>
-          {errors.locale && (
-            <div className="text-red-400 text-sm mt-1">{errors.locale}</div>
-          )}
         </div>
       </div>
 
