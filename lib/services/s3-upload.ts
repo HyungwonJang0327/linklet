@@ -3,6 +3,22 @@ import { PutObjectCommand, S3Client } from '@aws-sdk/client-s3'
 const Bucket = process.env?.AMPLIFY_BUCKET || 'linklet-image'
 const Region = process.env?.AWS_REGION || 'ap-northeast-2'
 
+// Detect environment
+function getEnvironment(): 'production' | 'development' {
+  // Check Vercel environment first
+  if (process.env.VERCEL_ENV === 'production') {
+    return 'production'
+  }
+
+  // Check Node environment
+  if (process.env.NODE_ENV === 'production') {
+    return 'production'
+  }
+
+  // Default to development for all other cases
+  return 'development'
+}
+
 // Singleton S3 client
 let s3Client: S3Client | null = null
 
@@ -151,12 +167,13 @@ export async function uploadImageToS3(
       }
     }
 
-    // Generate unique filename
+    // Generate unique filename with environment folder
+    const environment = getEnvironment()
     const sanitizedName = sanitizeFilename(filename)
     const timestamp = Date.now()
     const randomString = Math.random().toString(36).substring(2, 8)
     const extension = sanitizedName.split('.').pop() || mimeType.split('/')[1] || 'jpg'
-    const key = `${keyPrefix}/${timestamp}-${randomString}.${extension}`
+    const key = `${environment}/${keyPrefix}/${timestamp}-${randomString}.${extension}`
 
     // Upload to S3
     const s3 = getS3Client()
