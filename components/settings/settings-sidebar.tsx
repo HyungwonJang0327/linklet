@@ -110,14 +110,14 @@ export function SettingsSidebar({ collapsed = false, onToggleCollapse }: Setting
         }
       ]
     },
-    {
-      nameKey: 'settings.pricing.title',
-      href: `/${locale}/settings/pricing`,
-      icon: CreditCardIcon,
-      descriptionKey: 'settings.pricing.description',
-      menuId: 'pricing',
-      disabled: true
-    },
+    // {
+    //   nameKey: 'settings.pricing.title',
+    //   href: `/${locale}/settings/pricing`,
+    //   icon: CreditCardIcon,
+    //   descriptionKey: 'settings.pricing.description',
+    //   menuId: 'pricing',
+    //   disabled: true
+    // },
     // {
     //   nameKey: 'settings.appearance.title',
     //   href: `/${locale}/settings/appearance`,
