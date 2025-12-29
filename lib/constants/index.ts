@@ -6,7 +6,7 @@ export const APP_CONFIG = {
     free: 2,
     pro: Infinity
   },
-  maxItemsPerWishlist: Infinity,
+  maxItemsPerWishlist: 10,
   maxProductLinksOnCreate: 10,
   supportedLocales: ['kr', 'en', 'jp'] as const,
   defaultLocale: 'kr' as const

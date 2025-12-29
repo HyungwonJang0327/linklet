@@ -76,6 +76,10 @@ export function AddItemDialog({ wishlistId, isOpen, onClose, onSuccess }: AddIte
 
       if (!createResponse.ok) {
         const errorData = await createResponse.json()
+        // Check for item limit error
+        if (errorData.error === 'ITEM_LIMIT_REACHED') {
+          throw new Error(t('item.add.limitReached'))
+        }
         throw new Error(errorData.error || t('item.add.failed'))
       }
 

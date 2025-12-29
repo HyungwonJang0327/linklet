@@ -647,7 +647,8 @@
       "successWithoutMetadata": "상품이 추가되었습니다. 상품 정보를 수동으로 입력해주세요.",
       "failed": "아이템 추가에 실패했습니다",
       "error": "아이템 추가에 실패했습니다",
-      "metadataFailed": "상품 정보를 가져올 수 없습니다"
+      "metadataFailed": "상품 정보를 가져올 수 없습니다",
+      "limitReached": "위시리스트당 최대 10개의 아이템만 추가할 수 있습니다"
     },
     "delete": {
       "confirm": "이 아이템을 삭제하시겠습니까?",
@@ -748,7 +749,7 @@
       "description": "개인 사용자를 위한 기본 기능",
       "cta": "무료로 시작하기",
       "features": {
-        "wishlists": "최대 1개 위시리스트",
+        "wishlists": "최대 2개 위시리스트",
         "items": "위시리스트당 10개 아이템",
         "sharing": "링크 공유",
         "categories": "5개 카테고리",
@@ -769,6 +770,7 @@
       "badge": "인기",
       "cta": "Pro로 업그레이드",
       "currentPlan": "현재 이용 중인 요금제",
+      "comingSoon": "준비 중",
       "features": {
         "wishlists": "무제한 위시리스트",
         "items": "위시리스트당 무제한 아이템",

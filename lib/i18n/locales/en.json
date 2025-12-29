@@ -647,7 +647,8 @@
       "successWithoutMetadata": "Item added. Please manually enter product information.",
       "failed": "Failed to add item",
       "error": "Failed to add item",
-      "metadataFailed": "Unable to fetch product information"
+      "metadataFailed": "Unable to fetch product information",
+      "limitReached": "Maximum 10 items per wishlist allowed"
     },
     "delete": {
       "confirm": "Are you sure you want to delete this item?",
@@ -748,7 +749,7 @@
       "description": "Basic features for personal use",
       "cta": "Get Started Free",
       "features": {
-        "wishlists": "Up to 1 wishlists",
+        "wishlists": "Up to 2 wishlists",
         "items": "10 items per wishlist",
         "sharing": "Link sharing",
         "categories": "5 categories",
@@ -769,6 +770,7 @@
       "badge": "Most Popular",
       "cta": "Upgrade to Pro",
       "currentPlan": "Current Plan",
+      "comingSoon": "Coming Soon",
       "features": {
         "wishlists": "Unlimited wishlists",
         "items": "Unlimited items per wishlist",

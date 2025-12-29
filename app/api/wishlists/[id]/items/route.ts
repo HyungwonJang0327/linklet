@@ -3,6 +3,7 @@ import { addWishlistItem } from '@/lib/db/wishlist'
 import { prisma } from '@/lib/db'
 import { revalidateSharedWishlist } from '@/lib/revalidation'
 import { requireAuth, verifyWishlistOwnership } from '@/lib/auth-helpers'
+import { APP_CONFIG } from '@/lib/constants'
 
 export async function GET(
   request: Request,
@@ -38,6 +39,21 @@ export async function POST(
 
     const ownership = await verifyWishlistOwnership(id, auth.session!.user.id)
     if (ownership.error) return ownership.error
+
+    // Check item count limit
+    const currentItemCount = await prisma.wishlistItem.count({
+      where: { wishlistId: id }
+    })
+
+    if (currentItemCount >= APP_CONFIG.maxItemsPerWishlist) {
+      return NextResponse.json(
+        {
+          error: 'ITEM_LIMIT_REACHED',
+          message: `Maximum ${APP_CONFIG.maxItemsPerWishlist} items per wishlist allowed`
+        },
+        { status: 403 }
+      )
+    }
 
     const { title, description, productUrl, imageUrl, price, priority } = await request.json()
 

@@ -43,6 +43,7 @@ import {
 import { GripVertical } from 'lucide-react'
 import { toast } from 'sonner'
 import { formatRelativeTime } from '@/lib/utils'
+import { APP_CONFIG } from '@/lib/constants'
 
 export default function WishlistDetailPage() {
   const params = useParams()
@@ -193,6 +194,7 @@ export default function WishlistDetailPage() {
 
   const completedCount = items.filter(item => item.isCompleted).length
   const totalCount = items.length
+  const isItemLimitReached = totalCount >= APP_CONFIG.maxItemsPerWishlist
 
   // 총 금액 계산
   const totalPrice = items.reduce((sum, item) => {
@@ -507,8 +509,16 @@ export default function WishlistDetailPage() {
                 </Button>
 
                 <Button
-                  onClick={() => setIsAddDialogOpen(true)}
-                  className="bg-blue-600 hover:bg-blue-700 text-white"
+                  onClick={() => {
+                    if (isItemLimitReached) {
+                      toast.error(t('item.add.limitReached'))
+                    } else {
+                      setIsAddDialogOpen(true)
+                    }
+                  }}
+                  disabled={isItemLimitReached}
+                  className="bg-blue-600 hover:bg-blue-700 text-white disabled:opacity-50 disabled:cursor-not-allowed"
+                  title={isItemLimitReached ? t('item.add.limitReached') : undefined}
                 >
                   <PlusIcon className="w-4 h-4 mr-2" />
                   {t('wishlist.addItem')}
@@ -560,8 +570,15 @@ export default function WishlistDetailPage() {
                 {t('wishlist.noItems')}
               </p>
               <Button
-                onClick={() => setIsAddDialogOpen(true)}
-                className="bg-blue-600 hover:bg-blue-700 text-white"
+                onClick={() => {
+                  if (isItemLimitReached) {
+                    toast.error(t('item.add.limitReached'))
+                  } else {
+                    setIsAddDialogOpen(true)
+                  }
+                }}
+                disabled={isItemLimitReached}
+                className="bg-blue-600 hover:bg-blue-700 text-white disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 <PlusIcon className="w-4 h-4 mr-2" />
                 {t('wishlist.addFirstItem')}

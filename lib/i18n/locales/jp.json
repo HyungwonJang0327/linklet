@@ -647,7 +647,8 @@
       "successWithoutMetadata": "商品が追加されました。商品情報を手動で入力してください。",
       "failed": "アイテムの追加に失敗しました",
       "error": "アイテムの追加に失敗しました",
-      "metadataFailed": "商品情報を取得できません"
+      "metadataFailed": "商品情報を取得できません",
+      "limitReached": "ウィッシュリストごとに最大10個のアイテムまで追加できます"
     },
     "delete": {
       "confirm": "このアイテムを削除しますか？",
@@ -748,7 +749,7 @@
       "description": "個人利用の基本機能",
       "cta": "無料で始める",
       "features": {
-        "wishlists": "最大1つのウィッシュリスト",
+        "wishlists": "最大2つのウィッシュリスト",
         "items": "ウィッシュリスト当たり10個アイテム",
         "sharing": "リンク共有",
         "categories": "5カテゴリー",
@@ -769,6 +770,7 @@
       "badge": "人気",
       "cta": "Proにアップグレード",
       "currentPlan": "現在のプラン",
+      "comingSoon": "準備中",
       "features": {
         "wishlists": "無制限ウィッシュリスト",
         "items": "ウィッシュリスト当たり無制限アイテム",
