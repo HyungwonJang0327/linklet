@@ -234,6 +234,19 @@ v2/
 작업 중 계획에 없던 문제(버그·부채)를 발견하면 고치지 말고 `todo/` 에 추가하고 보고한다.
 문서와 코드가 어긋나면 문서를 먼저 고친다. 상태는 `planning.md`·`todo/`·`worklog/`·`audit/FEATURES.md` 에만 적는다.
 
+### 에이전트·커맨드 (`.claude/`)
+
+| 에이전트 | 언제 | 수정 권한 |
+|---|---|---|
+| `reviewer` | diff 리뷰 (`/review`) | 없음 |
+| `security-reviewer` | 인증·권한·safe-fetch·업로드·공개 응답·시크릿 변경 | 없음 |
+| `migrator` | FEATURES.md 한 행 이식 + 동등성 확인 | v2만 (기존 코드 삭제 금지) |
+| `tester` | 기준선 E2E, 커버리지, 실패 분석 | 테스트만 |
+| `designer` | 흐름·정보 구조·토큰·접근성 판단 | 없음 |
+
+커맨드: `/log` `/review` `/parity` `/baseline` `/audit` `/decide` `/status` `/brief` `/retro` `/retro-public` `/agent` `/demo`.
+`.claude/settings.json`: `git push`·`rm -r`·태그 삭제·배포·publish·마이그레이션 적용/초기화/`db push` 는 항상 확인, `.env*` 읽기 차단(`.env.example` 제외).
+
 ## 8. 커밋 단위 규칙
 
 - 한 커밋 = 한 가지 변경 (기능 하나·버그 하나·리팩토링 하나). 여러 작업을 모아 한 번에 커밋 금지
