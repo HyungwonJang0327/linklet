@@ -284,3 +284,4 @@ NextAuth(Google, database session 3일) ↔ Prisma adapter ↔ Account/Session �
 - 공유 페이지: `<title>`·`html lang`·meta description 없음, 제목 텍스트 대비 부족 (Lighthouse 모바일 83/88/100/82)
 - 404는 프레임워크 기본 흰 화면 (H7 확정)
 - 비로그인 `GET /api/wishlists` 가 공개 위시리스트 전체 목록 반환
+- 위시리스트 상세 카테고리 칩에 번역 키 `wishlist.categories.GENERAL` 노출 (사용자 촬영 스크린샷). 원인: DB enum 대문자 vs 번역 키 소문자. `t()` 는 키가 없으면 **키 문자열을 반환**하므로 코드 전반의 `t('x') || '한국어'` fallback(약 40건)은 **한 번도 실행되지 않는 죽은 코드** → M14 보강

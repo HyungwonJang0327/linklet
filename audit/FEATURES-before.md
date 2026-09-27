@@ -20,7 +20,7 @@
 | P06 | 설정 진입 | `/[locale]/settings` | 필요 | 동작 확인 | getServerSession 후 redirect |
 | P07 | 내 위시리스트 목록 | `/[locale]/settings/wishlists` | 필요 | 추정 | 4상태 구현, 2개 제한 클라이언트 검사 |
 | P08 | 위시리스트 생성 | `/[locale]/settings/wishlists/create` | 필요 | 추정 | 링크 붙여넣기 → 메타데이터 자동 추출 |
-| P09 | 위시리스트 상세·편집 | `/[locale]/settings/wishlists/[id]` | 필요 | 추정 (공유 링크 복사는 **깨짐**) | 아이템 추가·수정·삭제·완료·일괄삭제·DnD 재정렬. 링크 `/w/w/<id>` 생성 (page.tsx:98) |
+| P09 | 위시리스트 상세·편집 | `/[locale]/settings/wishlists/[id]` | 필요 | 화면 동작 (**실행 확인**, 사용자 촬영), 공유 링크 복사 **깨짐**, 카테고리 표시 **깨짐** | 아이템 추가·수정·삭제·완료·일괄삭제·DnD 재정렬. 링크 `/w/w/<id>` 생성 (page.tsx:98). 카테고리 칩에 `wishlist.categories.GENERAL` 키 노출 — enum 대문자 vs 번역 키 소문자 (page.tsx:426) |
 | P10 | 꾸미기 | `/[locale]/settings/customize` | 필요 | 추정 (미리보기 열기 **깨짐**) | 테마·레이아웃·색·프로필·소셜링크. `window.open('/w/'+shareUrl)` 이중 prefix (wishlist-selector.tsx:163) |
 | P11 | 프로필 | `/[locale]/settings/profile` | 필요 | 추정 | 이름·bio·아바타·locale. DataImport는 주석 처리 |
 | P12 | 통계 | `/[locale]/settings/analytics` | 필요 | 추정 | viewCount·clickCount, `as any` 로 접근 |

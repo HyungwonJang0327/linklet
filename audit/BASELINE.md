@@ -154,11 +154,20 @@ npx -y lighthouse@12 <URL> [--preset=desktop] \
 | 공지 | `notices-*.png` | ✅ |
 | 공개 위시리스트 | `shared-wishlist-*.png` | ✅ — 제목·사용자명이 배경과 대비 부족으로 거의 안 보임 |
 | 404 | `404-*.png` | ✅ — 프레임워크 기본 흰 화면(앱 테마와 무관) |
-| 내 위시리스트 목록 / 생성 / 상세 / 꾸미기 / 프로필 / 통계 / 관리자 | — | ❌ Google 로그인만 있어 테스트 계정 없음 (미결) |
+| 내 위시리스트 목록 | `wishlists-desktop.png` | ✅ 사용자 직접 촬영 |
+| 위시리스트 상세 | `wishlist-detail-desktop.png` | ✅ 사용자 직접 촬영 — 카테고리 칩에 번역 키 `wishlist.categories.GENERAL` 노출 |
+| 위시리스트 생성 | `wishlist-create-desktop-{1,2}.png` | ✅ 사용자 직접 촬영 |
+| 꾸미기 | `customize-desktop-{01..10}.png` | ✅ 사용자 직접 촬영 (탭별) |
+| 프로필 | `profile-desktop-{01,02}.png` | ✅ 사용자 직접 촬영 |
+| 통계 | `analytics-desktop.png` | ✅ 사용자 직접 촬영 |
+| 내 문의 | `inquiries-desktop.png` | ✅ 사용자 직접 촬영 |
+| 관리자 대시보드 | `admin-desktop.png`, `admin-mobile.png` | ✅ 사용자 직접 촬영 |
+
+로그인 화면 촬영 방법: 사용자가 Google 로그인 후 Chrome 개발자도구 "Capture full size screenshot" 으로 직접 촬영(방식 A, 2026-09-27 결정). 서버는 §6 래퍼로 `next start -p 3001`(Google OAuth에 3000~3005 리다이렉트 등록, 3000은 다른 프로젝트 사용 중). 리뉴얼 후에도 같은 계정·같은 방법으로 촬영한다.
 
 ## 9. 실행하지 못한 항목
 
 | 항목 | 이유 | 필요한 것 |
 |---|---|---|
 | 커버리지 | `@vitest/coverage-v8` 미설치 (설치 = lock 변경) | 리뉴얼 환경 단계에서 도입 |
-| 로그인 필요 화면 스크린샷·Lighthouse | Google OAuth만 존재, 테스트 계정 없음 | 방법 결정 필요 (worklog 미결) |
+| 로그인 필요 화면 Lighthouse | Google OAuth만 존재, 자동 측정 불가 | 스크린샷만 수동 촬영으로 확보 |
