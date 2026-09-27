@@ -53,7 +53,8 @@ Co-Authored-By: ... (에이전트가 작성한 커밋)
 | `deps` | 의존성 추가·갱신 |
 | `ci` | GitHub Actions·시크릿 스캔 |
 | `legacy` | 기존 앱(루트) — 교체 시 제거 등 |
-| `audit` · `intent` · `planning` · `decisions` · `worklog` · `todo` · `claude` · `readme` | 리뉴얼 문서 |
+| `audit` · `intent` · `planning` · `decisions` · `worklog` · `todo` · `readme` · `retro` | 리뉴얼·회고 문서 |
+| `claude` | `CLAUDE.md`, `COMMIT_CONVENTION.md`, `.claude/` 에이전트·커맨드 |
 
 새 scope가 필요하면 이 표에 먼저 추가한다.
 
