@@ -75,7 +75,6 @@
 | F35 | 문의 관리 (목록·답변·상태 변경) | admin/inquiries, /api/admin/inquiries | 유지 | 문의 유지(인터뷰) | 20 | E2E: 답변 등록 → 사용자 화면에 답변·상태 표시 | 미착수 |
 | F36 | 사용자 목록 (읽기 전용) | admin/users, /api/admin/users | 개선 | 관리자 최소 범위에 포함(Q6). `limit` 상한 없음, 서버 날짜 포맷(규약 위반) | 21 | E2E: 페이지네이션 목록, 날짜는 ISO로 받아 프론트에서 표시 | 미착수 |
 | F37 | 대시보드 | admin, admin/analytics, /api/admin/{stats,dashboard,analytics} | 재설계 | **숫자 3개(사용자 수·위시리스트 수·미답변 문의 수)만** (Q6). 서버 한국어 상대시간·admin email 로그(규약 위반) 제거, 통계 화면 삭제 | 21 | E2E: 시드 데이터 기준 세 숫자 일치 | 미착수 |
-| F38 | 에러 로그 | admin/errors, ErrorLog, lib/utils/error-logger.ts | ⚠ 5단계 | 기록하는 곳이 없음. 에러 처리·로그 결정(5단계)에서 존폐 | — | — | 보류 |
 
 ## 삭제
 
@@ -96,6 +95,7 @@
 | D13 | 국가 헤더 주입 | middleware.ts `req.geo` | 삭제 | 읽는 곳 없음, Next 15에서 제거된 API | 없음 |
 | D14 | 1회성 데이터 스크립트 | scripts/*.ts | 삭제 (교체 시) | 운영 DB 보호 가드 없음(H12) | F02 시드 스크립트 |
 | D15 | 죽은 코드 (약 85개 export) | lib/auth.ts(Kakao), validations/wishlist.ts, styles/, theme/, forms/*, ui/error-boundary 등 | 삭제 (교체 시) | 없음 | 없음 |
+| D16 | 에러 로그 (F38) | admin/errors, ErrorLog 모델, lib/utils/error-logger.ts | 삭제 | 기록하는 곳이 없어 데이터 없음, 관리자 메뉴 1개. `decisions/error-handling.md` E6 | Sentry 무료 플랜 + 구조화 로그 (E5) |
 
 ## 인프라 (기능 외)
 
@@ -109,7 +109,7 @@
 
 ## 확정 기록
 
-2026-09-27 사용자 확정. Q1~Q7 추천안 채택, Q8 삭제(데모 모드 미도입). 에러 로그(F38)는 5단계에서 결정.
+2026-09-27 사용자 확정. Q1~Q7 추천안 채택, Q8 삭제(데모 모드 미도입). 에러 로그(F38)는 5단계에서 삭제로 결정 → D16.
 
 | # | 결정 |
 |---|---|
