@@ -30,8 +30,9 @@ yarn-debug.log*
 yarn-error.log*
 .pnpm-debug.log*
 
-# env files (can opt-in for committing if needed)
+# env files — 시크릿은 git에 올리지 않는다 (.env.example 만 커밋)
 .env*
+!.env.example
 
 # vercel
 .vercel
