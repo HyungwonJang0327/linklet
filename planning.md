@@ -1,7 +1,7 @@
 # planning — 확정 사항
 
 > 확정된 것만 적는다. 결정 맥락은 `decisions/`, 오늘 한 일은 `worklog/`, 다음 작업은 `todo/`.
-> 이 파일의 나머지 섹션(서비스 개요·확정 스택·핵심 결정·미결 질문)은 6단계에서 채운다.
+> 이 파일의 나머지 섹션(서비스 개요·핵심 결정·미결 질문)은 6단계에서 채운다.
 
 ## 확정 기능 범위
 
@@ -26,3 +26,22 @@
 | 언젠가 (todo 보관) | 조회·클릭 통계(D05), 요금제 제한·요금제 페이지(D06), 알림 설정(D07), 사용자 페이지 `/@이름`, 결제, 푸시·이메일 알림, Google 외 소셜 로그인, 모바일 앱 |
 | 하지 않음 | 소셜 기능(친구·팔로우·댓글), 선물 예약·중복 방지, 익명 위시리스트 |
 | 보류 | 에러 로그(F38) — 5단계 결정 |
+
+## 확정된 기술 스택 (v2)
+
+근거: `decisions/tech-stack.md`. 실제 설치 버전은 8단계 후 갱신.
+
+| 영역 | 선택 | 버전 기준 |
+|---|---|---|
+| 런타임 | Node.js | 24.x LTS |
+| 프레임워크 | Next.js App Router (`cacheComponents` 끔) | 16.3.x |
+| 인증 | Better Auth + Prisma 어댑터 | 1.7.x |
+| ORM·DB | Prisma + Neon 어댑터 / PostgreSQL(Neon Free) | 7.10.0 고정 |
+| 입력 검증 | Zod | 4.x |
+| 서버 상태·스타일 | TanStack Query / Tailwind CSS | 5.x / 4.x |
+| 이미지 저장소 | Cloudflare R2 | — |
+| 요청 빈도 제한 | Vercel WAF(`/api/metadata`) + Better Auth 내장 | — |
+| 테스트 | Vitest / Playwright | 최신 / 1.63.x |
+| 린트·포맷 | ESLint flat + Prettier | — |
+| 패키지 매니저 | pnpm | 10.x |
+| 배포 | Vercel Hobby | — |
