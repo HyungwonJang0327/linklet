@@ -14,7 +14,19 @@
 
 | 패키지 | 용도 | 근거 결정 | 클라이언트 번들 | 라이선스 | 추가일 |
 |---|---|---|---|---|---|
-| (8단계 환경 세팅에서 실제 설치 버전으로 채운다) | | `decisions/tech-stack.md` | | | |
+| next | 프레임워크 | tech-stack | 런타임 | MIT | 2026-09-28 |
+| react · react-dom | UI | tech-stack | 런타임 | MIT | 2026-09-28 |
+| tailwindcss · @tailwindcss/postcss | 스타일 | tech-stack | 빌드 시 CSS만 | MIT | 2026-09-28 |
+| typescript · @types/node · @types/react · @types/react-dom | 타입 | tech-stack | ✗ | Apache-2.0 / MIT | 2026-09-28 |
+| eslint · eslint-config-next | 린트 (jsx-a11y·import 플러그인 포함) | tech-stack | ✗ | MIT | 2026-09-28 |
+| prettier · eslint-config-prettier | 포맷 | tech-stack (킥오프 고정) | ✗ | MIT | 2026-09-28 |
+| vitest · @vitest/coverage-v8 | 단위·통합 테스트, 커버리지 | testing | ✗ | MIT | 2026-09-28 |
+| @playwright/test | E2E | testing | ✗ | Apache-2.0 | 2026-09-28 |
+| lucide-react | 아이콘 (heroicons 대신 하나만) | tech-stack 갱신 | 사용 아이콘만(트리 셰이킹) — 설치 시 크기 기록 | ISC | 결정 2026-09-28, 설치는 첫 UI |
+
+설치 예정(해당 기능 이식 때 이 표에 추가): better-auth·@better-auth/prisma-adapter(F08), prisma·@prisma/client·@prisma/adapter-neon 7.10.0(F02), zod(F07), @tanstack/react-query(F13), @aws-sdk/client-s3(F20, R2), @sentry/nextjs(F06), cheerio(F18), @dnd-kit/*(F22), server-only(서버 모듈)
+
+로컬 도구(패키지 아님): gitleaks 8.30.1 (brew) — pre-commit 훅. CI는 gitleaks/gitleaks-action@v3 (개인 계정 리포는 라이선스 불필요).
 
 ## 이유
 
