@@ -1,0 +1,6 @@
+# gitleaks 오탐 허용 목록 (fingerprint). 실제 시크릿은 여기에 넣지 말고 폐기·교체한다.
+# 블로그 초안의 세션 ID 예시 문자열 (abc123...) — 2026-09-28 확인
+7feab176461fdd77d43de4cca289c240af3c4ad8:blog/jwt-vs-session-authentication.md:generic-api-key:42
+7feab176461fdd77d43de4cca289c240af3c4ad8:blog/jwt-vs-session-authentication.md:generic-api-key:46
+audit/legacy-docs/blog/jwt-vs-session-authentication.md:generic-api-key:42
+audit/legacy-docs/blog/jwt-vs-session-authentication.md:generic-api-key:46
