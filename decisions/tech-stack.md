@@ -19,6 +19,7 @@
 | 요청 빈도 제한 | Vercel WAF 규칙 1개(`/api/metadata`) + Better Auth 내장 제한(DB 저장) | — |
 | 단위 테스트 | Vitest | 최신 메이저 |
 | E2E | Playwright | 1.63.x |
+| 에러 모니터링 | Sentry Developer 무료 플랜 (`decisions/error-handling.md` E5) | @sentry/nextjs 11.x |
 | 린트·포맷 | ESLint(flat config) + Prettier | — |
 | 패키지 매니저 | pnpm | **10.x** |
 | 배포 | Vercel Hobby (비상업·개인 용도) | — |
@@ -78,6 +79,7 @@
 | Neon Free | 프로젝트당 0.5GB, 100 CU-시간/월, 브랜치 10 | 쓰기 차단 / 컴퓨트 정지 |
 | Cloudflare R2 | 10GB-월, Class A 100만, Class B 1000만, 송신 무료 | 과금 |
 | Vercel WAF (Hobby) | 레이트 리밋 규칙 1개, 허용 요청 100만 | — |
+| Sentry Developer | 사용자 1, 에러 5천/월, 스팬 500만/월, 리플레이 50/월, 보관 30일 | 초과분 미수집 |
 
 남용 방지 고정 상한(F39)은 Neon 0.5GB를 보호하는 역할도 한다.
 
@@ -94,3 +96,4 @@
 ## 갱신 이력
 
 - 2026-09-27 최초 결정 (사용자: 전부 추천대로)
+- 2026-09-27 에러 모니터링 Sentry 추가 (에러 처리 결정 E5에서 파생)
