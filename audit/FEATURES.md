@@ -21,7 +21,7 @@
 | F02 | DB 스키마·마이그레이션·시드 | prisma/ | 재설계 | 마이그레이션 드리프트(H5), 두 PrismaClient(H6), FK 인덱스 없음, `price` String, 상태값 표기 불일치. 데이터 폐기 가능 | 1 | 수동: 빈 DB에 마이그레이션 up → down → up 성공, 시드 실행 후 앱 기동 | 미착수 |
 | F03 | 공통 레이아웃·root layout | app/layout.tsx, [locale]/layout.tsx, app/w/layout.tsx | 재설계 | root layout에 `<html>` 없음, root layout 이중 구조, 공유 페이지 `lang` 없음 | 2 | E2E: 모든 주요 경로에 `<html lang>` 존재, 헤더·본문 렌더 | 미착수 |
 | F04 | i18n (3개 언어, 사전, `t()`) | lib/i18n/ | 개선 | 키 타입 안전성 없음, 키 누락 시 키 문자열 노출(`wishlist.categories.GENERAL`), `t() \|\| '한국어'` fallback 40곳이 죽은 코드 | 2 | 단위: 3개 사전 키 집합 동일, 코드에서 쓰는 키가 전부 사전에 존재 | 미착수 |
-| F05 | 언어 경로·루트 리다이렉트 | app/page.tsx, `[locale]` | 개선 | `/` 가 무조건 `/kr`. Accept-Language 반영. 코드 `kr/jp`→`ko/ja` 전환 가능(인터뷰: URL 바뀌어도 됨, 5단계 결정) | 2 | E2E: `/` 요청 시 브라우저 언어 경로로 이동, 미지원 언어는 기본 언어 | 미착수 |
+| F05 | 언어 경로·루트 리다이렉트 | app/page.tsx, `[locale]` | 개선 | `/` 가 무조건 `/kr`. Accept-Language 반영. 코드 `kr/jp`→**`ko/ja`** 전환(`decisions/url-design.md` U3) | 2 | E2E: `/` 요청 시 브라우저 언어 경로로 이동, 미지원 언어는 기본 언어 | 미착수 |
 | F06 | 404·500·에러 경계 | 없음 | 신규 | H7. 현재 프레임워크 기본 흰 화면 | 3 | E2E: 없는 경로 → 앱 테마 404, 렌더 에러 → 에러 경계 화면 | 미착수 |
 | F07 | API 응답·에러 스키마 + 헬퍼 | app/api/** (6종 이상) | 재설계 | H8, 내부 에러 메시지 노출(`details: error.message`) | 3 | 단위: 헬퍼가 스키마대로만 응답, 예상 못한 에러는 일반 문구 | 미착수 |
 | F08 | Google 로그인·로그아웃 | lib/auth-config.ts, [locale]/login, api/auth/[...nextauth] | 개선 | NextAuth v4 유지보수 모드·audit critical, `pages.signIn: '/login'` 404(실측). 라이브러리 교체(5단계) | 4 | 수동: 실제 Google 로그인·로그아웃. E2E: 테스트용 세션 주입 후 로그인 상태 화면 | 미착수 |
@@ -50,7 +50,7 @@
 
 | ID | 기능 | 현재 위치 | 처분 | 이유 | 순서 | 동등성 확인 방법 | 상태 |
 |---|---|---|---|---|---|---|---|
-| F23 | 공유 URL 구조 | shareUrl `w/<cuid>` 저장 | 개선 | 신규 링크 `/w/w/<id>` 깨짐(H1) → **위시리스트별 `/w/{id}` 유지, 저장값과 라우트 일치**. 사용자 페이지 `/@이름`은 언젠가 (Q1) | 12 | E2E: 새로 만든 위시리스트의 공유 링크가 열림 | 미착수 |
+| F23 | 공유 URL 구조 | shareUrl `w/<cuid>` 저장 | 개선 | 신규 링크 `/w/w/<id>` 깨짐(H1) → **위시리스트별 `/w/{shareId}` 유지(PK와 별도인 공유 전용 ID, 재발급 가능 — `decisions/api-response.md` R8), 저장값에 경로 접두사 없음**. 사용자 페이지 `/@이름`은 언젠가 (Q1) | 12 | E2E: 새로 만든 위시리스트의 공유 링크가 열림 | 미착수 |
 | F24 | 공개 위시리스트 페이지 | app/w/[shareUrl] | 재설계 | 클라이언트 렌더라 링크 미리보기·`<title>`·`lang` 없음(Lighthouse), 응답에 소유자 이메일(H3), 제목 대비 부족, 봇 차단이 미리보기 크롤러도 막음 | 12 | E2E: 서버 렌더 HTML에 OG 태그·title·lang 존재, 응답·HTML에 이메일 없음, 비공개는 404. 수동: 카카오톡·슬랙 미리보기 | 미착수 |
 | F25 | 공유 링크 복사·미리 보기 열기 | [id]/page.tsx:98, wishlist-selector.tsx:163 | 개선 | 이중 prefix 버그 | 12 | E2E: 복사된 링크 = 실제로 열리는 URL | 미착수 |
 | F26 | 공유 페이지 방문 분석(GA) | app/w/layout.tsx | 유지 | 무료, 공유 페이지만 | 12 | 수동: GA 실시간에 page_view | 미착수 |
