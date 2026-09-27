@@ -99,28 +99,66 @@ echo "$F" | grep -E '\.(ts|tsx)$' | xargs grep -n 'console\.' | wc -l
 echo "$F" | grep -E '\.(ts|tsx)$' | xargs wc -l | sort -rn | awk '$1>250 && $2!="total"' | wc -l
 ```
 
-## 6. 실행하지 못한 항목
+## 6. 런타임 측정 환경 (Lighthouse·스크린샷 공통)
+
+`.env.development`(운영과 분리된 dev DB — 사용자 확인 2026-09-27)를 Next 자체 로더(`@next/env`)로 읽어 프로덕션 빌드 + `next start -p 3100` 으로 띄웠다. 두 env 파일 키 목록이 같아 `.env.production` 값이 끼어들지 않음을 스크립트에서 검사했다(빠진 키가 있으면 중단). `NEXTAUTH_URL`·`NEXT_PUBLIC_APP_URL` 은 `http://localhost:3100` 으로 덮어씀. 측정 후 서버 종료, `.next` 원복.
+
+```js
+// with-dev-env.js — 사용: node with-dev-env.js npx next build && node with-dev-env.js npx next start -p 3100
+const { loadEnvConfig } = require(require.resolve('@next/env', { paths: [process.cwd()] }))
+const { spawnSync } = require('child_process')
+loadEnvConfig(process.cwd(), true, { info() {}, error() {} })          // .env.development 로드
+const prodKeys = require('fs').readFileSync('.env.production', 'utf8').split('\n')
+  .map(l => (l.match(/^([A-Za-z_][A-Za-z0-9_]*)=/) || [])[1]).filter(Boolean)
+const missing = prodKeys.filter(k => !(k in process.env))
+if (missing.length) process.exit(2)                                     // 운영 값 혼입 방지
+Object.assign(process.env, { NODE_ENV: 'production', NEXT_TELEMETRY_DISABLED: '1',
+  NEXTAUTH_URL: 'http://localhost:3100', NEXT_PUBLIC_APP_URL: 'http://localhost:3100' })
+const [cmd, ...args] = process.argv.slice(2)
+process.exit(spawnSync(cmd, args, { stdio: 'inherit', env: process.env }).status ?? 1)
+```
+
+`/api/health` → `healthy` (dev DB 연결 확인). 공유 페이지 측정용 데이터: dev DB의 공개 위시리스트 `/w/a87rzv5d6a`(아이템 6개).
+
+## 7. Lighthouse
+
+도구: `npx -y lighthouse@12` (package.json 미추가), 설치된 Chrome headless. 카테고리 점수 = 성능 / 접근성 / 권장사항 / SEO.
+
+| 페이지 | 모바일 | LCP · TBT · CLS (모바일) | 데스크톱 | 감점 항목 |
+|---|---|---|---|---|
+| 랜딩 `/kr` | **95 / 100 / 100 / 100** | 2.9s · 10ms · 0 | 100 / 100 / 100 / 100 | — |
+| 로그인 `/kr/login` | **96 / 98 / 100 / 100** | 2.7s · 20ms · 0 | 100 / 98 / 100 / 100 | heading-order |
+| 요금제 `/kr/pricing` | **98 / 88 / 100 / 100** | 2.5s · 10ms · 0 | 100 / 88 / 100 / 100 | button-name, color-contrast, heading-order |
+| 공유 `/w/a87rzv5d6a` | **83 / 88 / 100 / 82** | **4.7s** · 50ms · 0 | 100 / 88 / 100 / 82 | **document-title 없음, html-has-lang 없음, meta-description 없음**, heading-order |
+
+```bash
+export CHROME_PATH="/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"
+npx -y lighthouse@12 <URL> [--preset=desktop] \
+  --only-categories=performance,accessibility,best-practices,seo \
+  --output=json --output-path=<file>.json --chrome-flags="--headless=new" --quiet
+```
+
+해석: 정적 페이지는 이미 높다. **공유 페이지가 가장 약하다** — 서비스 핵심 화면인데 `<title>`·`lang`·메타 설명이 없고(링크 미리보기 부재와 같은 원인), 클라이언트 렌더라 모바일 LCP 4.7s. Lighthouse 접근성 점수는 자동 검사 범위만이며, AUDIT H9(키보드·모달·라벨)는 로그인 화면에 몰려 있어 이 점수에 반영되지 않았다.
+
+## 8. 스크린샷
+
+`audit/screenshots/before/` — **git 미추적**(`.gitignore`). dev DB 테스트 데이터에 토큰·이메일로 보이는 이미지가 포함돼 있어 커밋하지 않는다. **전후 비교(마지막 단계 /baseline·README)에 쓴 뒤 삭제한다**(사용자 지시 2026-09-27).
+
+도구: `npx -y playwright@1 screenshot --channel chrome --full-page --wait-for-timeout 2500 --viewport-size <W,H> <URL> <file>` (브라우저 다운로드 없이 설치된 Chrome 사용). 데스크톱 1440×900 / 모바일 390×844.
+
+| 화면 | 파일 | 촬영 |
+|---|---|---|
+| 랜딩 kr / en / jp | `landing-{kr,en,jp}-{desktop,mobile}.png` | ✅ |
+| 로그인 | `login-*.png` | ✅ |
+| 요금제 | `pricing-*.png` | ✅ |
+| 공지 | `notices-*.png` | ✅ |
+| 공개 위시리스트 | `shared-wishlist-*.png` | ✅ — 제목·사용자명이 배경과 대비 부족으로 거의 안 보임 |
+| 404 | `404-*.png` | ✅ — 프레임워크 기본 흰 화면(앱 테마와 무관) |
+| 내 위시리스트 목록 / 생성 / 상세 / 꾸미기 / 프로필 / 통계 / 관리자 | — | ❌ Google 로그인만 있어 테스트 계정 없음 (미결) |
+
+## 9. 실행하지 못한 항목
 
 | 항목 | 이유 | 필요한 것 |
 |---|---|---|
-| Lighthouse (성능·접근성) | 도구가 package.json에 없음. `npx lighthouse` 1회 실행은 승인 필요 | 승인 시: 더미 env 프로덕션 빌드 + `next start` 로 **DB 불필요한 정적 페이지**(랜딩·로그인·요금제) 측정 가능 |
-| 스크린샷 (`audit/screenshots/before/`) | Playwright 등 도구 없음. npx 1회 실행 승인 필요 | 정적 페이지는 위와 같이 가능. 로그인·데이터 화면은 **DB가 운영이 아님이 확인되고 테스트 계정이 있을 때만** |
 | 커버리지 | `@vitest/coverage-v8` 미설치 (설치 = lock 변경) | 리뉴얼 환경 단계에서 도입 |
-| 런타임 기능 확인 | dev 서버는 `.env.development` DB에 연결됨. 그 DB가 운영인지 미확인 | AUDIT Q2 답변 |
-
-### 스크린샷 대상 화면 목록 (승인 후 촬영)
-
-| 화면 | DB 필요 | 로그인 필요 |
-|---|---|---|
-| 랜딩 `/kr` (+ `/en`, `/jp`) | ✗ | ✗ |
-| 로그인 `/kr/login` | ✗ | ✗ |
-| 요금제 `/kr/pricing` | ✗ | ✗ |
-| 공지 `/kr/notices` | ✓ | ✗ |
-| 내 위시리스트 목록 | ✓ | ✓ |
-| 위시리스트 생성 (메타데이터 추출 상태 포함) | ✓ | ✓ |
-| 위시리스트 상세·편집 | ✓ | ✓ |
-| 꾸미기 | ✓ | ✓ |
-| 프로필 | ✓ | ✓ |
-| 공개 위시리스트 `/w/<id>` | ✓ | ✗ |
-| 관리자 대시보드 | ✓ | ✓ (admin) |
-| 404 (기본 화면) | ✗ | ✗ |
+| 로그인 필요 화면 스크린샷·Lighthouse | Google OAuth만 존재, 테스트 계정 없음 | 방법 결정 필요 (worklog 미결) |

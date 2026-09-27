@@ -108,7 +108,7 @@ NextAuth(Google, database session 3일) ↔ Prisma adapter ↔ Account/Session �
   - DateTime은 전부 `timestamp(3)`(tz 없음). Prisma가 UTC로 쓰므로 사실상 UTC
 - **마이그레이션 이력**: `prisma/migrations` 4개(마지막 `20250902053659_refresh_database`, `update_user_id_to_uuid` 는 빈 파일). 이후 Account·VerificationToken·Notice·QnA·ErrorLog·UserInquiry·isAdmin·view/clickCount·customization·siteName·avatar→image 변경이 **마이그레이션에 없음** → 2025-12 이후 `db push` 운용. enum 이름도 드리프트(`wishlist_category` vs `WishlistCategory`). README/DEPLOYMENT의 `migrate dev/deploy` 안내대로 새 DB를 만들면 스키마가 어긋난다.
 - **Seed**: 없음.
-- **실데이터**: README에 운영 URL(`link-let.vercel.app`)이 있고 `fix-share-urls.ts` 같은 데이터 보정 스크립트가 존재 → **운영 데이터 존재 가능성 높음. 규모 미확인(질문 Q1).**
+- **실데이터**: 운영(`link-let.vercel.app`)은 DB 연결 상태로 정상 동작하나 **실사용자 0** (사용자 확인 2026-09-27). DB는 Neon 2개 — `linklet-database`(2025-08-30 생성) / `linklet-database-prd`(2025-12-08 생성) — dev/운영 매핑은 이름·생성일 기준 추정. `.env.development` 는 운영과 다른 DB를 가리킴(사용자 확인). Vercel Storage 연동이 아니라 환경변수 직접 설정으로 연결된 것으로 보임.
 - **외부 저장소**: S3 `linklet-image` — `{production|development}/{uploads|metadata}/`. 공개 버킷 URL 방식.
 
 ---
@@ -270,10 +270,17 @@ NextAuth(Google, database session 3일) ↔ Prisma adapter ↔ Account/Session �
 
 ## 10. 확인할 질문
 
-- **Q1. 실사용자·실데이터**: 운영(link-let.vercel.app)에 실제 사용자 데이터가 있나? 대략 몇 명·몇 개?
-- **Q2. `.env.development` 의 DB**: 운영 DB와 다른 DB(예: Neon dev 브랜치)를 가리키나? 확인 전까지 dev 서버·Prisma 명령을 실행하지 않는다.
+- ~~Q1. 실사용자·실데이터~~ → **실사용자 0** (2026-09-27 답변)
+- ~~Q2. `.env.development` 의 DB~~ → **운영과 분리된 DB** (2026-09-27 답변). dev DB 대상 로컬 서버 실행 허용
 - **Q3. 운영 DB의 shareUrl 형식**: 현재 `w/xxx` 와 `xxx` 가 섞여 있나? (H1 영향 범위)
 - **Q4. 관리자 콘솔**: 리뉴얼 범위에 포함하나, 아니면 포트폴리오 핵심에서 제외하나?
 - **Q5. QnA vs UserInquiry**: 어느 쪽을 남길 의도였나?
 - **Q6. 신규 위시리스트 기본 공개 여부**: 스키마(공개)와 API(비공개) 중 의도는?
-- **Q7. 스크린샷·Lighthouse 도구**: `npx playwright`, `npx lighthouse` 1회 실행 승인 여부, 로그인 화면용 테스트 계정 유무.
+- ~~Q7. 스크린샷·Lighthouse 도구~~ → npx 실행 승인, 스크린샷은 용도 종료 후 삭제. **테스트 계정 없음**(Google 로그인만) — 로그인 화면 촬영 방법 미결
+
+### 런타임 확인으로 추가된 사실 (2026-09-27)
+- NextAuth `pages.signIn: '/login'` → `/login` **404 실측** (M17 확정)
+- dev DB 기존 shareUrl은 10자 형식으로 공유 페이지 정상 → H1은 **신규 생성분에 한정**
+- 공유 페이지: `<title>`·`html lang`·meta description 없음, 제목 텍스트 대비 부족 (Lighthouse 모바일 83/88/100/82)
+- 404는 프레임워크 기본 흰 화면 (H7 확정)
+- 비로그인 `GET /api/wishlists` 가 공개 위시리스트 전체 목록 반환
