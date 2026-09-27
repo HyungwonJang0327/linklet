@@ -50,3 +50,6 @@ yarn-error.log*
 next-env.d.ts
 
 /app/generated/prisma
+
+# 리뉴얼 감사 스크린샷: 테스트 데이터(토큰·이메일 노출 가능) 포함, 전후 비교 후 삭제
+/audit/screenshots/
