@@ -16,7 +16,7 @@
 | 서버 상태 | TanStack Query | 5.x |
 | 스타일 | Tailwind CSS | 4.x |
 | 이미지 저장소 | Cloudflare R2 (S3 호환, AWS SDK 사용) | — |
-| 요청 빈도 제한 | Vercel WAF 규칙 1개(`/api/metadata`) + Better Auth 내장 제한(DB 저장) | — |
+| 요청 빈도 제한 | Vercel WAF 규칙 1개(링크 미리보기 API — `url-design.md` 에서 `/api/link-previews`) + Better Auth 내장 제한(DB 저장) | — |
 | 단위 테스트 | Vitest | 최신 메이저 |
 | E2E | Playwright | 1.63.x |
 | 에러 모니터링 | Sentry Developer 무료 플랜 (`decisions/error-handling.md` E5) | @sentry/nextjs 11.x |
