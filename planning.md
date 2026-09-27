@@ -28,7 +28,7 @@
 
 ## 확정된 기술 스택 (v2)
 
-근거: `decisions/tech-stack.md`. 실제 설치 버전은 8단계 후 갱신.
+근거: `decisions/tech-stack.md`. 실제 설치 버전은 `CLAUDE.md` §3 "설치" 열.
 
 | 영역 | 선택 | 버전 기준 |
 |---|---|---|
@@ -42,6 +42,8 @@
 | 요청 빈도 제한 | Vercel WAF(`/api/link-previews`) + Better Auth 내장 | — |
 | 테스트 | Vitest / Playwright | 최신 / 1.63.x |
 | 에러 모니터링 | Sentry (Developer 무료 플랜) | @sentry/nextjs 11.x |
+| 아이콘 | lucide-react | 1.x |
+| 시크릿 스캔 | gitleaks (pre-commit + CI) | — |
 | 린트·포맷 | ESLint flat + Prettier | — |
 | 패키지 매니저 | pnpm | 10.x |
 | 배포 | Vercel Hobby | — |
@@ -92,13 +94,14 @@
 
 | 질문 | 결정 시점 |
 |---|---|
-| Cloudflare 계정 유무 | 8단계 |
-| 아이콘 라이브러리 (heroicons / lucide 중 하나) | 8단계 |
-| Vercel 프리뷰 프로젝트(`v2/` 루트) 운영 여부 | 8단계 |
-| v2가 쓸 Neon DB(기존 DB의 새 브랜치 / 새 프로젝트) | 8단계 |
+| Cloudflare 계정 유무 (R2) | 이미지 업로드 이식(F20) 때 — 사용자 작업 |
+| Vercel 프리뷰 프로젝트(`v2/` 루트) 운영 여부 | 첫 배포 때 |
+| v2가 쓸 Neon DB(기존 DB의 새 브랜치 / 새 프로젝트) | 첫 배포 때 (로컬은 Docker Postgres) |
 | id 생성 방식 (cuid2 / UUID v7) | Phase 1 스키마 작업 |
 | `down.sql` 생성 명령 | Phase 1 (Prisma 7 문서 확인) |
 | 카테고리 3~4종의 구체 목록 | 디자인 작업 |
 | 설정 사이드바 구조 유지 여부 | 디자인 작업 |
 | 주당 투입 시간 | 9단계 |
 | 기존 S3 버킷 삭제 | 교체 후 (사용자 작업) |
+| main 브랜치 보호 | v2 CI 첫 통과 직후 (사용자 확인 후 설정) |
+| 과거 커밋에 노출된 토큰 교체 | **즉시** — 사용자 작업 (AUDIT H13) |
