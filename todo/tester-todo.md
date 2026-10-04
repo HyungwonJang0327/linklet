@@ -5,8 +5,10 @@
 
 ## Phase 0 — 기준선
 
-기존 앱(루트) 코드는 수정하지 않는다. 대상: `next start -p 3001` 로 띄운 기존 앱. 실행 DB는 mvp-todo Phase 0 첫 항목의 결정을 따른다.
+기존 앱(루트) 코드는 수정하지 않는다. 대상: `next start -p 3001` 로 띄운 기존 앱. 실행 DB·실행 방식은 `decisions/testing.md` T8.
 
+- [ ] 기준선 DB·기존 앱 실행 스크립트 — `v2/e2e/baseline/` 에 전용 Docker 컨테이너 기동·`db push`(루트 prisma 6 CLI, 로컬 접속 문자열만), 기존 앱 env 래퍼(키 전부 로컬·더미 지정, 빠진 키 있으면 중단), 빌드·`next start -p 3001`, 종료 후 정리
+  - 완료 조건: 스크립트 한 번으로 기존 앱이 로컬 DB로 뜨고 `/api/health` healthy, 운영·dev 접속 문자열이 프로세스 env에 없음을 스크립트가 검사 / 커밋: `test(config): 기존 앱 기준선 실행 스크립트 추가`
 - [ ] 기준선 E2E Playwright project 추가 — `v2/e2e/baseline/`, baseURL `http://localhost:3001`, 기본 `pnpm test:e2e` 에서 제외
   - 완료 조건: `pnpm exec playwright test --project=baseline` 이 동작, `pnpm test:e2e` 영향 없음 / 커밋: `test(config): 기존 앱 기준선 E2E project 추가`
 - [ ] 비로그인 흐름 — 랜딩, 공유 페이지 열람(제목·아이템·상품 링크), 비공개 위시리스트 접근, 없는 경로
