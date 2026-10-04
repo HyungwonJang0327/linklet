@@ -4,7 +4,7 @@
 
 ## 즉시
 
-- [ ] **`REVALIDATE_SECRET_TOKEN` 교체** — 과거 커밋 `2b39a31` 에 토큰 값이 하드코딩되어 공개 이력에 남아 있다 (AUDIT H13). 운영(Vercel Production 환경변수)과 로컬 `.env.*` 모두 새 무작위 값으로 바꾸고 재배포. 교체 후 알려주면 `.gitleaksignore` 에 해당 fingerprint를 추가해 전체 이력 스캔을 통과시킨다
+- [x] **`REVALIDATE_SECRET_TOKEN` 교체** (2026-10-04 확인 — 운영에서 옛 값 401) — 과거 커밋 `2b39a31` 에 토큰 값이 하드코딩되어 공개 이력에 남아 있다 (AUDIT H13). 운영(Vercel Production 환경변수)과 로컬 `.env.*` 모두 새 무작위 값으로 바꾸고 재배포. 교체 후 알려주면 `.gitleaksignore` 에 해당 fingerprint를 추가해 전체 이력 스캔을 통과시킨다
   - 완료 조건: 운영 `/api/revalidate`·`/api/auth/cleanup-sessions` 가 옛 값으로 401/403
 
 ## v2 CI 첫 통과 직후
