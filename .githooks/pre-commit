@@ -1,0 +1,13 @@
+#!/bin/sh
+# 커밋 전 시크릿 스캔 (gitleaks). 리포가 PUBLIC이라 push 전에 막아야 한다.
+# 활성화(클론마다 1회): git config core.hooksPath .githooks
+# 설치: brew install gitleaks
+if ! command -v gitleaks >/dev/null 2>&1; then
+  echo "[pre-commit] gitleaks가 설치되어 있지 않습니다. 'brew install gitleaks' 후 다시 커밋하세요." >&2
+  exit 1
+fi
+gitleaks git --pre-commit --staged --redact --no-banner . || {
+  echo "[pre-commit] 시크릿으로 보이는 값이 staged 변경에 있습니다. 값을 제거하고 다시 커밋하세요." >&2
+  echo "             오탐이면 .gitleaksignore 에 fingerprint를 추가합니다 (실제 시크릿은 추가 금지)." >&2
+  exit 1
+}

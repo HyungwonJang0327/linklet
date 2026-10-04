@@ -97,3 +97,10 @@
 
 - 2026-09-27 최초 결정 (사용자: 전부 추천대로)
 - 2026-09-27 에러 모니터링 Sentry 추가 (에러 처리 결정 E5에서 파생)
+- 2026-09-28 환경 세팅 결정 (사용자: 추천대로)
+  - 아이콘: **lucide-react** 하나만 (heroicons 제거). 기각: heroicons — 아이콘 수가 적고 두 벌 혼용이 리뉴얼 전 부채(L2)
+  - create-next-app이 만든 `v2/AGENTS.md`(Next 16 문서 안내) 유지. 충돌 시 CLAUDE.md 우선
+  - React Compiler 끔 — 결정된 적 없음. 필요 시 `/decide`
+  - React는 create-next-app이 고정한 19.2.8로 시작 (19.x 범위)
+  - pnpm은 `packageManager: pnpm@10.34.5` 로 고정 (pnpm이 자동 전환)
+  - 시크릿 스캔: gitleaks — pre-commit(`.githooks/pre-commit`, `core.hooksPath`) + CI(gitleaks-action v3). 의존성 추가 없음

@@ -1,4 +1,4 @@
-import { defineConfig } from 'vitest/config'
+import { configDefaults, defineConfig } from 'vitest/config'
 import react from '@vitejs/plugin-react'
 import path from 'path'
 
@@ -7,6 +7,7 @@ export default defineConfig({
   test: {
     environment: 'node', // Use node environment for utility tests
     globals: true,
+    exclude: [...configDefaults.exclude, 'v2/**'],
     coverage: {
       provider: 'v8',
       reporter: ['text', 'json', 'html'],

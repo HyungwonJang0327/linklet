@@ -3,6 +3,8 @@
 > 결정 맥락은 `decisions/`, 확정 목록은 `planning.md`.
 > **리뉴얼 진행 중**: 기준표는 `audit/FEATURES.md`, 전략은 `decisions/renewal-strategy.md`.
 
+> `v2/AGENTS.md`(create-next-app 생성, Next 16 문서 안내)와 이 파일이 충돌하면 **이 파일이 우선**한다.
+
 ## 1. 개요
 
 Linklet — 요즘 갖고 싶은 것들, 링크만 붙여 넣으면 예쁘게 모아지는 내 위시리스트 페이지. 친구에게 링크 하나로 공유.
@@ -62,25 +64,29 @@ v2/
 
 ## 3. 기술 스택
 
-> 버전 기준은 `decisions/tech-stack.md`. **8단계 설치 후 실제 버전으로 갱신한다.**
+> 버전 기준은 `decisions/tech-stack.md`. "설치" 열은 `v2/` 에 실제 설치된 버전 (2026-09-28). 아직 설치 안 된 것은 해당 기능 이식 때 설치한다.
 
-| 영역 | 선택 | 버전 기준 |
-|---|---|---|
-| 런타임 | Node.js | 24.x LTS |
-| 프레임워크 | Next.js App Router (`cacheComponents` 끔) | 16.3.x |
-| UI | React | 19.x |
-| 인증 | Better Auth + Prisma 어댑터 (Google, DB 세션, admin 플러그인) | 1.7.x |
-| ORM·DB | Prisma + Neon 어댑터 / PostgreSQL (Neon Free) | **7.10.0 고정** |
-| 입력 검증 | Zod | 4.x |
-| 서버 상태 | TanStack Query | 5.x |
-| 스타일 | Tailwind CSS (`@theme` 토큰) | 4.x |
-| 이미지 저장소 | Cloudflare R2 (S3 호환 SDK) | — |
-| 요청 빈도 제한 | Vercel WAF(`/api/link-previews`) + Better Auth 내장 | — |
-| 에러 모니터링 | Sentry Developer 무료 플랜 | @sentry/nextjs 11.x |
-| 테스트 | Vitest (단위·통합, Docker Postgres) / Playwright (E2E) | 최신 / 1.63.x |
-| 린트·포맷 | ESLint flat + Prettier | — |
-| 패키지 매니저 | pnpm | 10.x |
-| 배포 | Vercel Hobby (비상업·개인) | — |
+| 영역 | 선택 | 버전 기준 | 설치 |
+|---|---|---|---|
+| 런타임 | Node.js (`v2/.nvmrc`, `engines`) | 24.x LTS | 24 |
+| 프레임워크 | Next.js App Router (`cacheComponents` 끔) | 16.3.x | 16.3.6 |
+| UI | React | 19.x | 19.2.8 |
+| 언어 | TypeScript (strict + `noUncheckedIndexedAccess`) | 5.x | 5.9.3 |
+| 인증 | Better Auth + Prisma 어댑터 (Google, DB 세션, admin 플러그인) | 1.7.x | — (F08) |
+| ORM·DB | Prisma + Neon 어댑터 / PostgreSQL (Neon Free, 로컬 Docker) | **7.10.0 고정** | — (F02) |
+| 입력 검증 | Zod | 4.x | — (F07) |
+| 서버 상태 | TanStack Query | 5.x | — (F13) |
+| 스타일 | Tailwind CSS (`@theme` 토큰) | 4.x | 4.3.3 |
+| 아이콘 | lucide-react | 1.x | — (첫 UI) |
+| 이미지 저장소 | Cloudflare R2 (S3 호환 SDK) | — | — (F20) |
+| 요청 빈도 제한 | Vercel WAF(`/api/link-previews`) + Better Auth 내장 | — | — |
+| 에러 모니터링 | Sentry Developer 무료 플랜 | @sentry/nextjs 11.x | — (F06) |
+| 단위·통합 테스트 | Vitest + @vitest/coverage-v8 (통합은 Docker Postgres) | 최신 메이저 | 5.0.2 |
+| E2E | Playwright | 1.63.x | 1.63.0 |
+| 린트·포맷 | ESLint(flat, eslint-config-next) + Prettier + eslint-config-prettier | — | 9.39.5 / 3.9.9 / 10.1.8 |
+| 패키지 매니저 | pnpm (`packageManager`) | 10.x | 10.34.5 |
+| 시크릿 스캔 | gitleaks — pre-commit(`.githooks`) + CI(gitleaks-action v3) | — | 8.30.1 (로컬) |
+| 배포 | Vercel Hobby (비상업·개인) | — | — (첫 배포) |
 
 기존 앱(루트)은 npm + Next 15 + NextAuth v4 + Prisma 6 그대로다(`audit/AUDIT.md` §2).
 
@@ -261,16 +267,31 @@ v2/
 
 ## 10. 자주 쓰는 명령어
 
-### v2 (8단계 환경 세팅 후 확정)
+### 처음 한 번 (클론마다)
+
+```bash
+git config core.hooksPath .githooks   # 커밋 전 gitleaks 시크릿 스캔 활성화
+brew install gitleaks                 # 없으면 설치 (훅이 없으면 커밋을 막는다)
+cd v2 && pnpm install --frozen-lockfile
+pnpm exec playwright install chromium # E2E를 로컬에서 돌릴 때
+```
+
+### v2
 
 ```bash
 cd v2
-pnpm install --frozen-lockfile
-pnpm dev                 # 개발 서버
-pnpm lint && pnpm typecheck && pnpm test
-pnpm test:e2e            # Playwright
-pnpm prisma migrate dev --name <snake_case_설명>   # 로컬 DB만. 운영 적용은 사용자가 직접
+pnpm dev                   # 개발 서버
+pnpm lint                  # ESLint (any·접근성·import 경계 포함)
+pnpm format / format:check # Prettier
+pnpm typecheck             # next typegen && tsc --noEmit
+pnpm test                  # Vitest (src/**/*.test.ts)
+pnpm test:coverage         # 커버리지 — T4 대상 80% 미만이면 실패
+pnpm test:e2e              # Playwright (e2e/, 포트 3002에 빌드·실행)
+pnpm build
+# DB 작업은 Phase 1에서 스크립트 확정: prisma migrate dev 는 로컬 DB만, 운영 적용은 사용자가 직접
 ```
+
+CI(`.github/workflows/v2-ci.yml`)는 PR마다 lint → format:check → typecheck → test:coverage → build 를 돈다. 시크릿 스캔(`secret-scan.yml`)은 모든 PR·main push.
 
 ### 기존 앱 (루트, 동결 — 비교·측정용)
 
