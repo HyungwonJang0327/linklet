@@ -5,7 +5,7 @@
 
 ## 운영 원칙
 
-- **세분화 시점**: Phase 0·1은 커밋 단위로 적었다. Phase 2 이후는 FEATURES 행 단위이며, **이전 Phase 완료 시** 역할별 todo에 커밋 단위로 쪼갠다
+- **세분화 시점**: Phase 0·1은 역할별 todo에 커밋 단위로 적었다. Phase 2 이후는 여기에 FEATURES 행 단위로 두고, **이전 Phase 완료 시** 역할별 todo로 옮겨 커밋 단위로 쪼갠다(옮긴 뒤 여기서는 체크박스를 뺀 요약만 남긴다)
 - **Phase 완료 조건(공통)**: 해당 FEATURES 행 상태가 `이식 완료` 이상 + main CI 통과 + `/log`. 첫 배포(Phase 5) 이후에는 프리뷰 배포까지 성공
 - **배포 가능한 상태 유지**(INTENT 제약): 기존 앱은 교체 전까지 운영 중이므로, v2는 "main CI가 항상 초록"을 배포 가능 상태로 본다
 - **기간**: 주당 약 10시간 기준 추정. Phase가 끝날 때마다 실제 소요와 비교해 다음 Phase 추정을 고친다
@@ -24,39 +24,29 @@
 
 ## Phase 0 — 준비
 
-이식의 정답지를 먼저 만든다. 기존 앱(루트) 코드는 수정하지 않는다.
+이식의 정답지를 먼저 만든다. 기존 앱(루트) 코드는 수정하지 않는다. 커밋 단위 항목은 역할별 todo에만 적는다(체크는 그쪽에서).
 
-- [ ] 기준선 E2E 실행 환경 결정 — 기존 앱을 어떤 DB로 띄울지(로컬 Docker Postgres에 기존 스키마 적용 방식 / dev DB 읽기 전용 시나리오만). tester 규칙상 dev·운영 DB에 테스트 금지 → 선택지 표로 결정 (`/decide`)
-  - 완료 조건: `decisions/testing.md` 에 기준선 E2E 환경 한 줄 추가 / 커밋: `docs(decisions): 기준선 E2E 실행 환경 결정`
-- [ ] 기준선 E2E Playwright project 추가 — `v2/e2e/baseline/`, 대상 `http://localhost:3001`(기존 앱), v2 기본 실행에서는 제외
-  - 완료 조건: `pnpm exec playwright test --project=baseline` 이 빈 스위트로 동작, `pnpm test:e2e` 는 영향 없음 / 커밋: `test(config): 기존 앱 기준선 E2E project 추가` / 담당: tester
-- [ ] 기준선 E2E — 비로그인 흐름: 랜딩, 공유 페이지 열람(제목·아이템·상품 링크), 비공개 위시리스트 접근, 없는 경로
-  - 완료 조건: 기존 앱에서 통과. 알려진 버그(H1 `/w/w/`, `/login` 404)는 "현재 동작"으로 고정하고 주석에 FEATURES ID / 커밋: `test(share): 기존 앱 공유 페이지 기준선 E2E` / 담당: tester / FEATURES: F23–F25
-- [ ] 기준선 E2E — 로그인 흐름: 세션 주입 → 위시리스트 생성 → 아이템 추가(메타데이터 자동 채움 제외, 수동 입력) → 수정·받음 표시·삭제
-  - 완료 조건: 기존 앱에서 통과 / 커밋: `test(wishlist): 기존 앱 핵심 흐름 기준선 E2E` / 담당: tester / FEATURES: F13–F17, F19, F21
-- [ ] 메타데이터 파서 정답 fixture 수집 — 실제 쇼핑몰 HTML 저장본 N개 + 기존 파서(`lib/services/url-metadata.ts` 파싱부) 출력 JSON
-  - 완료 조건: `v2/src/features/link-preview/server/__fixtures__/` 에 HTML·기대값 쌍, 수집 스크립트는 네트워크 없이 기존 파서만 실행 / 커밋: `test(link-preview): 기존 파서 정답 fixture 추가` / 담당: tester / FEATURES: F18
-- [ ] 디자인 토큰 설계 — 색(라이트·다크)·간격·반경·그림자·타이포, 대비 4.5:1 검증표 / 담당: designer
-  - 완료 조건: 선택지 표 → 사용자 결정 → `decisions/design-tokens.md` / 커밋: `docs(decisions): 디자인 토큰 체계 결정`
-- [ ] 카테고리 3~4종 목록·설정 사이드바 구조 결정 (planning 미결) / 담당: designer
-  - 완료 조건: FEATURES F16 이유 열·planning 미결 표 갱신 / 커밋: `docs(planning): 카테고리·설정 메뉴 구조 확정`
+- [ ] 기준선 E2E 실행 환경 결정 — 기존 앱을 어떤 DB로 띄울지(로컬 Docker Postgres에 기존 스키마 적용 방식 / dev DB 읽기 전용 시나리오만). tester 규칙상 dev·운영 DB에 테스트 금지, 기존 마이그레이션은 드리프트(H5)로 그대로 재현 안 됨 → `/decide`
+  - 완료 조건: `decisions/testing.md` 에 기준선 E2E 환경 추가 / 커밋: `docs(decisions): 기준선 E2E 실행 환경 결정` / 담당: 메인
+- [ ] 기준선 E2E 3건 + 파서 정답 fixture → `tester-todo.md` Phase 0
+- [ ] 디자인 토큰·카테고리·설정 메뉴 구조 → `designer-todo.md` Phase 0
 
 ## Phase 1 — 기반 (F01–F07, I01)
 
-순서: 공통 응답·환경 → DB → 화면 뼈대 → 에러 화면. 세부는 `migrator-todo.md`.
+순서: 공통 응답·환경 → DB → 화면 뼈대 → 에러 화면. 커밋 단위는 `migrator-todo.md`·`tester-todo.md` Phase 1. 아래는 요약이며 체크는 역할별 todo에서 한다.
 
-- [ ] Docker Postgres 로컬·CI 환경 (`v2/docker-compose.yml`, CI service container) — T5
-- [ ] F07 API 응답·에러 헬퍼 + `AppError` (zod 설치 포함)
-- [ ] F01 환경변수 스키마 `shared/config/env.ts`
-- [ ] I01 헬스 체크 (`/api/health`, 실패 시 일반 문구)
-- [ ] F02 Prisma 7.10.0 + 첫 마이그레이션(위시리스트·아이템·공지·문의 — 인증 테이블은 F08 마이그레이션) + `down.sql` 스크립트 + 시드(환경 가드)
+- Docker Postgres 로컬·CI 환경 (`v2/docker-compose.yml`, CI service container) — T5
+- F07 API 응답·에러 헬퍼 + `AppError` (zod 설치 포함)
+- F01 환경변수 스키마 `shared/config/env.ts`
+- I01 헬스 체크 (`/api/health`, 실패 시 일반 문구)
+- F02 Prisma 7.10.0 + 첫 마이그레이션(위시리스트·아이템·공지·문의 — 인증 테이블은 F08 마이그레이션) + `down.sql` 스크립트 + 시드(환경 가드)
   - 선행 결정: id 생성 방식(cuid2 / UUID v7), `down.sql` 생성 명령 (planning 미결)
-- [ ] 디자인 토큰 `@theme` 적용 (Phase 0 결정 기준)
-- [ ] F04 i18n 사전 3개 + 타입 안전 `t()` + 키 집합 테스트
-- [ ] F03 root layout `<html lang>` + `[locale]` 레이아웃
-- [ ] F05 `proxy.ts` Accept-Language 리다이렉트 (`ko/en/ja`)
-- [ ] F06 `not-found`·`error`·`global-error` + Sentry (사용자: Sentry DSN 발급 선행)
-- [ ] CI에 E2E 단계 추가 (Playwright 브라우저 설치, Docker Postgres) — 완료 기준 5의 틀
+- 디자인 토큰 `@theme` 적용 (Phase 0 결정 기준)
+- F04 i18n 사전 3개 + 타입 안전 `t()` + 키 집합 테스트
+- F03 root layout `<html lang>` + `[locale]` 레이아웃
+- F05 `proxy.ts` Accept-Language 리다이렉트 (`ko/en/ja`)
+- F06 `not-found`·`error`·`global-error` + Sentry (사용자: Sentry DSN 발급 선행)
+- CI에 E2E 단계 추가 (Playwright 브라우저 설치, Docker Postgres) — 완료 기준 5의 틀
 
 ## Phase 2 — 인증 (F08–F10)
 
