@@ -9,7 +9,7 @@
 
 ## v2 CI 첫 통과 직후
 
-- [ ] main 브랜치 보호 켜기 (PR 필수, 필수 체크 `v2 CI / quality`·`Secret scan / gitleaks`, 강제 push·삭제 금지) — 설정 방법은 에이전트가 안내하거나 사용자 승인 후 `gh api` 로 적용
+- [x] main 브랜치 보호 켜기 (PR 필수·승인 0명, 필수 체크 `quality`·`gitleaks`, 강제 push·삭제 금지, 관리자 예외 허용) — 사용자 승인 후 `gh api` 로 적용 (2026-10-04, PR #1 병합 `15ef23d`)
 
 ## 기능 이식 시점
 
