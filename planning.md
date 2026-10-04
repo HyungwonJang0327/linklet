@@ -83,7 +83,7 @@
 | 정상 응답 | `{ data }` / `{ data, nextCursor }`, 커서, 빈 배열, 204, null 명시, 문자열 id | api-response.md |
 | 공유 URL | `/w/{shareId}` — PK와 별도 공유 전용 ID, 재발급 가능 | api-response.md |
 | 입력 검증 | `features/*/schema.ts` Zod 공유, Route Handler에서 파싱 | api-response.md |
-| 테스트 | 순수 로직·서비스(Docker Postgres)·계약·E2E, 대상 한정 커버리지 80%, 기준선 E2E는 `v2/e2e/baseline/` | testing.md |
+| 테스트 | 순수 로직·서비스(Docker Postgres)·계약·E2E, 대상 한정 커버리지 80%, 기준선 E2E는 `v2/e2e/baseline/` + 로컬 Docker 전용 DB(로컬만) | testing.md |
 | 로드맵 | Phase 0~8(준비·기반·인증·미리보기·핵심 흐름·공유+첫 배포·꾸미기·관리자·교체), 주당 ~10시간 | roadmap.md, todo/mvp-todo.md |
 | 마이그레이션 | `migrate dev` + `down.sql`, `db push` 금지, 운영 적용은 사용자 | db-migration.md |
 | URL | 복수형·케밥·동사 금지, `/{locale}/wishlists`, `ko/en/ja`, 필터는 URL 쿼리, 하위 호환 없음 | url-design.md |
@@ -103,5 +103,4 @@
 | 카테고리 3~4종의 구체 목록 | Phase 0 (designer) |
 | 설정 사이드바 구조 유지 여부 | Phase 0 (designer) |
 | 기존 S3 버킷 삭제 | 교체 후 (사용자 작업) |
-| 기준선 E2E 실행 DB (로컬 Docker에 기존 스키마 적용 방식 / dev DB 읽기 전용) | Phase 0 첫 작업 |
 | 과거 커밋에 노출된 토큰 교체 | **즉시** — 사용자 작업 (AUDIT H13) |
