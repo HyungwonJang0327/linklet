@@ -178,7 +178,7 @@ NextAuth(Google, database session 3일) ↔ Prisma adapter ↔ Account/Session �
 | H11 | **보안 패치 누락** — audit critical 5 (next, next-auth, vitest 등) | npm audit |
 | H12 | **운영 DB에 붙을 수 있는 파괴적 스크립트** — 환경 가드 없음(`fix-share-urls.ts` 는 공유 링크 전부 재발급, `add-test-customizations.ts` 는 사용자 데이터 덮어쓰기) | scripts/ |
 
-| H13 | **과거 커밋에 비밀 토큰 하드코딩 (git 이력에 공개 노출)** — 세션 정리 API 호출에 `process.env.NEXT_PUBLIC_... \|\| '<토큰 값>'` 형태로 클라이언트 코드에 토큰 fallback. 현재 코드에서는 제거됐으나 PUBLIC 리포 이력에 남음. 이 토큰은 `/api/auth/cleanup-sessions?token=` 에 쓰였고 `REVALIDATE_SECRET_TOKEN` 재사용 구조라 `/api/revalidate` 에도 통할 수 있음. **대응: 운영·dev의 `REVALIDATE_SECRET_TOKEN` 교체(사용자 작업). 이력 재작성은 하지 않는다** (공개 이력 강제 수정은 파괴적이고, 교체로 무력화된다). 2026-09-28 gitleaks 전체 이력 스캔(8단계)에서 발견 — 0단계 간이 패턴 스캔은 놓침 | 커밋 `2b39a31` `components/settings/settings-sidebar.tsx:71` |
+| H13 | **과거 커밋에 비밀 토큰 하드코딩 (git 이력에 공개 노출)** — 세션 정리 API 호출에 `process.env.NEXT_PUBLIC_... \|\| '<토큰 값>'` 형태로 클라이언트 코드에 토큰 fallback. 현재 코드에서는 제거됐으나 PUBLIC 리포 이력에 남음. 이 토큰은 `/api/auth/cleanup-sessions?token=` 에 쓰였고 `REVALIDATE_SECRET_TOKEN` 재사용 구조라 `/api/revalidate` 에도 통할 수 있음. **대응: 운영·dev의 `REVALIDATE_SECRET_TOKEN` 교체(사용자 작업). 이력 재작성은 하지 않는다** (공개 이력 강제 수정은 파괴적이고, 교체로 무력화된다). 2026-09-28 gitleaks 전체 이력 스캔(8단계)에서 발견 — 0단계 간이 패턴 스캔은 놓침. **2026-10-04 해결**: 사용자가 운영·로컬 값 교체·재배포, 운영 `/api/revalidate` 에 옛 값 POST → 401 확인. fingerprint를 `.gitleaksignore` 에 추가해 전체 이력 스캔 통과 | 커밋 `2b39a31` `components/settings/settings-sidebar.tsx:71` |
 
 ### Med
 
