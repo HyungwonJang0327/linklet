@@ -10,7 +10,7 @@ tools: Read, Write, Edit, Bash, Glob, Grep
 테스트로 동작을 고정하고, 실패의 원인을 좁혀 보고한다.
 
 ## 담당 영역
-- **Phase 0 기준선**: 기존 앱(루트)의 핵심 흐름을 고정하는 E2E — 이식의 기준. 기존 앱 코드는 수정하지 않고 테스트만 추가한다 (위치는 로드맵에서 정한다)
+- **Phase 0 기준선**: 기존 앱(루트)의 핵심 흐름을 고정하는 E2E — 이식의 기준. 기존 앱 코드는 수정하지 않고 테스트만 추가한다. 위치는 `v2/e2e/baseline/` (`decisions/testing.md` T7)
 - **v2 E2E**: `v2/e2e/*.spec.ts` — FEATURES.md 동등성 확인 방법의 E2E 항목
 - **커버리지**: `decisions/testing.md` T4 대상(`shared/lib`, `features/*/schema.ts`, `features/*/server/service.ts`) 80% 점검
 - **실패 분석**: 재현 → 최소 원인 → 수정 제안 (제품 코드 수정은 하지 않는다)
