@@ -198,7 +198,7 @@ v2/
 | 2 | 외부 URL을 서버에서 `fetch` 로 직접 요청 | `shared/lib/safe-fetch` (DNS→IP 검사, 리다이렉트 재검사, 크기·시간 제한) | H2 SSRF |
 | 3 | 공개 응답에서 `include: { user: true }` 등 관계 전체 select | 공개용 select 명시, 테스트로 이메일 부재 확인 | H3 이메일 노출 |
 | 4 | 인증 없는 쓰기 API, route마다 따로 하는 권한 체크 | 서비스 계층에서 권한 판정 | H4, M1 IDOR |
-| 5 | `prisma db push` | `prisma migrate dev` + `down.sql` | H5 드리프트 |
+| 5 | `prisma db push` | `prisma migrate dev` + `down.sql` (예외: 기존 앱 기준선 E2E 전용 로컬 컨테이너, `decisions/testing.md` T8) | H5 드리프트 |
 | 6 | `new PrismaClient()` 를 두 곳 이상 | `server/db.ts` 하나 | H6 |
 | 7 | Route Handler에서 에러 JSON 직접 작성, `details: error.message` | 응답 헬퍼 + `AppError` | H8, 내부 메시지 노출 |
 | 8 | 클릭 가능한 `<div>`, 직접 만든 모달 | `<button>`, `shared/ui` Dialog | H9 |
