@@ -5,7 +5,7 @@
 
 ## Phase 0
 
-(없음 — 기준선·fixture는 tester, 토큰은 designer)
+(없음 — 기준선·fixture는 tester, 리디자인 시안·토큰은 메인)
 
 ## Phase 1 — 기반
 
@@ -34,7 +34,7 @@
   - 완료 조건: 로컬 시드 후 앱 기동, 가드 단위 테스트 / 커밋: `feat(db): 개발·테스트 시드와 환경 가드` / FEATURES: F02
 - [ ] 헬스 체크 `GET /api/health` (실패 시 일반 문구)
   - 완료 조건: 단위 테스트 — DB 실패 시 내부 메시지 없음 / 커밋: `feat(api): 헬스 체크 API 추가` / FEATURES: I01
-- [ ] 디자인 토큰 `@theme` 적용 (designer Phase 0 결정 기준, 라이트·다크)
+- [ ] 디자인 토큰 `@theme` 적용 (`decisions/design-tokens.md` 기준, 라이트·다크)
   - 완료 조건: 원색 클래스 0, 토큰만 사용 / 커밋: `design(ui): 디자인 토큰 적용` / FEATURES: F03
 - [ ] i18n 사전 3개(ko·en·ja) + 타입 안전 `t()` + enum→키 매핑 위치
   - 완료 조건: 단위 테스트 — 3개 사전 키 집합 동일 / 커밋: `feat(i18n): 사전 3개와 타입 안전 t()` / FEATURES: F04
