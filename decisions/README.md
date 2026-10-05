@@ -21,3 +21,4 @@
 | [db-migration.md](db-migration.md) | 마이그레이션 생성·되돌리기·적용 순서 |
 | [url-design.md](url-design.md) | 페이지·API 경로, 언어 코드, 하위 호환 |
 | [dependencies.md](dependencies.md) | 의존성 추가 기준과 기록 |
+| [roadmap.md](roadmap.md) | Phase 구성·투입 시간·첫 배포 시점 |

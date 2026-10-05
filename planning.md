@@ -83,7 +83,9 @@
 | 정상 응답 | `{ data }` / `{ data, nextCursor }`, 커서, 빈 배열, 204, null 명시, 문자열 id | api-response.md |
 | 공유 URL | `/w/{shareId}` — PK와 별도 공유 전용 ID, 재발급 가능 | api-response.md |
 | 입력 검증 | `features/*/schema.ts` Zod 공유, Route Handler에서 파싱 | api-response.md |
-| 테스트 | 순수 로직·서비스(Docker Postgres)·계약·E2E, 대상 한정 커버리지 80% | testing.md |
+| 테스트 | 순수 로직·서비스(Docker Postgres)·계약·E2E, 대상 한정 커버리지 80%, 기준선 E2E는 `v2/e2e/baseline/` + 로컬 Docker 전용 DB(로컬만) | testing.md |
+| 로드맵 | Phase 0~8(준비·기반·인증·미리보기·핵심 흐름·공유+첫 배포·꾸미기·관리자·교체), 기간 산정 없이 시간 날 때 진행 | roadmap.md, todo/mvp-todo.md |
+| UI 리디자인 | v2는 새 시각 디자인. 최대한 직관적으로, UX로 유명한 서비스들(애플·토스·Pinterest·Airbnb·Linear·Stripe 등)의 장점(UX 원칙 12개). Phase 0에서 방향 → 핵심 화면 HTML 시안(`design/mockups/`) → 토큰 | roadmap.md |
 | 마이그레이션 | `migrate dev` + `down.sql`, `db push` 금지, 운영 적용은 사용자 | db-migration.md |
 | URL | 복수형·케밥·동사 금지, `/{locale}/wishlists`, `ko/en/ja`, 필터는 URL 쿼리, 하위 호환 없음 | url-design.md |
 | 의존성 | 5가지 기준 확인 + 기록 후 추가 | dependencies.md |
@@ -94,14 +96,12 @@
 
 | 질문 | 결정 시점 |
 |---|---|
-| Cloudflare 계정 유무 (R2) | 이미지 업로드 이식(F20) 때 — 사용자 작업 |
-| Vercel 프리뷰 프로젝트(`v2/` 루트) 운영 여부 | 첫 배포 때 |
-| v2가 쓸 Neon DB(기존 DB의 새 브랜치 / 새 프로젝트) | 첫 배포 때 (로컬은 Docker Postgres) |
+| Cloudflare 계정 유무 (R2) | 이미지 업로드 이식(F20, Phase 4) 때 — 사용자 작업 |
+| Vercel 프리뷰 프로젝트(`v2/` 루트) 운영 여부 | 첫 배포 때 (Phase 5) |
+| v2가 쓸 Neon DB(기존 DB의 새 브랜치 / 새 프로젝트) | 첫 배포 때 (Phase 5, 로컬은 Docker Postgres) |
 | id 생성 방식 (cuid2 / UUID v7) | Phase 1 스키마 작업 |
 | `down.sql` 생성 명령 | Phase 1 (Prisma 7 문서 확인) |
-| 카테고리 3~4종의 구체 목록 | 디자인 작업 |
-| 설정 사이드바 구조 유지 여부 | 디자인 작업 |
-| 주당 투입 시간 | 9단계 |
+| UI 시각 방향 (후보 시안 3개 중 선택) | Phase 0 |
+| 카테고리 3~4종의 구체 목록 | Phase 0 (designer) |
+| 설정 사이드바 구조 유지 여부 | Phase 0 (designer) |
 | 기존 S3 버킷 삭제 | 교체 후 (사용자 작업) |
-| main 브랜치 보호 | v2 CI 첫 통과 직후 (사용자 확인 후 설정) |
-| 과거 커밋에 노출된 토큰 교체 | **즉시** — 사용자 작업 (AUDIT H13) |

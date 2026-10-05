@@ -4,7 +4,7 @@
 
 | # | 항목 | 결정 |
 |---|---|---|
-| M1 | 생성 방식 | `prisma migrate dev --name {snake_case_설명}` 로만. 파일명은 Prisma 기본(`YYYYMMDDHHMMSS_{이름}/migration.sql`). **`prisma db push` 금지** |
+| M1 | 생성 방식 | `prisma migrate dev --name {snake_case_설명}` 로만. 파일명은 Prisma 기본(`YYYYMMDDHHMMSS_{이름}/migration.sql`). **`prisma db push` 금지** (예외: 기존 앱 기준선 E2E 전용 로컬 컨테이너 — `testing.md` T8) |
 | M2 | 되돌리기 | 마이그레이션마다 역방향 SQL `down.sql` 을 같은 폴더에 함께 커밋. `prisma migrate diff` 로 생성 — 정확한 명령은 Prisma 7 문서 확인 후 스크립트화(Phase 1) |
 | M3 | 적용 순서 | 로컬 Docker DB → CI(빈 DB에 전체 적용 검증) → dev DB → 운영. **운영 적용은 사용자가 직접 실행**. `.claude/settings.json` 에서 마이그레이션 적용 명령은 항상 확인 |
 | — | 연결 | 런타임은 pooled `DATABASE_URL`(Neon 어댑터), CLI(`prisma.config.ts`)는 `DATABASE_URL_UNPOOLED` |
@@ -35,3 +35,4 @@
 ## 갱신 이력
 
 - 2026-09-27 최초 결정 (사용자: 추천대로)
+- 2026-10-04 M1에 기준선 E2E 전용 로컬 DB 예외 명시 (testing T8)
