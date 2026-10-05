@@ -35,7 +35,7 @@
 
 시안은 `design/mockups/` 정적 HTML. 외부 스크립트 없이 열리게, 색·간격은 CSS 변수(토큰 후보)로만 쓴다.
 
-- [ ] 시각 방향 후보 시안 3개 — 같은 화면 2개(공유 페이지·내 위시리스트 목록)를 방향별로. 세 안 모두 `decisions/roadmap.md` UX 원칙(직관성, 애플·토스 장점)을 지키고 시각 무드(색·타이포·밀도)만 다르게. 방향마다 무드 한 줄·색·타이포
+- [ ] 시각 방향 후보 시안 3개 — 같은 화면 2개(공유 페이지·내 위시리스트 목록)를 방향별로. 세 안 모두 `decisions/roadmap.md` UX 원칙(직관성, UX로 유명한 서비스들의 장점)을 지키고 시각 무드(색·타이포·밀도)만 다르게. 방향마다 무드 한 줄·색·타이포
   - 완료 조건: `design/mockups/direction-{a,b,c}.html` + `design/README.md`(보는 법), designer 대비 검토 후 사용자 선택 / 커밋: `docs(design): 시각 방향 후보 시안 3개 추가`
 - [ ] 선택한 방향 기록
   - 완료 조건: `decisions/design-direction.md` (선택·이유·기각안) / 커밋: `docs(decisions): UI 시각 방향 결정`
