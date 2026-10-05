@@ -20,6 +20,7 @@ linklet/
 ├─ v2/                  # 새 앱 (여기서만 개발) — 8단계 환경 세팅에서 생성
 ├─ app/ components/ hooks/ lib/ prisma/ middleware.ts ...   # 기존 앱 (동결, 운영 배포 중)
 ├─ audit/               # 감사 산출물 — AUDIT·BASELINE·FEATURES(판정표)·legacy-docs
+├─ design/              # UI 리디자인 시안 (mockups/*.html — 정적 HTML, 메인 작성)
 ├─ decisions/           # 주제별 결정 (왜)
 ├─ worklog/             # 날짜별 작업 일지 (오늘 무엇을)
 ├─ todo/                # Phase별 작업 (누가 다음에 무엇을)
