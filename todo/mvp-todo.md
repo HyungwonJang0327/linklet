@@ -40,6 +40,7 @@
 - [x] 선택한 방향 기록 (2026-11-08 — B 깨끗한 캔버스, `decisions/design-direction.md`)
   - 완료 조건: `decisions/design-direction.md` (선택·이유·기각안) / 커밋: `docs(decisions): UI 시각 방향 결정`
 - [ ] 핵심 화면 시안 — 랜딩·로그인, 내 위시리스트 목록(로딩·비어 있음·에러·정상), 생성 3분 흐름, 상세(아이템 추가), 공유 페이지(프리셋 2개 이상), 라이트·다크
+  - 진행: 시안 6개 + 공통 토큰·스타일 커밋(2026-11-08, `3a12817`~`317a08a`), designer 2차 검토 완료. **남은 것: 2차 지적 반영**(high 3·medium 13, 토큰 추출 전 필수 H2·M3·M13 — worklog/2026-11-08.md)
   - 완료 조건: `design/mockups/*.html`, designer 흐름·접근성 검토 반영, 카테고리·설정 메뉴 구조가 시안 안에 들어감 / 커밋: 화면별 `docs(design): {화면} 시안 추가`
 - [ ] 시안에서 디자인 토큰 추출·결정
   - 완료 조건: `decisions/design-tokens.md` (색 라이트·다크·간격·반경·그림자·타이포, 대비 4.5:1 검증표, **스킨 표 — 기본 B + 후보 A·C, 출시 스킨 수 확정**, `decisions/app-skin.md`) / 커밋: `docs(decisions): 디자인 토큰 체계 결정`
