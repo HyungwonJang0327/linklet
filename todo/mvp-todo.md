@@ -37,7 +37,7 @@
 
 - [x] 시각 방향 후보 시안 3개 (2026-11-08, bd5a657 — designer 검토 완료, 추천 A. 사용자 선택은 다음 항목) — 같은 화면 2개(공유 페이지·내 위시리스트 목록)를 방향별로. 세 안 모두 `decisions/roadmap.md` UX 원칙(직관성, UX로 유명한 서비스들의 장점)을 지키고 시각 무드(색·타이포·밀도)만 다르게. 방향마다 무드 한 줄·색·타이포
   - 완료 조건: `design/mockups/direction-{a,b,c}.html` + `design/README.md`(보는 법), designer 대비 검토 후 사용자 선택 / 커밋: `docs(design): 시각 방향 후보 시안 3개 추가`
-- [ ] 선택한 방향 기록
+- [x] 선택한 방향 기록 (2026-11-08 — B 깨끗한 캔버스, `decisions/design-direction.md`)
   - 완료 조건: `decisions/design-direction.md` (선택·이유·기각안) / 커밋: `docs(decisions): UI 시각 방향 결정`
 - [ ] 핵심 화면 시안 — 랜딩·로그인, 내 위시리스트 목록(로딩·비어 있음·에러·정상), 생성 3분 흐름, 상세(아이템 추가), 공유 페이지(프리셋 2개 이상), 라이트·다크
   - 완료 조건: `design/mockups/*.html`, designer 흐름·접근성 검토 반영, 카테고리·설정 메뉴 구조가 시안 안에 들어감 / 커밋: 화면별 `docs(design): {화면} 시안 추가`
