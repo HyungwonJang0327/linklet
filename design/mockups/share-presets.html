@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="ko" data-skin="canvas" data-mode="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Linklet 시안 — 공유 페이지 · 프리셋 × 레이아웃</title>
+<link rel="stylesheet" href="tokens.css">
+<link rel="stylesheet" href="base.css">
+</head>
+<body class="doc-bg">
+<div class="doc">
+  <header class="doc-head">
+    <div>
+      <h1>공유 페이지 · 프리셋 × 레이아웃<small><code>/w/{shareId}</code> — F23, F24, F27 (서버 렌더 + OG 메타)</small></h1>
+      <p>친구가 메신저에서 여는 페이지. 로그인 요소 없음. 모습은 소유자가 고른 프리셋(색)과 레이아웃(grid/list)이 정하고, 보는 사람의 앱 스킨은 영향 없음(decisions/app-skin.md). 상단 스킨 토글은 이 화면에 적용되지 않는 것이 맞다.</p>
+    </div>
+    <form class="controls" aria-label="시안 보기 옵션">
+      <fieldset><legend>스킨</legend>
+        <label><input type="radio" name="skin" value="canvas" checked>캔버스</label>
+        <label><input type="radio" name="skin" value="paper" >종이</label>
+        <label><input type="radio" name="skin" value="pop" >팝</label>
+      </fieldset>
+      <fieldset><legend>모드</legend>
+        <label><input type="radio" name="mode" value="light" checked>라이트</label>
+        <label><input type="radio" name="mode" value="dark">다크</label>
+      </fieldset>
+    </form>
+  </header>
+  <section class="screens"><article class=""><h2>프리셋 canvas · grid (기본)</h2><div class="phone"><div class="screen "><div class="share" data-preset="canvas">
+    <header class="topbar"><a class="wordmark" href="#">Linklet</a></header>
+    <section class="owner">
+      <div class="owner__row"><span class="avatar avatar--lg" aria-hidden="true">하</span><p class="owner__name"><strong>하영</strong>님의 위시리스트</p></div>
+      <h1>올해 생일 전에 갖고 싶은 것들</h1>
+      <p class="desc">특히 헤드폰! 나머지는 그냥 구경용이에요 😄</p>
+      <p class="meta"><span class="chip">생일</span><span class="sep">아이템 6</span><span class="sep">11월 7일 업데이트</span></p>
+    </section>
+    <ul class="items" aria-label="위시리스트 아이템"><li class="item"><a class="item__link" href="#" aria-label="소니 WH-1000XM6 무선 헤드폰, 449,000원, 쿠팡">
+  <div class="item__img" style="background:linear-gradient(135deg,#9aa7b8,#4d5a6b)"></div>
+  <div class="item__body"><p class="item__title">소니 WH-1000XM6 무선 헤드폰</p><p class="item__price">449,000원</p><p class="item__site">쿠팡</p><span class="item__cta">상품 보러 가기 <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7M8 7h9v9"/></svg></span></div></a></li><li class="item"><a class="item__link" href="#" aria-label="무인양품 리넨 워싱 셔츠, 59,900원, 무인양품">
+  <div class="item__img" style="background:linear-gradient(135deg,#e9ddc8,#b9a98c)"></div>
+  <div class="item__body"><p class="item__title">무인양품 리넨 워싱 셔츠</p><p class="item__price">59,900원</p><p class="item__site">무인양품</p><span class="item__cta">상품 보러 가기 <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7M8 7h9v9"/></svg></span></div></a></li><li class="item"><a class="item__link" href="#" aria-label="스탠리 퀜처 텀블러 887ml, 62,000원, 29CM">
+  <div class="item__img" style="background:linear-gradient(135deg,#b8d8c8,#5e8f78)"></div>
+  <div class="item__body"><p class="item__title">스탠리 퀜처 텀블러 887ml</p><p class="item__price">62,000원</p><p class="item__site">29CM</p><span class="item__cta">상품 보러 가기 <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7M8 7h9v9"/></svg></span></div></a></li><li class="item item--received"><a class="item__link" href="#" aria-label="킨들 페이퍼화이트 12세대, 219,000원, 아마존, 받음">
+  <div class="item__img" style="background:linear-gradient(135deg,#3d3d44,#1d1d22)"><span class="badge badge--received"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 5 5L20 7"/></svg> 받았어요</span></div>
+  <div class="item__body"><p class="item__title">킨들 페이퍼화이트 12세대</p><p class="item__price">219,000원</p><p class="item__site">아마존</p><span class="item__cta">상품 보러 가기 <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7M8 7h9v9"/></svg></span></div></a></li><li class="item"><a class="item__link" href="#" aria-label="르크루제 시그니처 냄비 22cm, 398,000원, 네이버 쇼핑">
+  <div class="item__img" style="background:linear-gradient(135deg,#f0a27a,#c8553d)"></div>
+  <div class="item__body"><p class="item__title">르크루제 시그니처 냄비 22cm</p><p class="item__price">398,000원</p><p class="item__site">네이버 쇼핑</p><span class="item__cta">상품 보러 가기 <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7M8 7h9v9"/></svg></span></div></a></li><li class="item"><a class="item__link" href="#" aria-label="아이패드 에어 11 (M3), 899,000원, 애플">
+  <div class="item__img" style="background:linear-gradient(135deg,#d9e3f0,#8fa6c4)"></div>
+  <div class="item__body"><p class="item__title">아이패드 에어 11 (M3)</p><p class="item__price">899,000원</p><p class="item__site">애플</p><span class="item__cta">상품 보러 가기 <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7M8 7h9v9"/></svg></span></div></a></li></ul>
+    <footer class="foot"><p>Linklet으로 만든 위시리스트예요</p><a class="btn btn--ghost" href="#">나도 만들어 보기</a></footer>
+    </div></div></div><p class=note>첫 화면(844px)에 "하영님의 · 무슨 목록 · 아이템 4개 상단"이 들어온다. 이름은 본문 크기·굵게, 아바타 40px(designer 지적 반영).</p></article><article class=""><h2>프리셋 night · grid</h2><div class="phone"><div class="screen "><div class="share" data-preset="night">
+    <header class="topbar"><a class="wordmark" href="#">Linklet</a></header>
+    <section class="owner">
+      <div class="owner__row"><span class="avatar avatar--lg" aria-hidden="true">하</span><p class="owner__name"><strong>하영</strong>님의 위시리스트</p></div>
+      <h1>올해 생일 전에 갖고 싶은 것들</h1>
+      <p class="desc">특히 헤드폰! 나머지는 그냥 구경용이에요 😄</p>
+      <p class="meta"><span class="chip">생일</span><span class="sep">아이템 6</span><span class="sep">11월 7일 업데이트</span></p>
+    </section>
+    <ul class="items" aria-label="위시리스트 아이템"><li class="item"><a class="item__link" href="#" aria-label="소니 WH-1000XM6 무선 헤드폰, 449,000원, 쿠팡">
+  <div class="item__img" style="background:linear-gradient(135deg,#9aa7b8,#4d5a6b)"></div>
+  <div class="item__body"><p class="item__title">소니 WH-1000XM6 무선 헤드폰</p><p class="item__price">449,000원</p><p class="item__site">쿠팡</p><span class="item__cta">상품 보러 가기 <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7M8 7h9v9"/></svg></span></div></a></li><li class="item"><a class="item__link" href="#" aria-label="무인양품 리넨 워싱 셔츠, 59,900원, 무인양품">
+  <div class="item__img" style="background:linear-gradient(135deg,#e9ddc8,#b9a98c)"></div>
+  <div class="item__body"><p class="item__title">무인양품 리넨 워싱 셔츠</p><p class="item__price">59,900원</p><p class="item__site">무인양품</p><span class="item__cta">상품 보러 가기 <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7M8 7h9v9"/></svg></span></div></a></li><li class="item"><a class="item__link" href="#" aria-label="스탠리 퀜처 텀블러 887ml, 62,000원, 29CM">
+  <div class="item__img" style="background:linear-gradient(135deg,#b8d8c8,#5e8f78)"></div>
+  <div class="item__body"><p class="item__title">스탠리 퀜처 텀블러 887ml</p><p class="item__price">62,000원</p><p class="item__site">29CM</p><span class="item__cta">상품 보러 가기 <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7M8 7h9v9"/></svg></span></div></a></li><li class="item item--received"><a class="item__link" href="#" aria-label="킨들 페이퍼화이트 12세대, 219,000원, 아마존, 받음">
+  <div class="item__img" style="background:linear-gradient(135deg,#3d3d44,#1d1d22)"><span class="badge badge--received"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 5 5L20 7"/></svg> 받았어요</span></div>
+  <div class="item__body"><p class="item__title">킨들 페이퍼화이트 12세대</p><p class="item__price">219,000원</p><p class="item__site">아마존</p><span class="item__cta">상품 보러 가기 <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7M8 7h9v9"/></svg></span></div></a></li><li class="item"><a class="item__link" href="#" aria-label="르크루제 시그니처 냄비 22cm, 398,000원, 네이버 쇼핑">
+  <div class="item__img" style="background:linear-gradient(135deg,#f0a27a,#c8553d)"></div>
+  <div class="item__body"><p class="item__title">르크루제 시그니처 냄비 22cm</p><p class="item__price">398,000원</p><p class="item__site">네이버 쇼핑</p><span class="item__cta">상품 보러 가기 <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7M8 7h9v9"/></svg></span></div></a></li><li class="item"><a class="item__link" href="#" aria-label="아이패드 에어 11 (M3), 899,000원, 애플">
+  <div class="item__img" style="background:linear-gradient(135deg,#d9e3f0,#8fa6c4)"></div>
+  <div class="item__body"><p class="item__title">아이패드 에어 11 (M3)</p><p class="item__price">899,000원</p><p class="item__site">애플</p><span class="item__cta">상품 보러 가기 <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7M8 7h9v9"/></svg></span></div></a></li></ul>
+    <footer class="foot"><p>Linklet으로 만든 위시리스트예요</p><a class="btn btn--ghost" href="#">나도 만들어 보기</a></footer>
+    </div></div></div><p class=note>어두운 프리셋. 받음 배지는 밝은 면 + 잉크 테두리라 어두운 사진·어두운 배경 모두에서 보인다. 본문 16.2:1, 보조 7.5:1.</p></article><article class=""><h2>프리셋 paper · list</h2><div class="phone"><div class="screen "><div class="share" data-preset="paper">
+    <header class="topbar"><a class="wordmark" href="#">Linklet</a></header>
+    <section class="owner">
+      <div class="owner__row"><span class="avatar avatar--lg" aria-hidden="true">하</span><p class="owner__name"><strong>하영</strong>님의 위시리스트</p></div>
+      <h1>올해 생일 전에 갖고 싶은 것들</h1>
+      <p class="desc">특히 헤드폰! 나머지는 그냥 구경용이에요 😄</p>
+      <p class="meta"><span class="chip">생일</span><span class="sep">아이템 6</span><span class="sep">11월 7일 업데이트</span></p>
+    </section>
+    <ul class="items items--list" aria-label="위시리스트 아이템"><li class="item"><a class="item__link" href="#" aria-label="소니 WH-1000XM6 무선 헤드폰, 449,000원, 쿠팡">
+  <div class="item__img" style="background:linear-gradient(135deg,#9aa7b8,#4d5a6b)"></div>
+  <div class="item__body"><p class="item__title">소니 WH-1000XM6 무선 헤드폰</p><p class="item__price">449,000원</p><p class="item__site">쿠팡</p><span class="item__cta">상품 보러 가기 <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7M8 7h9v9"/></svg></span></div></a></li><li class="item"><a class="item__link" href="#" aria-label="무인양품 리넨 워싱 셔츠, 59,900원, 무인양품">
+  <div class="item__img" style="background:linear-gradient(135deg,#e9ddc8,#b9a98c)"></div>
+  <div class="item__body"><p class="item__title">무인양품 리넨 워싱 셔츠</p><p class="item__price">59,900원</p><p class="item__site">무인양품</p><span class="item__cta">상품 보러 가기 <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7M8 7h9v9"/></svg></span></div></a></li><li class="item"><a class="item__link" href="#" aria-label="스탠리 퀜처 텀블러 887ml, 62,000원, 29CM">
+  <div class="item__img" style="background:linear-gradient(135deg,#b8d8c8,#5e8f78)"></div>
+  <div class="item__body"><p class="item__title">스탠리 퀜처 텀블러 887ml</p><p class="item__price">62,000원</p><p class="item__site">29CM</p><span class="item__cta">상품 보러 가기 <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7M8 7h9v9"/></svg></span></div></a></li><li class="item item--received"><a class="item__link" href="#" aria-label="킨들 페이퍼화이트 12세대, 219,000원, 아마존, 받음">
+  <div class="item__img" style="background:linear-gradient(135deg,#3d3d44,#1d1d22)"><span class="badge badge--received"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 5 5L20 7"/></svg> 받았어요</span></div>
+  <div class="item__body"><p class="item__title">킨들 페이퍼화이트 12세대</p><p class="item__price">219,000원</p><p class="item__site">아마존</p><span class="item__cta">상품 보러 가기 <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7M8 7h9v9"/></svg></span></div></a></li><li class="item"><a class="item__link" href="#" aria-label="르크루제 시그니처 냄비 22cm, 398,000원, 네이버 쇼핑">
+  <div class="item__img" style="background:linear-gradient(135deg,#f0a27a,#c8553d)"></div>
+  <div class="item__body"><p class="item__title">르크루제 시그니처 냄비 22cm</p><p class="item__price">398,000원</p><p class="item__site">네이버 쇼핑</p><span class="item__cta">상품 보러 가기 <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7M8 7h9v9"/></svg></span></div></a></li><li class="item"><a class="item__link" href="#" aria-label="아이패드 에어 11 (M3), 899,000원, 애플">
+  <div class="item__img" style="background:linear-gradient(135deg,#d9e3f0,#8fa6c4)"></div>
+  <div class="item__body"><p class="item__title">아이패드 에어 11 (M3)</p><p class="item__price">899,000원</p><p class="item__site">애플</p><span class="item__cta">상품 보러 가기 <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7M8 7h9v9"/></svg></span></div></a></li></ul>
+    <footer class="foot"><p>Linklet으로 만든 위시리스트예요</p><a class="btn btn--ghost" href="#">나도 만들어 보기</a></footer>
+    </div></div></div><p class=note>따뜻한 프리셋(방향 A 팔레트 재사용) + list 레이아웃. 카드 구분은 면+그림자라 배경이 바뀌어도 유지.</p></article><article class="wide"><h2>프리셋 canvas · 데스크톱 1200</h2><div class="desktop"><div class="screen screen--desktop" style="min-height:100%"><div class="share" data-preset="canvas" style="min-height:100%"><div style="max-width:960px;margin:0 auto;padding:8px 32px 40px"><div class="share" data-preset="canvas">
+    <header class="topbar"><a class="wordmark" href="#">Linklet</a></header>
+    <section class="owner">
+      <div class="owner__row"><span class="avatar avatar--lg" aria-hidden="true">하</span><p class="owner__name"><strong>하영</strong>님의 위시리스트</p></div>
+      <h1>올해 생일 전에 갖고 싶은 것들</h1>
+      <p class="desc">특히 헤드폰! 나머지는 그냥 구경용이에요 😄</p>
+      <p class="meta"><span class="chip">생일</span><span class="sep">아이템 6</span><span class="sep">11월 7일 업데이트</span></p>
+    </section>
+    <ul class="items" aria-label="위시리스트 아이템"><li class="item"><a class="item__link" href="#" aria-label="소니 WH-1000XM6 무선 헤드폰, 449,000원, 쿠팡">
+  <div class="item__img" style="background:linear-gradient(135deg,#9aa7b8,#4d5a6b)"></div>
+  <div class="item__body"><p class="item__title">소니 WH-1000XM6 무선 헤드폰</p><p class="item__price">449,000원</p><p class="item__site">쿠팡</p><span class="item__cta">상품 보러 가기 <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7M8 7h9v9"/></svg></span></div></a></li><li class="item"><a class="item__link" href="#" aria-label="무인양품 리넨 워싱 셔츠, 59,900원, 무인양품">
+  <div class="item__img" style="background:linear-gradient(135deg,#e9ddc8,#b9a98c)"></div>
+  <div class="item__body"><p class="item__title">무인양품 리넨 워싱 셔츠</p><p class="item__price">59,900원</p><p class="item__site">무인양품</p><span class="item__cta">상품 보러 가기 <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7M8 7h9v9"/></svg></span></div></a></li><li class="item"><a class="item__link" href="#" aria-label="스탠리 퀜처 텀블러 887ml, 62,000원, 29CM">
+  <div class="item__img" style="background:linear-gradient(135deg,#b8d8c8,#5e8f78)"></div>
+  <div class="item__body"><p class="item__title">스탠리 퀜처 텀블러 887ml</p><p class="item__price">62,000원</p><p class="item__site">29CM</p><span class="item__cta">상품 보러 가기 <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7M8 7h9v9"/></svg></span></div></a></li><li class="item item--received"><a class="item__link" href="#" aria-label="킨들 페이퍼화이트 12세대, 219,000원, 아마존, 받음">
+  <div class="item__img" style="background:linear-gradient(135deg,#3d3d44,#1d1d22)"><span class="badge badge--received"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 5 5L20 7"/></svg> 받았어요</span></div>
+  <div class="item__body"><p class="item__title">킨들 페이퍼화이트 12세대</p><p class="item__price">219,000원</p><p class="item__site">아마존</p><span class="item__cta">상품 보러 가기 <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7M8 7h9v9"/></svg></span></div></a></li><li class="item"><a class="item__link" href="#" aria-label="르크루제 시그니처 냄비 22cm, 398,000원, 네이버 쇼핑">
+  <div class="item__img" style="background:linear-gradient(135deg,#f0a27a,#c8553d)"></div>
+  <div class="item__body"><p class="item__title">르크루제 시그니처 냄비 22cm</p><p class="item__price">398,000원</p><p class="item__site">네이버 쇼핑</p><span class="item__cta">상품 보러 가기 <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7M8 7h9v9"/></svg></span></div></a></li><li class="item"><a class="item__link" href="#" aria-label="아이패드 에어 11 (M3), 899,000원, 애플">
+  <div class="item__img" style="background:linear-gradient(135deg,#d9e3f0,#8fa6c4)"></div>
+  <div class="item__body"><p class="item__title">아이패드 에어 11 (M3)</p><p class="item__price">899,000원</p><p class="item__site">애플</p><span class="item__cta">상품 보러 가기 <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7M8 7h9v9"/></svg></span></div></a></li></ul>
+    <footer class="foot"><p>Linklet으로 만든 위시리스트예요</p><a class="btn btn--ghost" href="#">나도 만들어 보기</a></footer>
+    </div></div></div></div></div><p class=note>가운데 960px, 4열. OG 이미지는 첫 아이템 사진 또는 기본 카드(F24 이식 때 결정).</p></article></section>
+  <section class="notes"><h2>이 화면에서 지킨 것 · 메모</h2><ul><li>공유 받는 사람도 사용자: 로그인·설정 요소 없음, 유입 동선은 맨 아래 고스트 버튼 하나</li><li>프리셋 토큰(<code>--p-*</code>)은 앱 스킨 토큰(<code>--c-*</code>)과 이름을 분리 — 같은 메커니즘(변수 집합 교체), 다른 목록. 6종 중 3종만 시안</li><li>글자 크기: 본문·아이템 제목 15px(design-direction 조건 1)</li><li>공개용 select: 소유자는 이름·아바타만. 이메일 없음(함정 #3)</li><li>비공개 전환 시 이 경로는 404 → <code>w/[id]/not-found</code> 는 앱 테마의 "이 위시리스트는 비공개예요" 문구 (F06)</li></ul></section>
+</div>
+<script>
+  // 시안 전용: 스킨·모드 라디오 → html data 속성. 제품에서는 F29 설정 값으로 같은 속성을 렌더한다.
+  document.querySelector('.controls').addEventListener('change', (e) => {
+    if (e.target.name === 'skin' || e.target.name === 'mode') document.documentElement.dataset[e.target.name] = e.target.value;
+  });
+</script>
+</body>
+</html>
