@@ -1,0 +1,115 @@
+/* Linklet v2 디자인 토큰 후보 — 방향 B 기준 (decisions/design-direction.md)
+   구조: [data-skin] × [data-mode]  (decisions/app-skin.md)
+   - 스킨은 색·반경·그림자만 바꾼다. 간격·타이포는 모든 스킨 공통
+   - 실제 값은 decisions/design-tokens.md 에서 확정한다 */
+
+/* ── 공통 (스킨 무관) ─────────────────────────────── */
+:root {
+  --font-sans: -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Pretendard", "Noto Sans KR", system-ui, sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, monospace;
+
+  /* 타이포 단계 (적게) */
+  --t-display: 700 24px/1.25 var(--font-sans);   /* 화면 제목 */
+  --t-display-ls: -0.025em;
+  --t-heading: 600 17px/1.35 var(--font-sans);   /* 섹션·카드 제목 */
+  --t-title: 600 14px/1.4 var(--font-sans);      /* 아이템 제목 */
+  --t-body: 400 14px/1.5 var(--font-sans);
+  --t-body-lg: 400 15px/1.55 var(--font-sans);   /* 공유 페이지 본문 (조건 1) */
+  --t-title-lg: 600 15px/1.4 var(--font-sans);   /* 공유 페이지 아이템 제목 (조건 1) */
+  --t-price: 700 15px/1.3 var(--font-sans);
+  --t-caption: 400 12px/1.45 var(--font-sans);
+  --t-label: 500 13px/1.4 var(--font-sans);
+  --t-wordmark: 700 18px/1 var(--font-sans);
+
+  /* 간격 (4 배수) */
+  --sp-1: 4px; --sp-2: 8px; --sp-3: 12px; --sp-4: 16px; --sp-5: 20px; --sp-6: 24px; --sp-8: 32px; --sp-10: 40px;
+  --pad-x: 16px;           /* 모바일 좌우 여백 */
+  --touch: 44px;           /* 최소 터치 영역 */
+  --control-h: 48px;       /* 버튼·입력 높이 */
+}
+
+/* ── 스킨: canvas (기본, 방향 B) ───────────────────── */
+[data-skin="canvas"] {
+  --r-sm: 8px; --r-md: 10px; --r-lg: 12px; --r-btn: 10px;
+  --shadow: none;
+  --shadow-sheet: 0 -8px 30px -12px rgba(0,0,0,.25);
+}
+[data-skin="canvas"][data-mode="light"] {
+  --c-bg: #FFFFFF; --c-surface: #FFFFFF; --c-surface-2: #F4F5F7;
+  --c-text: #111318; --c-muted: #5B6270;
+  --c-accent: #2A4FE0; --c-on-accent: #FFFFFF; --c-accent-text: #2A4FE0; --c-accent-soft: #E6EBFF;
+  --c-border: #E4E6EA; --c-border-strong: #747A87; --c-card-border: #E4E6EA; --c-focus: #2A4FE0;
+  --c-chip: #F4F5F7; --c-chip-text: #111318;
+  --c-danger: #B42318; --c-success: #067647;
+  --c-skeleton: #E4E6EA; --c-skeleton-hi: #F4F5F7;
+  --c-overlay: rgba(17,19,24,.45);
+}
+[data-skin="canvas"][data-mode="dark"] {
+  --c-bg: #0E1015; --c-surface: #161920; --c-surface-2: #1E222B;
+  --c-text: #EDEFF3; --c-muted: #9AA1AE;
+  --c-accent: #7F9CFF; --c-on-accent: #0E1015; --c-accent-text: #7F9CFF; --c-accent-soft: #1E2742;
+  --c-border: #272B35; --c-border-strong: #6E7585; --c-card-border: #272B35; --c-focus: #7F9CFF;
+  --c-chip: #1E222B; --c-chip-text: #EDEFF3;
+  --c-danger: #F97066; --c-success: #47CD89;
+  --c-skeleton: #1E222B; --c-skeleton-hi: #272B35;
+  --c-overlay: rgba(0,0,0,.6);
+}
+
+/* ── 스킨 후보: paper (방향 A 팔레트) ─────────────── */
+[data-skin="paper"] {
+  --r-sm: 10px; --r-md: 14px; --r-lg: 16px; --r-btn: 12px;
+  --shadow: 0 1px 2px rgba(60,40,20,.06), 0 10px 30px -14px rgba(60,40,20,.18);
+  --shadow-sheet: 0 -8px 30px -12px rgba(60,40,20,.3);
+}
+[data-skin="paper"][data-mode="light"] {
+  --c-bg: #F7F3EC; --c-surface: #FFFFFF; --c-surface-2: #EFE9DF;
+  --c-text: #2B2521; --c-muted: #6B6159;
+  --c-accent: #B5472F; --c-on-accent: #FFFFFF; --c-accent-text: #B5472F; --c-accent-soft: #F6DED6;
+  --c-border: #E3DBCE; --c-border-strong: #8A7F73; --c-card-border: transparent; --c-focus: #B5472F;
+  --c-chip: #EFE9DF; --c-chip-text: #2B2521;
+  --c-danger: #B42318; --c-success: #067647;
+  --c-skeleton: #EFE9DF; --c-skeleton-hi: #F7F3EC;
+  --c-overlay: rgba(43,37,33,.45);
+}
+[data-skin="paper"][data-mode="dark"] {
+  --c-bg: #1C1916; --c-surface: #26221E; --c-surface-2: #2F2A25;
+  --c-text: #F2EDE6; --c-muted: #A89E93;
+  --c-accent: #E0765E; --c-on-accent: #1C1916; --c-accent-text: #E0765E; --c-accent-soft: #3E2A24;
+  --c-border: #3A332D; --c-border-strong: #7A6F64; --c-card-border: transparent; --c-focus: #E0765E;
+  --c-chip: #2F2A25; --c-chip-text: #F2EDE6;
+  --c-danger: #F97066; --c-success: #47CD89;
+  --c-skeleton: #2F2A25; --c-skeleton-hi: #3A332D;
+  --c-overlay: rgba(0,0,0,.6);
+}
+
+/* ── 스킨 후보: pop (방향 C 팔레트, 노랑은 제외) ─── */
+[data-skin="pop"] {
+  --r-sm: 12px; --r-md: 16px; --r-lg: 20px; --r-btn: 999px;
+  --shadow: 0 2px 0 rgba(30,21,56,.04), 0 14px 34px -16px rgba(106,61,245,.25);
+  --shadow-sheet: 0 -8px 30px -12px rgba(30,21,56,.35);
+}
+[data-skin="pop"][data-mode="light"] {
+  --c-bg: #F6F0FF; --c-surface: #FFFFFF; --c-surface-2: #ECE4FF;
+  --c-text: #1E1538; --c-muted: #5F5680;
+  --c-accent: #6A3DF5; --c-on-accent: #FFFFFF; --c-accent-text: #5A2FE0; --c-accent-soft: #E6DDFF;
+  --c-border: #DDD3F5; --c-border-strong: #8878B8; --c-card-border: transparent; --c-focus: #6A3DF5;
+  --c-chip: #ECE4FF; --c-chip-text: #1E1538;
+  --c-danger: #B42318; --c-success: #067647;
+  --c-skeleton: #ECE4FF; --c-skeleton-hi: #F6F0FF;
+  --c-overlay: rgba(30,21,56,.45);
+}
+[data-skin="pop"][data-mode="dark"] {
+  --c-bg: #141026; --c-surface: #1E1838; --c-surface-2: #272050;
+  --c-text: #F3EFFF; --c-muted: #AEA6CC;
+  --c-accent: #A68BFF; --c-on-accent: #141026; --c-accent-text: #A68BFF; --c-accent-soft: #2E2460;
+  --c-border: #322A55; --c-border-strong: #7A6CAF; --c-card-border: transparent; --c-focus: #A68BFF;
+  --c-chip: #272050; --c-chip-text: #F3EFFF;
+  --c-danger: #F97066; --c-success: #47CD89;
+  --c-skeleton: #272050; --c-skeleton-hi: #322A55;
+  --c-overlay: rgba(0,0,0,.6);
+}
+
+/* ── 공유 페이지 프리셋 (F27) — 소유자가 고른다. 앱 스킨과 무관 ── */
+[data-preset="canvas"] { --p-bg:#FFFFFF; --p-surface:#FFFFFF; --p-text:#111318; --p-muted:#5B6270; --p-accent:#2A4FE0; --p-border:#E4E6EA; --p-r:12px; --p-shadow:none; }
+[data-preset="night"]  { --p-bg:#15161C; --p-surface:#1F2129; --p-text:#F2F2F5; --p-muted:#A4A7B3; --p-accent:#9DB2FF; --p-border:#2C2F3A; --p-r:12px; --p-shadow:none; }
+[data-preset="paper"]  { --p-bg:#F7F3EC; --p-surface:#FFFFFF; --p-text:#2B2521; --p-muted:#6B6159; --p-accent:#B5472F; --p-border:transparent; --p-r:16px; --p-shadow:0 1px 2px rgba(60,40,20,.06),0 10px 30px -14px rgba(60,40,20,.18); }
