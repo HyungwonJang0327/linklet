@@ -88,7 +88,8 @@
 | UI 시각 방향 | **B 깨끗한 캔버스** — 흰 배경·잉크·파랑 강조, 그림자 없는 1px 선, 2열 그리드. 조건: 공유 페이지 15px 이상, 빈 상태·랜딩 온도감 검토 | design-direction.md |
 | 카테고리 | 계기 3종 생일·기념일·언젠가(`birthday`·`occasion`·`someday`), 미선택 `null`·칩 없음, 생성 흐름에서 묻지 않음 | category.md |
 | 설정 메뉴 | 설정 허브(그룹별 행) + 항목별 페이지, 데스크톱은 같은 목록이 사이드바. 꾸미기는 상세 버튼만, 공지·문의는 허브 안에만, 모바일 nav는 워드마크+아바타 | settings-navigation.md |
-| 앱 스킨 | 앱 화면 팔레트를 사용자가 선택(F29 확장). 스킨=색·반경·그림자만, 모드(라이트·다크·시스템)와 독립, 기본 B, 후보 A·C. 공유 페이지는 제외(F27) | app-skin.md |
+| 앱 스킨 | 앱 화면 팔레트를 사용자가 선택(F29 확장). 스킨=색·반경·그림자만, 모드(라이트·다크·시스템)와 독립. 출시 3종 canvas(기본)·paper·pop. 공유 페이지는 제외(F27) | app-skin.md |
+| 디자인 토큰 | 원본 `design/mockups/tokens.css`. 공통(타이포·간격) / 스킨(반경·그림자) / 스킨×모드(색) / 프리셋(`--p-*`) 4층, `<html data-skin data-mode>` 변수 교체. Tailwind 4 `@theme inline` 으로 연결, 시스템 폰트. 대비 전 조합 통과 | design-tokens.md |
 | UI 리디자인 | v2는 새 시각 디자인. 최대한 직관적으로, UX로 유명한 서비스들(애플·토스·Pinterest·Airbnb·Linear·Stripe 등)의 장점(UX 원칙 12개). Phase 0에서 방향 → 핵심 화면 HTML 시안(`design/mockups/`) → 토큰 | roadmap.md |
 | 마이그레이션 | `migrate dev` + `down.sql`, `db push` 금지, 운영 적용은 사용자 | db-migration.md |
 | URL | 복수형·케밥·동사 금지, `/{locale}/wishlists`, `ko/en/ja`, 필터는 URL 쿼리, 하위 호환 없음 | url-design.md |
