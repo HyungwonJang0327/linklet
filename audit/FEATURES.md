@@ -37,7 +37,7 @@
 | F13 | 내 위시리스트 목록 | settings/wishlists, GET /api/wishlists | 개선 | 훅·raw fetch 이원화(M6). 4상태 본보기 화면으로 삼는다 | 6 | E2E: 로딩·비어 있음·에러·정상 4상태, 본인 것만 보임 | 미착수 |
 | F14 | 위시리스트 생성 | settings/wishlists/create, POST /api/wishlists | 재설계 | 캐주얼 3분 흐름(완료 기준 10), 생성 시 아이템 한도 우회·비트랜잭션(M2) | 7 | E2E: 로그인 → 링크 붙여 넣기 → 생성 → 공유 링크 복사 3분 이내 | 미착수 |
 | F15 | 공개 설정·기본값 | Wishlist.isPublic | 개선 | 스키마 기본 공개 vs API 기본 비공개 불일치 → **기본 공개(링크 아는 사람만 열람, 목록·검색 노출 없음)** (Q2) | 7 | E2E: 새 위시리스트는 공유 링크로 열림, 비공개 전환 시 공유 페이지 404 | 미착수 |
-| F16 | 카테고리 | WishlistCategory enum 10종 | 재설계 | 인터뷰: 축소 → **3~4종 선택 입력, 생성 흐름에서는 기본값 자동** (Q3). 종류는 디자인 단계에서 확정 | 7 | E2E: 카테고리 미선택 생성 가능, 선택 시 3개 언어로 표시(키 노출 없음) | 미착수 |
+| F16 | 카테고리 | WishlistCategory enum 10종 | 재설계 | 인터뷰: 축소 → **계기 3종 `birthday`·`occasion`·`someday` 선택 입력, 미선택은 `null`·칩 없음, 생성 흐름에서는 묻지 않음** (Q3, 2026-11-08 `decisions/category.md`) | 7 | E2E: 카테고리 미선택 생성 가능, 선택 시 3개 언어로 표시(키 노출 없음) | 미착수 |
 | F17 | 위시리스트 편집·삭제 | [id]/page.tsx, edit-wishlist-dialog, PUT/DELETE /api/wishlists/[id] | 개선 | 710줄 페이지 분해, 직접 만든 모달 접근성(H9), 삭제는 native confirm | 8 | E2E: 제목·설명 수정 반영, 삭제 확인 모달(키보드) 후 목록에서 사라짐 | 미착수 |
 | F18 | URL 메타데이터 파서 | lib/services/url-metadata.ts (파싱부) | 유지 | 가장 많이 쌓인 도메인 노하우(OG·Twitter·JSON-LD 가격·쇼핑몰 셀렉터) | 5 | 단위: HTML fixture 세트에 대해 기존 구현과 같은 결과(제목·이미지·가격·사이트명) | 미착수 |
 | F19 | 아이템 추가 (링크 자동 채움) | add-item-dialog, POST /api/wishlists/[id]/items, /api/metadata | 개선 | 추출→생성 로직 2곳 중복, `/api/metadata` 비로그인 허용(S3 쓰기 유발), productUrl scheme 미검증, 아이템 한도 경쟁 조건 | 9 | E2E: 링크 입력 → 미리보기 → 추가 → 목록 반영. 단위: http(s) 외 scheme 거부 | 미착수 |
