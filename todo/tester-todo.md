@@ -9,9 +9,9 @@
 
 - [x] 기준선 DB·기존 앱 실행 스크립트 (2026-11-08, c3d5f77) — `v2/e2e/baseline/` 에 전용 Docker 컨테이너 기동·`db push`(루트 prisma 6 CLI, 로컬 접속 문자열만), 기존 앱 env 래퍼(키 전부 로컬·더미 지정, 빠진 키 있으면 중단), 빌드·`next start -p 3001`, 종료 후 정리
   - 완료 조건: 스크립트 한 번으로 기존 앱이 로컬 DB로 뜨고 `/api/health` healthy, 운영·dev 접속 문자열이 프로세스 env에 없음을 스크립트가 검사 / 커밋: `test(config): 기존 앱 기준선 실행 스크립트 추가`
-- [ ] 기준선 E2E Playwright project 추가 — `v2/e2e/baseline/`, baseURL `http://localhost:3001`, 기본 `pnpm test:e2e` 에서 제외
+- [x] 기준선 E2E Playwright project 추가 (2026-11-08, 82afa98 — `BASELINE=1` 모드, `test:e2e:baseline`, 스모크 3건 통과) — `v2/e2e/baseline/`, baseURL `http://localhost:3001`, 기본 `pnpm test:e2e` 에서 제외
   - 완료 조건: `pnpm exec playwright test --project=baseline` 이 동작, `pnpm test:e2e` 영향 없음 / 커밋: `test(config): 기존 앱 기준선 E2E project 추가`
-- [ ] 비로그인 흐름 — 랜딩, 공유 페이지 열람(제목·아이템·상품 링크), 비공개 위시리스트 접근, 없는 경로
+- [ ] 비로그인 흐름 — 선행: 기준선 시드 방법 결정(planning 미결) — 랜딩, 공유 페이지 열람(제목·아이템·상품 링크), 비공개 위시리스트 접근, 없는 경로
   - 완료 조건: 기존 앱에서 통과. 알려진 버그(H1 `/w/w/`, `/login` 404, 없는 shareUrl 200, 비로그인 `/api/wishlists` 200, 공유 API 비브라우저 UA 403 — 2026-11-08 실측)는 현재 동작으로 고정하고 주석에 FEATURES ID / 커밋: `test(share): 기존 앱 공유 페이지 기준선 E2E` / FEATURES: F23–F25
 - [ ] 로그인 흐름 — 세션 주입 → 위시리스트 생성 → 아이템 수동 추가 → 수정·받음 표시·삭제
   - 완료 조건: 기존 앱에서 통과 / 커밋: `test(wishlist): 기존 앱 핵심 흐름 기준선 E2E` / FEATURES: F13–F17, F19, F21
