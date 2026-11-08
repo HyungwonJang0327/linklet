@@ -46,9 +46,29 @@ open design/mockups/direction-a.html   # macOS
 
 테두리(`--c-border`)는 장식용이라 3:1 을 맞추지 않았다. 입력 필드·구분이 필요한 곳은 `--c-border-strong` 을 쓴다(핵심 화면 단계에서 검증).
 
+## Phase 0 — 핵심 화면 시안 (방향 B, 2026-11-08)
+
+`decisions/design-direction.md`(B 채택)·`app-skin.md`·`category.md`·`settings-navigation.md` 를 반영한 화면들. 공통 파일 두 개를 `<link>` 로 공유한다.
+
+| 파일 | 내용 |
+|---|---|
+| `mockups/tokens.css` | **토큰 후보 변수만** — `[data-skin] × [data-mode]` 구조(canvas 기본, paper·pop 후보), 공유 페이지 프리셋 `--p-*` 3종. `decisions/design-tokens.md` 의 원본 |
+| `mockups/base.css` | 토큰만 쓰는 제품 UI 컴포넌트(버튼·입력·카드·시트·토스트·허브 등) + 시안 문서 틀 |
+| `mockups/landing.html` | 랜딩 (모바일·데스크톱) · 로그인 |
+| `mockups/wishlists-states.html` | 내 위시리스트 목록 — 로딩·비어 있음·에러·정상 4상태 + 데스크톱 |
+| `mockups/create-flow.html` | 생성 3분 흐름 — 이름 → 첫 링크(성공·형식 오류·미리보기 실패) → 완성·복사 토스트 |
+| `mockups/wishlist-detail.html` | 상세 — 정상, 아이템 추가 시트, 카테고리 선택 시트, 아이템 메뉴·실행 취소 토스트, 데스크톱 |
+| `mockups/share-presets.html` | 공유 페이지 — 프리셋 canvas·night·paper × grid/list, 데스크톱 |
+| `mockups/settings.html` | 설정 허브(모바일) · 화면 설정(스킨·모드·언어, 모바일·데스크톱 2단) |
+
+- 파일 상단 **스킨(캔버스·종이·팝) × 모드(라이트·다크)** 토글은 `<html data-skin data-mode>` 만 바꾼다(시안 전용 6줄 스크립트). 레이아웃이 그대로인 채 색·반경·그림자만 바뀌는 것이 앱 스킨 결정의 증명이다
+- 공유 페이지는 스킨 토글의 영향을 받지 않는다 — 소유자가 고른 프리셋(`data-preset`)이 결정한다
+- designer 1차 검토 지적 반영: 공유 페이지 글자 15px·소유자 이름 위계·아바타 40px, 받음 배지 밝은 면+잉크 테두리, 받음 상태 `aria-label` 포함, `--c-border-strong` 3:1 이상(라이트 4.3 / 다크 4.1), 아바타 히트 영역 44px, "공개" 반복 표기 제거(비공개만 자물쇠), 받음 아이템 CTA 약화
+- 시안에 없는 화면(프로필·로그인 기기·공지·문의·관리자·404)은 토큰과 `shared/ui` 로 이식 시점에 만든다
+
 ## 다음 단계
 
-1. designer 검토 (원칙 준수·대비·공유 페이지 가독성) → 사용자 선택
-2. `decisions/design-direction.md` 에 선택·이유·기각안 기록
-3. 선택한 방향으로 핵심 화면 시안 (랜딩·로그인, 목록 4상태, 생성 3분 흐름, 상세, 공유 페이지 프리셋 2+, 라이트·다크)
-4. 시안에서 토큰 추출 → `decisions/design-tokens.md`
+1. ~~designer 검토 → 사용자 선택~~ (B, 2026-11-08)
+2. ~~`decisions/design-direction.md`~~ (2026-11-08)
+3. ~~핵심 화면 시안~~ → designer 2차 검토(흐름·4상태 문구·키보드·3개 언어 길이)
+4. `mockups/tokens.css` 에서 토큰 추출 → `decisions/design-tokens.md` (스킨 표·출시 스킨 수·대비 검증표)
