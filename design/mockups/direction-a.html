@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Linklet 시안 — 방향 A: 따뜻한 종이</title>
+<style>
+/* 토큰 후보 — 라이트 */
+.theme{--c-bg:#F7F3EC;--c-surface:#FFFFFF;--c-surface-2:#EFE9DF;--c-text:#2B2521;--c-muted:#6B6159;
+--c-accent:#B5472F;--c-on-accent:#FFFFFF;--c-accent-text:#B5472F;--c-accent-soft:#F6DED6;
+--c-border:#E3DBCE;--c-border-strong:#B9AE9E;--c-card-border:transparent;--c-focus:#B5472F;
+--c-chip:#EFE9DF;--c-chip-text:#2B2521;--c-badge:#2B2521;--c-badge-text:#F7F3EC;
+--shadow:0 1px 2px rgba(60,40,20,.06),0 10px 30px -14px rgba(60,40,20,.18);--shadow-accent:0 8px 20px -10px rgba(181,71,47,.6);
+--r-sm:10px;--r-md:14px;--r-lg:20px;--r-btn:14px;
+--font-body:-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Pretendard","Noto Sans KR",system-ui,sans-serif;
+--t-wordmark:700 20px/1 var(--font-body);
+--t-display:600 26px/1.3 var(--font-body);--t-display-ls:-.02em;
+--t-title:500 17px/1.4 var(--font-body);--t-body:400 15px/1.55 var(--font-body);
+--t-price:600 16px/1.3 var(--font-body);--t-caption:400 13px/1.45 var(--font-body);
+--pad-x:20px;--items-cols:1;--items-gap:16px;--img-ratio:4/3;--card-pad:16px 18px 18px;
+--wl-cols:1;--wl-gap:12px;--wl-template:96px 1fr;--wl-inner-gap:16px;--wl-pad:14px;--wl-cover-ratio:1;--wl-cover-w:96px;
+--doc-bg:var(--c-bg)}
+/* 토큰 후보 — 다크 (값만 교체) */
+html:has(#dark:checked) .theme{--c-bg:#1C1916;--c-surface:#26221E;--c-surface-2:#2F2A25;--c-text:#F2EDE6;--c-muted:#A89E93;
+--c-accent:#E0765E;--c-on-accent:#1C1916;--c-accent-text:#E0765E;--c-accent-soft:#3E2A24;
+--c-border:#3A332D;--c-border-strong:#5C524A;--c-card-border:transparent;--c-focus:#E0765E;
+--c-chip:#2F2A25;--c-chip-text:#F2EDE6;--c-badge:#F2EDE6;--c-badge-text:#1C1916;
+--shadow:0 1px 2px rgba(0,0,0,.3),0 10px 30px -14px rgba(0,0,0,.5);--shadow-accent:0 8px 20px -10px rgba(224,118,94,.5);}
+
+*,*::before,*::after{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;font-family:var(--font-body)}
+.theme{min-height:100vh;color:var(--c-text);background:var(--c-bg)}
+.sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+a{color:inherit;text-decoration:none}
+button{font:inherit;color:inherit}
+ul{list-style:none;margin:0;padding:0}
+p,h1,h2,h3{margin:0}
+:focus-visible{outline:3px solid var(--c-focus);outline-offset:2px}
+i{display:block}
+
+/* ── 문서 틀 (시안 자체의 UI, 제품 UI 아님) ───────────────── */
+.doc{max-width:1200px;margin:0 auto;padding:32px 20px 80px}
+.doc-head{display:flex;flex-wrap:wrap;gap:16px 32px;align-items:flex-end;justify-content:space-between;margin-bottom:28px}
+.doc-head h1{font-size:28px;font-weight:700;letter-spacing:-.02em}
+.doc-head h1 small{display:block;font-size:14px;font-weight:500;color:var(--c-muted);margin-top:6px;letter-spacing:0}
+.doc-head .mood{font-size:16px;color:var(--c-muted);max-width:60ch;line-height:1.55}
+.toggle{display:inline-flex;align-items:center;gap:10px;padding:10px 14px;border:1px solid var(--c-border);border-radius:999px;background:var(--c-surface);cursor:pointer;font-size:14px;user-select:none}
+.toggle::before{content:"";width:34px;height:20px;border-radius:999px;background:var(--c-border);position:relative;display:inline-block;transition:background .15s}
+.toggle::after{content:"";position:absolute;width:16px;height:16px;border-radius:50%;background:#fff;margin-left:2px;transition:transform .15s}
+.toggle{position:relative}
+html:has(#dark:checked) .toggle::before{background:var(--c-accent)}
+html:has(#dark:checked) .toggle::after{transform:translateX(14px)}
+.tokens{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px;margin-bottom:36px}
+.tok{padding:16px;border:1px solid var(--c-border);border-radius:var(--r-lg);background:var(--c-surface)}
+.tok h2{font-size:12px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--c-muted);margin-bottom:12px}
+.swatches{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.sw{height:56px;border-radius:var(--r-md);border:1px solid var(--c-border);display:flex;align-items:flex-end;padding:6px;font-size:11px;font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
+.type-sample .t1{font:var(--t-display);letter-spacing:var(--t-display-ls)}
+.type-sample .t2{font:var(--t-title);margin-top:8px}
+.type-sample .t3{font:var(--t-body);margin-top:8px}
+.type-sample .t4{font:var(--t-caption);color:var(--c-muted);margin-top:4px}
+.shape-sample{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.shape-sample .btn{pointer-events:none}
+.shape-sample .card-demo{width:72px;height:56px;border-radius:var(--r-lg);background:var(--c-surface-2);box-shadow:var(--shadow)}
+.screens{display:grid;grid-template-columns:repeat(auto-fit,minmax(360px,1fr));gap:40px 28px;align-items:start}
+.screens article>h2{font-size:15px;font-weight:600;margin-bottom:12px;color:var(--c-muted)}
+.screens article>h2 code{font:12px ui-monospace,SFMono-Regular,Menlo,monospace;background:var(--c-surface-2);padding:2px 6px;border-radius:6px;color:var(--c-text)}
+.screens .wide{grid-column:1/-1}
+.phone{width:390px;max-width:100%;height:844px;border-radius:44px;border:10px solid #111;background:var(--c-bg);overflow:hidden;box-shadow:0 30px 60px -20px rgba(0,0,0,.35);position:relative}
+.phone .screen{height:100%;overflow-y:auto;scrollbar-width:none}
+.phone .screen::-webkit-scrollbar{display:none}
+.desktop{width:100%;max-width:1100px;height:640px;border-radius:14px;border:1px solid #2a2a2a;background:var(--c-bg);overflow:hidden;box-shadow:0 30px 60px -20px rgba(0,0,0,.35)}
+.desktop .screen{height:100%;overflow-y:auto}
+.notes{margin-top:48px;padding:20px 24px;border:1px solid var(--c-border);border-radius:var(--r-lg);background:var(--c-surface);font-size:14px;line-height:1.7}
+.notes h2{font-size:15px;margin-bottom:8px}
+.notes li{margin-left:1.2em;list-style:disc}
+
+/* ── 제품 UI 공통 ───────────────────────────────────────── */
+.screen{background:var(--c-bg);color:var(--c-text);font:var(--t-body)}
+.topbar{display:flex;align-items:center;gap:16px;padding:14px 20px;position:sticky;top:0;background:color-mix(in srgb,var(--c-bg) 86%,transparent);backdrop-filter:blur(12px);z-index:2}
+.topbar--share{padding-top:18px}
+.wordmark{font:var(--t-wordmark);letter-spacing:-.02em;color:var(--c-accent)}
+.topbar__nav{display:none;gap:4px;margin-left:8px}
+.topbar__nav a{padding:8px 12px;border-radius:var(--r-sm);color:var(--c-muted);font-weight:500}
+.topbar__nav a[aria-current]{color:var(--c-text);background:var(--c-surface-2)}
+.screen--desktop .topbar__nav{display:flex}
+.avatar{width:56px;height:56px;border-radius:50%;background:var(--c-accent-soft);color:var(--c-accent-text);display:inline-grid;place-items:center;font-weight:700;font-size:22px;border:0}
+.avatar--sm{width:34px;height:34px;font-size:14px;margin-left:auto;cursor:pointer}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:48px;padding:0 20px;border-radius:var(--r-btn);font-weight:600;font-size:15px;border:1px solid transparent;cursor:pointer;transition:transform .12s,background .12s}
+.btn:active{transform:scale(.98)}
+.btn--primary{background:var(--c-accent);color:var(--c-on-accent);box-shadow:var(--shadow-accent)}
+.btn--ghost{background:transparent;border-color:var(--c-border-strong);color:var(--c-text)}
+.icon-btn{width:44px;height:44px;border-radius:var(--r-btn);border:0;background:transparent;display:inline-grid;place-items:center;color:var(--c-muted);cursor:pointer}
+.icon-btn:hover{background:var(--c-surface-2);color:var(--c-text)}
+.chip{display:inline-flex;align-items:center;min-height:26px;padding:0 10px;border-radius:999px;background:var(--c-chip);color:var(--c-chip-text);font-size:12px;font-weight:600}
+.badge{display:inline-flex;align-items:center;gap:4px;font-size:12px;font-weight:700;padding:5px 9px;border-radius:999px}
+.badge--received{position:absolute;left:10px;top:10px;background:var(--c-badge);color:var(--c-badge-text)}
+.dot{margin:0 6px;color:var(--c-muted)}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+
+/* 공유 페이지 */
+.owner{padding:8px 20px 20px;display:grid;justify-items:start;gap:8px}
+.owner__name{font:var(--t-caption);color:var(--c-muted)}
+.share__title{font:var(--t-display);letter-spacing:var(--t-display-ls)}
+.share__desc{font:var(--t-body);color:var(--c-muted);line-height:1.55}
+.share__meta{display:flex;align-items:center;gap:8px;font:var(--t-caption);color:var(--c-muted);margin-top:4px}
+.items{display:grid;gap:var(--items-gap);padding:4px var(--pad-x) 24px;grid-template-columns:repeat(var(--items-cols),1fr)}
+.item__link{display:block;background:var(--c-surface);border-radius:var(--r-lg);overflow:hidden;box-shadow:var(--shadow);border:1px solid var(--c-card-border);height:100%}
+.item__img{aspect-ratio:var(--img-ratio);position:relative}
+.item__body{padding:var(--card-pad);display:grid;gap:6px}
+.item__title{font:var(--t-title);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.item__meta{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap}
+.item__price{font:var(--t-price)}
+.item__site{font:var(--t-caption);color:var(--c-muted)}
+.item__cta{display:inline-flex;align-items:center;gap:4px;margin-top:2px;font:var(--t-caption);font-weight:600;color:var(--c-accent-text)}
+.item--received .item__img{filter:grayscale(.7);opacity:.75}
+.item--received .item__title{color:var(--c-muted)}
+.share__foot{padding:8px 20px 40px;display:grid;gap:12px;justify-items:center;text-align:center;font:var(--t-caption);color:var(--c-muted)}
+
+/* 내 위시리스트 목록 */
+.list__main{padding:8px var(--pad-x) 120px}
+.screen--desktop .list__main{max-width:1040px;margin:0 auto;padding:16px 32px 48px}
+.list__head{display:flex;align-items:center;justify-content:space-between;gap:16px;margin:12px 0 20px}
+.list__title{font:var(--t-display);letter-spacing:var(--t-display-ls)}
+.count{color:var(--c-muted);font-weight:500}
+.wls{display:grid;gap:var(--wl-gap);grid-template-columns:repeat(var(--wl-cols),1fr)}
+.screen--desktop .wls{grid-template-columns:repeat(3,1fr)}
+.wl{position:relative}
+.wl__link{display:grid;grid-template-columns:var(--wl-template);gap:var(--wl-inner-gap);align-items:center;padding:var(--wl-pad);background:var(--c-surface);border-radius:var(--r-lg);box-shadow:var(--shadow);border:1px solid var(--c-card-border);min-height:100%}
+.wl__cover{display:grid;grid-template-columns:1fr 1fr;gap:3px;overflow:hidden;border-radius:var(--r-md);aspect-ratio:var(--wl-cover-ratio);width:var(--wl-cover-w)}
+.wl__cover i{min-height:0}
+.wl__body{display:grid;gap:6px;min-width:0;padding-right:44px}
+.wl__title{font:var(--t-title);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.wl__meta{font:var(--t-caption);color:var(--c-muted);display:flex;align-items:center;flex-wrap:wrap}
+.wl__vis{display:inline-flex;align-items:center;gap:4px}
+.wl .icon-btn{position:absolute;right:calc(var(--wl-pad) - 6px);bottom:calc(var(--wl-pad) - 6px)}
+.fab{position:sticky;bottom:20px;margin:0 20px;width:calc(100% - 40px);box-shadow:var(--shadow-accent),0 12px 30px -10px rgba(0,0,0,.35)}
+.screen--desktop .fab{position:static;width:auto;margin:0}
+
+.screen--desktop .wl__link{grid-template-columns:1fr;align-items:start}.screen--desktop .wl__cover{width:100%;aspect-ratio:16/10}
+</style>
+</head>
+<body>
+<input type="checkbox" id="dark" class="sr-only">
+<div class="theme">
+<div class="doc">
+  <header class="doc-head">
+    <div>
+      <h1>방향 A — 따뜻한 종이<small>Linklet 시각 방향 후보 · 공유 페이지 + 내 위시리스트 목록</small></h1>
+      <p class="mood" style="margin-top:14px">종이 위에 올려 둔 스크랩북. 따뜻한 미색 배경에 한 가지 테라코타 강조색, 큰 사진 한 장씩 세로로 넘겨 보는 잡지 같은 밀도.</p>
+    </div>
+    <label class="toggle" for="dark">다크 보기</label>
+  </header>
+
+  <section class="tokens" aria-label="토큰 후보">
+    <div class="tok"><h2>색</h2><div class="swatches"><div class="sw" style="background:var(--c-bg);color:var(--c-text)">bg</div><div class="sw" style="background:var(--c-surface);color:var(--c-text)">surface</div><div class="sw" style="background:var(--c-surface-2);color:var(--c-text)">surface-2</div><div class="sw" style="background:var(--c-text);color:var(--c-bg)">text</div><div class="sw" style="background:var(--c-muted);color:var(--c-bg)">muted</div><div class="sw" style="background:var(--c-accent);color:var(--c-on-accent)">accent</div></div><p style="margin-top:10px;font-size:12px;color:var(--c-muted)">미색 배경 #F7F3EC · 잉크 #2B2521 · 테라코타 #B5472F</p></div>
+    <div class="tok type-sample"><h2>타이포</h2><p class="t1">갖고 싶은 것들</p><p class="t2">아이템 제목 두 줄까지 표시</p><p class="t3">본문 — 링크만 붙여 넣으면 예쁘게 모아져요.</p><p class="t4">캡션 · 11월 7일 업데이트</p><p style="margin-top:10px;font-size:12px;color:var(--c-muted)">시스템 산세리프, 제목 26px/600, 본문 15px, 줄 간격 넉넉하게</p></div>
+    <div class="tok"><h2>모양·밀도</h2><div class="shape-sample"><span class="btn btn--primary">링크 복사하기</span><span class="btn btn--ghost">취소</span><span class="card-demo"></span><span class="chip">테크·가전</span></div><p style="margin-top:12px;font-size:12px;color:var(--c-muted)">낮음 — 공유 페이지 1열, 목록은 가로형 카드</p></div>
+  </section>
+
+  <section class="screens">
+    <article>
+      <h2>공유 페이지 <code>/w/{shareId}</code> · 모바일 390</h2>
+      <div class="phone">
+    <div class="screen share" data-screen="share">
+      <header class="topbar topbar--share">
+        <span class="wordmark">Linklet</span>
+      </header>
+      <section class="owner">
+        <span class="avatar" aria-hidden="true">하</span>
+        <p class="owner__name">하영의 위시리스트</p>
+        <h1 class="share__title">올해 생일 전에 갖고 싶은 것들</h1>
+        <p class="share__desc">특히 헤드폰! 나머지는 그냥 구경용이에요 😄</p>
+        <p class="share__meta"><span class="chip">테크·가전</span><span>아이템 6</span><span class="dot" aria-hidden="true">·</span><span>11월 7일 업데이트</span></p>
+      </section>
+      <ul class="items" aria-label="위시리스트 아이템">
+        <li class="item">
+          <a class="item__link" href="#" aria-label="소니 WH-1000XM6 무선 헤드폰 — 449,000원, 쿠팡에서 보기">
+            <div class="item__img" style="background:linear-gradient(135deg,#9aa7b8,#4d5a6b)"></div>
+            <div class="item__body">
+              <p class="item__title">소니 WH-1000XM6 무선 헤드폰</p>
+              <p class="item__meta"><strong class="item__price">449,000원</strong><span class="item__site">쿠팡</span></p>
+              <span class="item__cta">상품 보러 가기 <svg aria-hidden="true" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7M8 7h9v9"/></svg></span>
+            </div>
+          </a>
+        </li>
+        <li class="item">
+          <a class="item__link" href="#" aria-label="무인양품 리넨 워싱 셔츠 — 59,900원, 무인양품에서 보기">
+            <div class="item__img" style="background:linear-gradient(135deg,#e9ddc8,#b9a98c)"></div>
+            <div class="item__body">
+              <p class="item__title">무인양품 리넨 워싱 셔츠</p>
+              <p class="item__meta"><strong class="item__price">59,900원</strong><span class="item__site">무인양품</span></p>
+              <span class="item__cta">상품 보러 가기 <svg aria-hidden="true" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7M8 7h9v9"/></svg></span>
+            </div>
+          </a>
+        </li>
+        <li class="item">
+          <a class="item__link" href="#" aria-label="스탠리 퀜처 텀블러 887ml — 62,000원, 29CM에서 보기">
+            <div class="item__img" style="background:linear-gradient(135deg,#b8d8c8,#5e8f78)"></div>
+            <div class="item__body">
+              <p class="item__title">스탠리 퀜처 텀블러 887ml</p>
+              <p class="item__meta"><strong class="item__price">62,000원</strong><span class="item__site">29CM</span></p>
+              <span class="item__cta">상품 보러 가기 <svg aria-hidden="true" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7M8 7h9v9"/></svg></span>
+            </div>
+          </a>
+        </li>
+        <li class="item item--received">
+          <a class="item__link" href="#" aria-label="킨들 페이퍼화이트 12세대 — 219,000원, 아마존에서 보기">
+            <div class="item__img" style="background:linear-gradient(135deg,#3d3d44,#1d1d22)"><span class="badge badge--received"><svg aria-hidden="true" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 5 5L20 7"/></svg> 받았어요</span></div>
+            <div class="item__body">
+              <p class="item__title">킨들 페이퍼화이트 12세대</p>
+              <p class="item__meta"><strong class="item__price">219,000원</strong><span class="item__site">아마존</span></p>
+              <span class="item__cta">상품 보러 가기 <svg aria-hidden="true" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7M8 7h9v9"/></svg></span>
+            </div>
+          </a>
+        </li>
+        <li class="item">
+          <a class="item__link" href="#" aria-label="르크루제 시그니처 냄비 22cm — 398,000원, 네이버 쇼핑에서 보기">
+            <div class="item__img" style="background:linear-gradient(135deg,#f0a27a,#c8553d)"></div>
+            <div class="item__body">
+              <p class="item__title">르크루제 시그니처 냄비 22cm</p>
+              <p class="item__meta"><strong class="item__price">398,000원</strong><span class="item__site">네이버 쇼핑</span></p>
+              <span class="item__cta">상품 보러 가기 <svg aria-hidden="true" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7M8 7h9v9"/></svg></span>
+            </div>
+          </a>
+        </li>
+        <li class="item">
+          <a class="item__link" href="#" aria-label="아이패드 에어 11 (M3) — 899,000원, 애플에서 보기">
+            <div class="item__img" style="background:linear-gradient(135deg,#d9e3f0,#8fa6c4)"></div>
+            <div class="item__body">
+              <p class="item__title">아이패드 에어 11 (M3)</p>
+              <p class="item__meta"><strong class="item__price">899,000원</strong><span class="item__site">애플</span></p>
+              <span class="item__cta">상품 보러 가기 <svg aria-hidden="true" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7M8 7h9v9"/></svg></span>
+            </div>
+          </a>
+        </li>
+      </ul>
+      <footer class="share__foot">
+        <p>Linklet으로 만든 위시리스트예요</p>
+        <a class="btn btn--ghost" href="#">나도 만들어 보기</a>
+      </footer>
+    </div></div>
+    </article>
+    <article>
+      <h2>내 위시리스트 목록 <code>/ko/wishlists</code> · 모바일 390</h2>
+      <div class="phone">
+    <div class="screen list" data-screen="list" data-primary="sticky">
+      <header class="topbar">
+        <span class="wordmark">Linklet</span>
+        <nav class="topbar__nav" aria-label="주 메뉴">
+          <a href="#" aria-current="page">위시리스트</a><a href="#">설정</a>
+        </nav>
+        <button type="button" class="avatar avatar--sm" aria-label="내 계정 메뉴">하</button>
+      </header>
+      <main class="list__main">
+        <div class="list__head">
+          <h1 class="list__title">내 위시리스트 <span class="count">3</span></h1>
+          
+        </div>
+        <ul class="wls" aria-label="내 위시리스트">
+        <li class="wl">
+          <a class="wl__link" href="#">
+            <div class="wl__cover" aria-hidden="true"><i style="background:#9aa7b8"></i><i style="background:#e9ddc8"></i><i style="background:#b8d8c8"></i><i style="background:#f0a27a"></i></div>
+            <div class="wl__body">
+              <p class="wl__title">올해 생일 전에 갖고 싶은 것들</p>
+              <p class="wl__meta"><span>아이템 6</span><span class="dot" aria-hidden="true">·</span><span class="wl__vis">공개</span><span class="dot" aria-hidden="true">·</span><span>어제</span></p>
+            </div>
+          </a>
+          <button type="button" class="icon-btn" aria-label="‘올해 생일 전에 갖고 싶은 것들’ 공유 링크 복사"><svg aria-hidden="true" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.5.5l3-3a5 5 0 0 0-7-7l-1.7 1.7"/><path d="M14 11a5 5 0 0 0-7.5-.5l-3 3a5 5 0 0 0 7 7l1.7-1.7"/></svg></button>
+        </li>
+        <li class="wl">
+          <a class="wl__link" href="#">
+            <div class="wl__cover" aria-hidden="true"><i style="background:#d8c9b4"></i><i style="background:#8fa27a"></i><i style="background:#f1e3c8"></i><i style="background:#6b7a8c"></i></div>
+            <div class="wl__body">
+              <p class="wl__title">자취방 꾸미기</p>
+              <p class="wl__meta"><span>아이템 12</span><span class="dot" aria-hidden="true">·</span><span class="wl__vis">공개</span><span class="dot" aria-hidden="true">·</span><span>3일 전</span></p>
+            </div>
+          </a>
+          <button type="button" class="icon-btn" aria-label="‘자취방 꾸미기’ 공유 링크 복사"><svg aria-hidden="true" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.5.5l3-3a5 5 0 0 0-7-7l-1.7 1.7"/><path d="M14 11a5 5 0 0 0-7.5-.5l-3 3a5 5 0 0 0 7 7l1.7-1.7"/></svg></button>
+        </li>
+        <li class="wl">
+          <a class="wl__link" href="#">
+            <div class="wl__cover" aria-hidden="true"><i style="background:#f3b24f"></i><i style="background:#2f3a4a"></i><i style="background:#c9d7e6"></i><i style="background:#9fd0b5"></i></div>
+            <div class="wl__body">
+              <p class="wl__title">러닝 장비</p>
+              <p class="wl__meta"><span>아이템 4</span><span class="dot" aria-hidden="true">·</span><span class="wl__vis"><svg aria-hidden="true" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg> 비공개</span><span class="dot" aria-hidden="true">·</span><span>10월 21일</span></p>
+            </div>
+          </a>
+          <button type="button" class="icon-btn" aria-label="‘러닝 장비’ 공유 링크 복사"><svg aria-hidden="true" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.5.5l3-3a5 5 0 0 0-7-7l-1.7 1.7"/><path d="M14 11a5 5 0 0 0-7.5-.5l-3 3a5 5 0 0 0 7 7l1.7-1.7"/></svg></button>
+        </li>
+        </ul>
+      </main>
+      <a class="btn btn--primary fab" href="#"><svg aria-hidden="true" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg> 새 위시리스트 만들기</a>
+    </div></div>
+    </article>
+    <article class="wide">
+      <h2>내 위시리스트 목록 · 데스크톱 1100</h2>
+      <div class="desktop">
+    <div class="screen list screen--desktop" data-screen="list" data-primary="inline">
+      <header class="topbar">
+        <span class="wordmark">Linklet</span>
+        <nav class="topbar__nav" aria-label="주 메뉴">
+          <a href="#" aria-current="page">위시리스트</a><a href="#">설정</a>
+        </nav>
+        <button type="button" class="avatar avatar--sm" aria-label="내 계정 메뉴">하</button>
+      </header>
+      <main class="list__main">
+        <div class="list__head">
+          <h1 class="list__title">내 위시리스트 <span class="count">3</span></h1>
+          <a class="btn btn--primary fab" href="#"><svg aria-hidden="true" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg> 새 위시리스트 만들기</a>
+        </div>
+        <ul class="wls" aria-label="내 위시리스트">
+        <li class="wl">
+          <a class="wl__link" href="#">
+            <div class="wl__cover" aria-hidden="true"><i style="background:#9aa7b8"></i><i style="background:#e9ddc8"></i><i style="background:#b8d8c8"></i><i style="background:#f0a27a"></i></div>
+            <div class="wl__body">
+              <p class="wl__title">올해 생일 전에 갖고 싶은 것들</p>
+              <p class="wl__meta"><span>아이템 6</span><span class="dot" aria-hidden="true">·</span><span class="wl__vis">공개</span><span class="dot" aria-hidden="true">·</span><span>어제</span></p>
+            </div>
+          </a>
+          <button type="button" class="icon-btn" aria-label="‘올해 생일 전에 갖고 싶은 것들’ 공유 링크 복사"><svg aria-hidden="true" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.5.5l3-3a5 5 0 0 0-7-7l-1.7 1.7"/><path d="M14 11a5 5 0 0 0-7.5-.5l-3 3a5 5 0 0 0 7 7l1.7-1.7"/></svg></button>
+        </li>
+        <li class="wl">
+          <a class="wl__link" href="#">
+            <div class="wl__cover" aria-hidden="true"><i style="background:#d8c9b4"></i><i style="background:#8fa27a"></i><i style="background:#f1e3c8"></i><i style="background:#6b7a8c"></i></div>
+            <div class="wl__body">
+              <p class="wl__title">자취방 꾸미기</p>
+              <p class="wl__meta"><span>아이템 12</span><span class="dot" aria-hidden="true">·</span><span class="wl__vis">공개</span><span class="dot" aria-hidden="true">·</span><span>3일 전</span></p>
+            </div>
+          </a>
+          <button type="button" class="icon-btn" aria-label="‘자취방 꾸미기’ 공유 링크 복사"><svg aria-hidden="true" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.5.5l3-3a5 5 0 0 0-7-7l-1.7 1.7"/><path d="M14 11a5 5 0 0 0-7.5-.5l-3 3a5 5 0 0 0 7 7l1.7-1.7"/></svg></button>
+        </li>
+        <li class="wl">
+          <a class="wl__link" href="#">
+            <div class="wl__cover" aria-hidden="true"><i style="background:#f3b24f"></i><i style="background:#2f3a4a"></i><i style="background:#c9d7e6"></i><i style="background:#9fd0b5"></i></div>
+            <div class="wl__body">
+              <p class="wl__title">러닝 장비</p>
+              <p class="wl__meta"><span>아이템 4</span><span class="dot" aria-hidden="true">·</span><span class="wl__vis"><svg aria-hidden="true" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg> 비공개</span><span class="dot" aria-hidden="true">·</span><span>10월 21일</span></p>
+            </div>
+          </a>
+          <button type="button" class="icon-btn" aria-label="‘러닝 장비’ 공유 링크 복사"><svg aria-hidden="true" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.5.5l3-3a5 5 0 0 0-7-7l-1.7 1.7"/><path d="M14 11a5 5 0 0 0-7.5-.5l-3 3a5 5 0 0 0 7 7l1.7-1.7"/></svg></button>
+        </li>
+        </ul>
+      </main>
+      
+    </div></div>
+    </article>
+  </section>
+
+  <section class="notes">
+    <h2>이 방향에서 UX 원칙이 드러나는 지점 · 위험</h2>
+    <ul><li>콘텐츠가 주인공: 상품 사진이 화면 폭을 꽉 채우는 1열. 테두리 없이 그림자만으로 카드 구분</li><li>한 화면 한 가지 일: 공유 페이지에는 둘러보기만, 목록에는 "새 위시리스트 만들기" 하나만 강조색</li><li>모바일 우선: 주요 버튼은 하단 고정(엄지 영역). 데스크톱에서는 제목 옆으로 이동</li><li>위험: 1열은 아이템이 많을 때 스크롤이 길어짐 → 핵심 화면 단계에서 2열 전환 지점 검토</li></ul>
+  </section>
+</div>
+</div>
+</body>
+</html>
