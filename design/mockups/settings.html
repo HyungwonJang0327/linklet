@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="ko" data-skin="canvas" data-mode="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Linklet 시안 — 설정 허브 · 화면 설정</title>
+<link rel="stylesheet" href="tokens.css">
+<link rel="stylesheet" href="base.css">
+</head>
+<body class="doc-bg">
+<div class="doc">
+  <header class="doc-head">
+    <div>
+      <h1>설정 허브 · 화면 설정<small><code>/ko/settings</code> · <code>/ko/settings/appearance</code> — F28~F32, F29(스킨·모드·언어)</small></h1>
+      <p>설정은 iOS식 허브(그룹별 행) + 항목별 페이지. 데스크톱은 같은 허브가 왼쪽 열이 된다(decisions/settings-navigation.md). 화면 설정에서 스킨을 고르면 상단 "스킨" 토글과 같은 효과 — 실제 제품에서는 이 페이지의 값이 html data 속성이 된다.</p>
+    </div>
+    <form class="controls" aria-label="시안 보기 옵션">
+      <fieldset><legend>스킨</legend>
+        <label><input type="radio" name="skin" value="canvas" checked>캔버스</label>
+        <label><input type="radio" name="skin" value="paper" >종이</label>
+        <label><input type="radio" name="skin" value="pop" >팝</label>
+      </fieldset>
+      <fieldset><legend>모드</legend>
+        <label><input type="radio" name="mode" value="light" checked>라이트</label>
+        <label><input type="radio" name="mode" value="dark">다크</label>
+      </fieldset>
+    </form>
+  </header>
+  <section class="screens"><article class=""><h2>설정 허브 · 모바일</h2><div class="phone"><div class="screen "><header class="topbar"><a class="wordmark" href="#">Linklet</a><span class="topbar__spacer"></span><a class="avatar-btn" href="#" aria-label="설정"><span class="avatar" aria-hidden="true">하</span></a></header><div style="padding:8px var(--pad-x) 0"><h1 style="font:var(--t-display);letter-spacing:var(--t-display-ls)">설정</h1></div><nav class="hub" aria-label="설정">
+    <section><h2>계정</h2><ul><li><a href="#">프로필<span class="val"><span class="val-text">하영</span><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 6 6 6-6 6"/></svg></span></a></li><li><a href="#">로그인 기기<span class="val"><span class="val-text">2대</span><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 6 6 6-6 6"/></svg></span></a></li></ul></section>
+    <section><h2>화면</h2><ul><li><a href="#">화면 설정<span class="val"><span class="val-text">캔버스 · 시스템 · 한국어</span><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 6 6 6-6 6"/></svg></span></a></li></ul></section>
+    <section><h2>도움말</h2><ul><li><a href="#">공지<span class="val"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 6 6 6-6 6"/></svg></span></a></li><li><a href="#">문의<span class="val"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 6 6 6-6 6"/></svg></span></a></li></ul></section>
+    <section><h2 class="sr-only">계정 나가기</h2><ul><li><button type="button" class="is-danger">로그아웃</button></li></ul></section>
+    </nav></div></div><p class=note>행 끝에 현재 값. 공지·문의는 "도움말" 그룹, 로그아웃은 맨 아래 버튼. 하단 고정 버튼 없음.</p></article><article class=""><h2>화면 설정 · 모바일</h2><div class="phone"><div class="screen "><header class="topbar"><a class="back" href="#"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>설정</a><span class="topbar__spacer"></span></header><div class="settings-page">
+  <h1>화면 설정</h1>
+  <fieldset class="field" style="border:0;padding:0;margin:0"><legend class="field__label" style="margin-bottom:8px">스킨</legend>
+    <div class="skin-cards"><label class="skin-card"><input type="radio" name="skin-pick" value="canvas" checked><span class="skin-card__sw" aria-hidden="true"><i style="background:#FFFFFF"></i><i style="background:#111318"></i><i style="background:#2A4FE0"></i></span><span class="skin-card__name">캔버스</span></label><label class="skin-card"><input type="radio" name="skin-pick" value="paper" ><span class="skin-card__sw" aria-hidden="true"><i style="background:#F7F3EC"></i><i style="background:#2B2521"></i><i style="background:#B5472F"></i></span><span class="skin-card__name">종이</span></label><label class="skin-card"><input type="radio" name="skin-pick" value="pop" ><span class="skin-card__sw" aria-hidden="true"><i style="background:#F6F0FF"></i><i style="background:#1E1538"></i><i style="background:#6A3DF5"></i></span><span class="skin-card__name">팝</span></label></div>
+    <p class="field__hint">내 화면에만 적용돼요. 공유 페이지의 모습은 위시리스트마다 "꾸미기"에서 정해요.</p></fieldset>
+  <fieldset class="field" style="border:0;padding:0;margin:0"><legend class="field__label" style="margin-bottom:8px">모드</legend>
+    <div class="segmented"><label><input type="radio" name="mode-pick" value="light">라이트</label><label><input type="radio" name="mode-pick" value="dark">다크</label><label><input type="radio" name="mode-pick" value="system" checked>시스템</label></div></fieldset>
+  <div class="field"><label class="field__label" for="lang">언어</label><span class="select-wrap"><select class="select" id="lang"><option>한국어</option><option>English</option><option>日本語</option></select><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></span></div>
+  <p class="field__hint field__hint--success" role="status"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 5 5L20 7"/></svg> 바로 저장돼요</p>
+</div></div></div><p class=note>스킨 카드 3개(라디오) + 모드 세그먼트 + 언어 선택. 저장 버튼 없이 바로 저장(즉각 피드백). 뒤로 가기 "설정".</p></article><article class="wide"><h2>화면 설정 · 데스크톱 1200 (2단)</h2><div class="desktop"><div class="screen screen--desktop"><header class="topbar"><a class="wordmark" href="#">Linklet</a><nav class="topbar__nav" aria-label="주 메뉴"><a href="#" aria-current="page">위시리스트</a><a href="#">설정</a></nav><span class="topbar__spacer"></span><a class="avatar-btn" href="#" aria-label="설정"><span class="avatar" aria-hidden="true">하</span></a></header><div class="settings-2col"><aside><nav class="hub" aria-label="설정">
+    <section><h2>계정</h2><ul><li><a href="#">프로필<span class="val"><span class="val-text">하영</span><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 6 6 6-6 6"/></svg></span></a></li><li><a href="#">로그인 기기<span class="val"><span class="val-text">2대</span><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 6 6 6-6 6"/></svg></span></a></li></ul></section>
+    <section><h2>화면</h2><ul><li><a href="#" aria-current="page">화면 설정<span class="val"><span class="val-text">캔버스 · 시스템 · 한국어</span><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 6 6 6-6 6"/></svg></span></a></li></ul></section>
+    <section><h2>도움말</h2><ul><li><a href="#">공지<span class="val"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 6 6 6-6 6"/></svg></span></a></li><li><a href="#">문의<span class="val"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 6 6 6-6 6"/></svg></span></a></li></ul></section>
+    <section><h2 class="sr-only">계정 나가기</h2><ul><li><button type="button" class="is-danger">로그아웃</button></li></ul></section>
+    </nav></aside><section><div class="settings-page">
+  <h1>화면 설정</h1>
+  <fieldset class="field" style="border:0;padding:0;margin:0"><legend class="field__label" style="margin-bottom:8px">스킨</legend>
+    <div class="skin-cards"><label class="skin-card"><input type="radio" name="skin-pick" value="canvas" checked><span class="skin-card__sw" aria-hidden="true"><i style="background:#FFFFFF"></i><i style="background:#111318"></i><i style="background:#2A4FE0"></i></span><span class="skin-card__name">캔버스</span></label><label class="skin-card"><input type="radio" name="skin-pick" value="paper" ><span class="skin-card__sw" aria-hidden="true"><i style="background:#F7F3EC"></i><i style="background:#2B2521"></i><i style="background:#B5472F"></i></span><span class="skin-card__name">종이</span></label><label class="skin-card"><input type="radio" name="skin-pick" value="pop" ><span class="skin-card__sw" aria-hidden="true"><i style="background:#F6F0FF"></i><i style="background:#1E1538"></i><i style="background:#6A3DF5"></i></span><span class="skin-card__name">팝</span></label></div>
+    <p class="field__hint">내 화면에만 적용돼요. 공유 페이지의 모습은 위시리스트마다 "꾸미기"에서 정해요.</p></fieldset>
+  <fieldset class="field" style="border:0;padding:0;margin:0"><legend class="field__label" style="margin-bottom:8px">모드</legend>
+    <div class="segmented"><label><input type="radio" name="mode-pick" value="light">라이트</label><label><input type="radio" name="mode-pick" value="dark">다크</label><label><input type="radio" name="mode-pick" value="system" checked>시스템</label></div></fieldset>
+  <div class="field"><label class="field__label" for="lang">언어</label><span class="select-wrap"><select class="select" id="lang"><option>한국어</option><option>English</option><option>日本語</option></select><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></span></div>
+  <p class="field__hint field__hint--success" role="status"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 5 5L20 7"/></svg> 바로 저장돼요</p>
+</div></section></div></div></div><p class=note>허브가 사이드바로. 현재 항목 <code>aria-current="page"</code> 강조. 사이드바 폭 260px, 라벨 2줄 허용(ja).</p></article></section>
+  <section class="notes"><h2>이 화면에서 지킨 것 · 메모</h2><ul><li>한 화면에 한 가지 일: 허브는 목록만, 각 페이지는 설정 한 묶음</li><li>스킨 = 색·반경·그림자만(decisions/app-skin.md). 이 시안의 상단 토글이 그 증명 — 레이아웃은 스킨과 무관하게 같다</li><li>허브 행 <code>&lt;a&gt;</code> 높이 52px, 그룹 제목 <code>&lt;h2&gt;</code>, 로그아웃만 <code>&lt;button&gt;</code></li><li>꾸미기(F27)는 설정에 없다 — 안내 문구로 위치만 알려 준다</li><li>프로필·로그인 기기·공지·문의 페이지는 토큰과 shared/ui 로 이식 시점에 만든다(roadmap)</li></ul></section>
+</div>
+<script>
+  // 시안 전용: 스킨·모드 라디오 → html data 속성. 제품에서는 F29 설정 값으로 같은 속성을 렌더한다.
+  document.querySelector('.controls').addEventListener('change', (e) => {
+    if (e.target.name === 'skin' || e.target.name === 'mode') document.documentElement.dataset[e.target.name] = e.target.value;
+  });
+</script>
+</body>
+</html>

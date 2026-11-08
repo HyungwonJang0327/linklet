@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="ko" data-skin="canvas" data-mode="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Linklet 시안 — 랜딩 · 로그인</title>
+<link rel="stylesheet" href="tokens.css">
+<link rel="stylesheet" href="base.css">
+</head>
+<body class="doc-bg">
+<div class="doc">
+  <header class="doc-head">
+    <div>
+      <h1>랜딩 · 로그인<small><code>/ko</code> · <code>/ko/login</code> — F08, 완료 기준 10의 시작점</small></h1>
+      <p>로그인 전 사용자가 보는 두 화면. 랜딩은 "무엇을 하는 서비스인지"와 시작 버튼 하나, 로그인은 Google 버튼 하나. 공지·문의·언어는 하단으로.</p>
+    </div>
+    <form class="controls" aria-label="시안 보기 옵션">
+      <fieldset><legend>스킨</legend>
+        <label><input type="radio" name="skin" value="canvas" checked>캔버스</label>
+        <label><input type="radio" name="skin" value="paper" >종이</label>
+        <label><input type="radio" name="skin" value="pop" >팝</label>
+      </fieldset>
+      <fieldset><legend>모드</legend>
+        <label><input type="radio" name="mode" value="light" checked>라이트</label>
+        <label><input type="radio" name="mode" value="dark">다크</label>
+      </fieldset>
+    </form>
+  </header>
+  <section class="screens"><article class=""><h2>랜딩 · 모바일 390</h2><div class="phone"><div class="screen "><header class="topbar"><a class="wordmark" href="#">Linklet</a><span class="topbar__spacer"></span><a class="btn btn--text" href="#">로그인</a></header>
+    <main class="landing">
+    <section class="hero">
+      <h1>링크만 붙여 넣으면,<br>갖고 싶은 것들이 한 페이지에</h1>
+      <p>흩어진 장바구니 대신 내 위시리스트. 친구에게는 링크 하나로.</p>
+      <div class="hero__actions"><a class="btn btn--primary" href="#"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 12h7M12 7.5a4.5 4.5 0 1 0 4.2 6"/></svg> Google로 시작하기</a><a class="btn btn--text" href="#">예시 위시리스트 보기</a></div>
+    </section><div class="sample" aria-hidden="true"><div class="sample__head"><span class="avatar" style="width:28px;height:28px;font-size:12px">하</span><span>하영의 위시리스트</span></div><p class="sample__title">올해 생일 전에 갖고 싶은 것들</p><ul class="items" style="gap:8px"><li class="item"><div class="item__link">
+  <div class="item__img" style="background:linear-gradient(135deg,#9aa7b8,#4d5a6b)"></div>
+  <div class="item__body"><p class="item__title">소니 WH-1000XM6 무선 헤드폰</p><p class="item__price">449,000원</p><p class="item__site">쿠팡</p></div></div></li><li class="item"><div class="item__link">
+  <div class="item__img" style="background:linear-gradient(135deg,#e9ddc8,#b9a98c)"></div>
+  <div class="item__body"><p class="item__title">무인양품 리넨 워싱 셔츠</p><p class="item__price">59,900원</p><p class="item__site">무인양품</p></div></div></li><li class="item"><div class="item__link">
+  <div class="item__img" style="background:linear-gradient(135deg,#b8d8c8,#5e8f78)"></div>
+  <div class="item__body"><p class="item__title">스탠리 퀜처 텀블러 887ml</p><p class="item__price">62,000원</p><p class="item__site">29CM</p></div></div></li><li class="item item--received"><div class="item__link"><span class="badge badge--received"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 5 5L20 7"/></svg> 받았어요</span>
+  <div class="item__img" style="background:linear-gradient(135deg,#3d3d44,#1d1d22)"></div>
+  <div class="item__body"><p class="item__title">킨들 페이퍼화이트 12세대</p><p class="item__price">219,000원</p><p class="item__site">아마존</p></div></div></li></ul></div>
+    <ol class="how">
+      <li><span class="how__n">1</span><div><p class="how__t">링크를 붙여 넣어요</p><p class="how__d">쇼핑몰 어디든. 제목·사진·가격이 자동으로 채워져요.</p></div></li>
+      <li><span class="how__n">2</span><div><p class="how__t">한 페이지에 모여요</p><p class="how__d">생일 전에 갖고 싶은 것, 자취방 꾸미기 — 주제별로.</p></div></li>
+      <li><span class="how__n">3</span><div><p class="how__t">링크 하나로 보여줘요</p><p class="how__d">친구는 로그인 없이 바로 열어 볼 수 있어요.</p></div></li>
+    </ol>
+      <footer class="land-foot"><a href="#">공지</a><a href="#">문의</a><span class="sep"></span><span class="select-wrap" style="width:120px"><select class="select" aria-label="언어" style="min-height:36px;font:var(--t-label)"><option>한국어</option><option>English</option><option>日本語</option></select><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></span></footer>
+    </main>
+    <style>
+      .landing{padding:16px var(--pad-x) 40px;display:grid;gap:36px}
+      .hero{display:grid;gap:14px;padding-top:16px}
+      .hero h1{font:var(--t-hero);letter-spacing:-.03em}
+      .hero p{font:var(--t-body-lg);color:var(--c-muted)}
+      .hero__actions{display:grid;gap:6px;margin-top:8px}
+      .sample{padding:14px;border-radius:var(--r-lg);background:var(--c-surface-2);display:grid;gap:8px;transform:rotate(-1deg)}
+      .sample__head{display:flex;gap:8px;align-items:center;font:var(--t-caption);color:var(--c-muted)}
+      .sample__title{font:var(--t-heading)}
+      .how{display:grid;gap:18px}
+      .how li{display:grid;grid-template-columns:32px 1fr;gap:12px}
+      .how__n{width:32px;height:32px;border-radius:50%;background:var(--c-accent-soft);color:var(--c-accent-text);display:grid;place-items:center;font:700 14px/1 var(--font-sans)}
+      .how__t{font:var(--t-heading)} .how__d{font:var(--t-body);color:var(--c-muted);margin-top:2px}
+      .land-foot{display:flex;gap:16px;align-items:center;font:var(--t-caption);color:var(--c-muted);padding-top:8px;border-top:1px solid var(--c-border)}
+      .landing--desk{max-width:1040px;margin:0 auto;padding:32px;grid-template-columns:1fr 1fr;align-items:center;column-gap:56px}
+      .landing--desk .hero h1{font-size:40px} .landing--desk .hero__actions{grid-auto-flow:column;justify-content:start}
+      .landing--desk .how{grid-column:1/-1;grid-template-columns:repeat(3,1fr)} .landing--desk .land-foot{grid-column:1/-1}
+    </style></div></div><p class=note>주된 행동은 "Google로 시작하기" 하나. 예시 보기는 텍스트 버튼. 3단계 설명은 담기 → 모아지기 → 공유 시나리오 순서.</p></article><article class=""><h2>로그인 <code>/ko/login</code> · 모바일</h2><div class="phone"><div class="screen "><header class="topbar"><a class="back" href="#"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>돌아가기</a><span class="topbar__spacer"></span></header>
+    <main class="login">
+      <span class="wordmark" style="font-size:24px">Linklet</span>
+      <h1>반가워요!</h1>
+      <p>Google 계정으로 3초 만에 시작해요.<br>첫 위시리스트까지 3분이면 충분해요.</p>
+      <a class="btn btn--primary btn--block" href="#"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 12h7M12 7.5a4.5 4.5 0 1 0 4.2 6"/></svg> Google로 계속하기</a>
+      <p class="login__terms">계속하면 <a href="#">이용약관</a>과 <a href="#">개인정보 처리방침</a>에 동의하는 거예요.</p>
+    </main>
+    <style>.login{padding:48px var(--pad-x);display:grid;gap:16px;justify-items:start;align-content:start;max-width:420px} .login h1{font:var(--t-display);letter-spacing:var(--t-display-ls);margin-top:12px} .login p{font:var(--t-body-lg);color:var(--c-muted)} .login .btn{margin-top:12px} .login__terms{font:var(--t-caption)!important} .login__terms a{text-decoration:underline;text-underline-offset:3px}</style></div></div><p class=note>Google 로그인 하나뿐이라 폼이 없다. 문구로 "3분" 기대치를 미리 말한다. 뒤로 가기는 랜딩으로.</p></article><article class="wide"><h2>랜딩 · 데스크톱 1200</h2><div class="desktop"><div class="screen screen--desktop"><header class="topbar"><a class="wordmark" href="#">Linklet</a><span class="topbar__spacer"></span><a class="btn btn--text" href="#">로그인</a></header>
+    <main class="landing landing--desk">
+    <section class="hero">
+      <h1>링크만 붙여 넣으면,<br>갖고 싶은 것들이 한 페이지에</h1>
+      <p>흩어진 장바구니 대신 내 위시리스트. 친구에게는 링크 하나로.</p>
+      <div class="hero__actions"><a class="btn btn--primary" href="#"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 12h7M12 7.5a4.5 4.5 0 1 0 4.2 6"/></svg> Google로 시작하기</a><a class="btn btn--text" href="#">예시 위시리스트 보기</a></div>
+    </section><div class="sample" aria-hidden="true"><div class="sample__head"><span class="avatar" style="width:28px;height:28px;font-size:12px">하</span><span>하영의 위시리스트</span></div><p class="sample__title">올해 생일 전에 갖고 싶은 것들</p><ul class="items" style="gap:8px"><li class="item"><div class="item__link">
+  <div class="item__img" style="background:linear-gradient(135deg,#9aa7b8,#4d5a6b)"></div>
+  <div class="item__body"><p class="item__title">소니 WH-1000XM6 무선 헤드폰</p><p class="item__price">449,000원</p><p class="item__site">쿠팡</p></div></div></li><li class="item"><div class="item__link">
+  <div class="item__img" style="background:linear-gradient(135deg,#e9ddc8,#b9a98c)"></div>
+  <div class="item__body"><p class="item__title">무인양품 리넨 워싱 셔츠</p><p class="item__price">59,900원</p><p class="item__site">무인양품</p></div></div></li><li class="item"><div class="item__link">
+  <div class="item__img" style="background:linear-gradient(135deg,#b8d8c8,#5e8f78)"></div>
+  <div class="item__body"><p class="item__title">스탠리 퀜처 텀블러 887ml</p><p class="item__price">62,000원</p><p class="item__site">29CM</p></div></div></li><li class="item item--received"><div class="item__link"><span class="badge badge--received"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 5 5L20 7"/></svg> 받았어요</span>
+  <div class="item__img" style="background:linear-gradient(135deg,#3d3d44,#1d1d22)"></div>
+  <div class="item__body"><p class="item__title">킨들 페이퍼화이트 12세대</p><p class="item__price">219,000원</p><p class="item__site">아마존</p></div></div></li></ul></div>
+    <ol class="how">
+      <li><span class="how__n">1</span><div><p class="how__t">링크를 붙여 넣어요</p><p class="how__d">쇼핑몰 어디든. 제목·사진·가격이 자동으로 채워져요.</p></div></li>
+      <li><span class="how__n">2</span><div><p class="how__t">한 페이지에 모여요</p><p class="how__d">생일 전에 갖고 싶은 것, 자취방 꾸미기 — 주제별로.</p></div></li>
+      <li><span class="how__n">3</span><div><p class="how__t">링크 하나로 보여줘요</p><p class="how__d">친구는 로그인 없이 바로 열어 볼 수 있어요.</p></div></li>
+    </ol>
+      <footer class="land-foot"><a href="#">공지</a><a href="#">문의</a><span class="sep"></span><span class="select-wrap" style="width:120px"><select class="select" aria-label="언어" style="min-height:36px;font:var(--t-label)"><option>한국어</option><option>English</option><option>日本語</option></select><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></span></footer>
+    </main>
+    <style>
+      .landing{padding:16px var(--pad-x) 40px;display:grid;gap:36px}
+      .hero{display:grid;gap:14px;padding-top:16px}
+      .hero h1{font:var(--t-hero);letter-spacing:-.03em}
+      .hero p{font:var(--t-body-lg);color:var(--c-muted)}
+      .hero__actions{display:grid;gap:6px;margin-top:8px}
+      .sample{padding:14px;border-radius:var(--r-lg);background:var(--c-surface-2);display:grid;gap:8px;transform:rotate(-1deg)}
+      .sample__head{display:flex;gap:8px;align-items:center;font:var(--t-caption);color:var(--c-muted)}
+      .sample__title{font:var(--t-heading)}
+      .how{display:grid;gap:18px}
+      .how li{display:grid;grid-template-columns:32px 1fr;gap:12px}
+      .how__n{width:32px;height:32px;border-radius:50%;background:var(--c-accent-soft);color:var(--c-accent-text);display:grid;place-items:center;font:700 14px/1 var(--font-sans)}
+      .how__t{font:var(--t-heading)} .how__d{font:var(--t-body);color:var(--c-muted);margin-top:2px}
+      .land-foot{display:flex;gap:16px;align-items:center;font:var(--t-caption);color:var(--c-muted);padding-top:8px;border-top:1px solid var(--c-border)}
+      .landing--desk{max-width:1040px;margin:0 auto;padding:32px;grid-template-columns:1fr 1fr;align-items:center;column-gap:56px}
+      .landing--desk .hero h1{font-size:40px} .landing--desk .hero__actions{grid-auto-flow:column;justify-content:start}
+      .landing--desk .how{grid-column:1/-1;grid-template-columns:repeat(3,1fr)} .landing--desk .land-foot{grid-column:1/-1}
+    </style></div></div></article></section>
+  <section class="notes"><h2>이 화면에서 지킨 것 · 메모</h2><ul><li>한 화면에 한 가지 일: 랜딩·로그인 모두 강조색 버튼 하나</li><li>말하듯 쉬운 문구: "붙여 넣어요 / 모여요 / 보여줘요", 버튼은 결과 동사</li><li>온도감(design-direction 조건 2): 기울인 예시 카드와 친근한 문구로 B의 차가움을 보완. 일러스트는 넣지 않고 실제 UI 조각을 예시로 쓴다</li><li>예시 위시리스트 보기 = 공개 데모 공유 페이지로 이동(로그인 불필요)</li><li>비목표: 익명 위시리스트 없음 → 랜딩에서 바로 입력하는 UI를 두지 않는다</li></ul></section>
+</div>
+<script>
+  // 시안 전용: 스킨·모드 라디오 → html data 속성. 제품에서는 F29 설정 값으로 같은 속성을 렌더한다.
+  document.querySelector('.controls').addEventListener('change', (e) => {
+    if (e.target.name === 'skin' || e.target.name === 'mode') document.documentElement.dataset[e.target.name] = e.target.value;
+  });
+</script>
+</body>
+</html>

@@ -29,20 +29,20 @@
 - [x] 기준선 E2E 실행 환경 결정 (2026-10-04, bddcbb5 — 로컬 Docker 전용 컨테이너 + db push, testing T8) — 기존 앱을 어떤 DB로 띄울지(로컬 Docker Postgres에 기존 스키마 적용 방식 / dev DB 읽기 전용 시나리오만). tester 규칙상 dev·운영 DB에 테스트 금지, 기존 마이그레이션은 드리프트(H5)로 그대로 재현 안 됨 → `/decide`
   - 완료 조건: `decisions/testing.md` 에 기준선 E2E 환경 추가 / 커밋: `docs(decisions): 기준선 E2E 실행 환경 결정` / 담당: 메인
 - [ ] 기준선 E2E 3건 + 파서 정답 fixture → `tester-todo.md` Phase 0
-- [ ] 디자인 검토(방향·핵심 화면·토큰 대비) → `designer-todo.md` Phase 0
+- [x] 디자인 검토(방향·핵심 화면·토큰 대비) → `designer-todo.md` Phase 0 (2026-11-08, 4건 모두 완료)
 
 ### UI 리디자인 (담당: 메인, `decisions/roadmap.md`)
 
 시안은 `design/mockups/` 정적 HTML. 외부 스크립트 없이 열리게, 색·간격은 CSS 변수(토큰 후보)로만 쓴다.
 
-- [ ] 시각 방향 후보 시안 3개 — 같은 화면 2개(공유 페이지·내 위시리스트 목록)를 방향별로. 세 안 모두 `decisions/roadmap.md` UX 원칙(직관성, UX로 유명한 서비스들의 장점)을 지키고 시각 무드(색·타이포·밀도)만 다르게. 방향마다 무드 한 줄·색·타이포
+- [x] 시각 방향 후보 시안 3개 (2026-11-08, bd5a657 — designer 검토 완료, 추천 A. 사용자 선택은 다음 항목) — 같은 화면 2개(공유 페이지·내 위시리스트 목록)를 방향별로. 세 안 모두 `decisions/roadmap.md` UX 원칙(직관성, UX로 유명한 서비스들의 장점)을 지키고 시각 무드(색·타이포·밀도)만 다르게. 방향마다 무드 한 줄·색·타이포
   - 완료 조건: `design/mockups/direction-{a,b,c}.html` + `design/README.md`(보는 법), designer 대비 검토 후 사용자 선택 / 커밋: `docs(design): 시각 방향 후보 시안 3개 추가`
-- [ ] 선택한 방향 기록
+- [x] 선택한 방향 기록 (2026-11-08 — B 깨끗한 캔버스, `decisions/design-direction.md`)
   - 완료 조건: `decisions/design-direction.md` (선택·이유·기각안) / 커밋: `docs(decisions): UI 시각 방향 결정`
-- [ ] 핵심 화면 시안 — 랜딩·로그인, 내 위시리스트 목록(로딩·비어 있음·에러·정상), 생성 3분 흐름, 상세(아이템 추가), 공유 페이지(프리셋 2개 이상), 라이트·다크
+- [x] 핵심 화면 시안 (2026-11-08, `3a12817`~`317a08a` 시안 6개 + 공통 토큰·스타일, `1921caa`·`2ac786a` designer 2차 검토 반영) — 랜딩·로그인, 내 위시리스트 목록(로딩·비어 있음·에러·정상), 생성 3분 흐름, 상세(아이템 추가), 공유 페이지(프리셋 2개 이상), 라이트·다크
   - 완료 조건: `design/mockups/*.html`, designer 흐름·접근성 검토 반영, 카테고리·설정 메뉴 구조가 시안 안에 들어감 / 커밋: 화면별 `docs(design): {화면} 시안 추가`
-- [ ] 시안에서 디자인 토큰 추출·결정
-  - 완료 조건: `decisions/design-tokens.md` (색 라이트·다크·간격·반경·그림자·타이포, 대비 4.5:1 검증표) / 커밋: `docs(decisions): 디자인 토큰 체계 결정`
+- [x] 시안에서 디자인 토큰 추출·결정 (2026-11-08 — `decisions/design-tokens.md`, 출시 스킨 3종)
+  - 완료 조건: `decisions/design-tokens.md` (색 라이트·다크·간격·반경·그림자·타이포, 대비 4.5:1 검증표, **스킨 표 — 기본 B + 후보 A·C, 출시 스킨 수 확정**, `decisions/app-skin.md`) / 커밋: `docs(decisions): 디자인 토큰 체계 결정`
 
 ## Phase 1 — 기반 (F01–F07, I01)
 
@@ -102,7 +102,7 @@
 
 - [ ] F27 테마 프리셋 6 + 레이아웃 2 + 강조색 + 소셜 링크
 - [ ] F28 프로필
-- [ ] F29 화면 설정 (테마·언어)
+- [ ] F29 화면 설정 (스킨·모드·언어 — `decisions/app-skin.md`)
 - [ ] F30 사용자 문의
 - [ ] F31 공지 열람
 - [ ] F32 세션 관리

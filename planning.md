@@ -85,6 +85,11 @@
 | 입력 검증 | `features/*/schema.ts` Zod 공유, Route Handler에서 파싱 | api-response.md |
 | 테스트 | 순수 로직·서비스(Docker Postgres)·계약·E2E, 대상 한정 커버리지 80%, 기준선 E2E는 `v2/e2e/baseline/` + 로컬 Docker 전용 DB(로컬만) | testing.md |
 | 로드맵 | Phase 0~8(준비·기반·인증·미리보기·핵심 흐름·공유+첫 배포·꾸미기·관리자·교체), 기간 산정 없이 시간 날 때 진행 | roadmap.md, todo/mvp-todo.md |
+| UI 시각 방향 | **B 깨끗한 캔버스** — 흰 배경·잉크·파랑 강조, 그림자 없는 1px 선, 2열 그리드. 조건: 공유 페이지 15px 이상, 빈 상태·랜딩 온도감 검토 | design-direction.md |
+| 카테고리 | 계기 3종 생일·기념일·언젠가(`birthday`·`occasion`·`someday`), 미선택 `null`·칩 없음, 생성 흐름에서 묻지 않음 | category.md |
+| 설정 메뉴 | 설정 허브(그룹별 행) + 항목별 페이지, 데스크톱은 같은 목록이 사이드바. 꾸미기는 상세 버튼만, 공지·문의는 허브 안에만, 모바일 nav는 워드마크+아바타 | settings-navigation.md |
+| 앱 스킨 | 앱 화면 팔레트를 사용자가 선택(F29 확장). 스킨=색·반경·그림자만, 모드(라이트·다크·시스템)와 독립. 출시 3종 canvas(기본)·paper·pop. 공유 페이지는 제외(F27) | app-skin.md |
+| 디자인 토큰 | 원본 `design/mockups/tokens.css`. 공통(타이포·간격) / 스킨(반경·그림자) / 스킨×모드(색) / 프리셋(`--p-*`) 4층, `<html data-skin data-mode>` 변수 교체. Tailwind 4 `@theme inline` 으로 연결, 시스템 폰트. 대비 전 조합 통과 | design-tokens.md |
 | UI 리디자인 | v2는 새 시각 디자인. 최대한 직관적으로, UX로 유명한 서비스들(애플·토스·Pinterest·Airbnb·Linear·Stripe 등)의 장점(UX 원칙 12개). Phase 0에서 방향 → 핵심 화면 HTML 시안(`design/mockups/`) → 토큰 | roadmap.md |
 | 마이그레이션 | `migrate dev` + `down.sql`, `db push` 금지, 운영 적용은 사용자 | db-migration.md |
 | URL | 복수형·케밥·동사 금지, `/{locale}/wishlists`, `ko/en/ja`, 필터는 URL 쿼리, 하위 호환 없음 | url-design.md |
@@ -101,7 +106,6 @@
 | v2가 쓸 Neon DB(기존 DB의 새 브랜치 / 새 프로젝트) | 첫 배포 때 (Phase 5, 로컬은 Docker Postgres) |
 | id 생성 방식 (cuid2 / UUID v7) | Phase 1 스키마 작업 |
 | `down.sql` 생성 명령 | Phase 1 (Prisma 7 문서 확인) |
-| UI 시각 방향 (후보 시안 3개 중 선택) | Phase 0 |
-| 카테고리 3~4종의 구체 목록 | Phase 0 (designer) |
-| 설정 사이드바 구조 유지 여부 | Phase 0 (designer) |
+| 로그인 직후 위시리스트 0개면 `/wishlists/new` 직행 여부 | Phase 4 (F13·F14, designer 제안) |
+| 꾸미기 화면(F27) 주된 행동에 "링크 복사하기" 포함 여부 (INTENT 시나리오 3) | Phase 6 (F27) |
 | 기존 S3 버킷 삭제 | 교체 후 (사용자 작업) |

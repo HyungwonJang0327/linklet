@@ -37,7 +37,7 @@
 | F13 | 내 위시리스트 목록 | settings/wishlists, GET /api/wishlists | 개선 | 훅·raw fetch 이원화(M6). 4상태 본보기 화면으로 삼는다 | 6 | E2E: 로딩·비어 있음·에러·정상 4상태, 본인 것만 보임 | 미착수 |
 | F14 | 위시리스트 생성 | settings/wishlists/create, POST /api/wishlists | 재설계 | 캐주얼 3분 흐름(완료 기준 10), 생성 시 아이템 한도 우회·비트랜잭션(M2) | 7 | E2E: 로그인 → 링크 붙여 넣기 → 생성 → 공유 링크 복사 3분 이내 | 미착수 |
 | F15 | 공개 설정·기본값 | Wishlist.isPublic | 개선 | 스키마 기본 공개 vs API 기본 비공개 불일치 → **기본 공개(링크 아는 사람만 열람, 목록·검색 노출 없음)** (Q2) | 7 | E2E: 새 위시리스트는 공유 링크로 열림, 비공개 전환 시 공유 페이지 404 | 미착수 |
-| F16 | 카테고리 | WishlistCategory enum 10종 | 재설계 | 인터뷰: 축소 → **3~4종 선택 입력, 생성 흐름에서는 기본값 자동** (Q3). 종류는 디자인 단계에서 확정 | 7 | E2E: 카테고리 미선택 생성 가능, 선택 시 3개 언어로 표시(키 노출 없음) | 미착수 |
+| F16 | 카테고리 | WishlistCategory enum 10종 | 재설계 | 인터뷰: 축소 → **계기 3종 `birthday`·`occasion`·`someday` 선택 입력, 미선택은 `null`·칩 없음, 생성 흐름에서는 묻지 않음** (Q3, 2026-11-08 `decisions/category.md`) | 7 | E2E: 카테고리 미선택 생성 가능, 선택 시 3개 언어로 표시(키 노출 없음) | 미착수 |
 | F17 | 위시리스트 편집·삭제 | [id]/page.tsx, edit-wishlist-dialog, PUT/DELETE /api/wishlists/[id] | 개선 | 710줄 페이지 분해, 직접 만든 모달 접근성(H9), 삭제는 native confirm | 8 | E2E: 제목·설명 수정 반영, 삭제 확인 모달(키보드) 후 목록에서 사라짐 | 미착수 |
 | F18 | URL 메타데이터 파서 | lib/services/url-metadata.ts (파싱부) | 유지 | 가장 많이 쌓인 도메인 노하우(OG·Twitter·JSON-LD 가격·쇼핑몰 셀렉터) | 5 | 단위: HTML fixture 세트에 대해 기존 구현과 같은 결과(제목·이미지·가격·사이트명) | 미착수 |
 | F19 | 아이템 추가 (링크 자동 채움) | add-item-dialog, POST /api/wishlists/[id]/items, /api/metadata | 개선 | 추출→생성 로직 2곳 중복, `/api/metadata` 비로그인 허용(S3 쓰기 유발), productUrl scheme 미검증, 아이템 한도 경쟁 조건 | 9 | E2E: 링크 입력 → 미리보기 → 추가 → 목록 반영. 단위: http(s) 외 scheme 거부 | 미착수 |
@@ -61,7 +61,7 @@
 |---|---|---|---|---|---|---|---|
 | F27 | 공유 페이지 꾸미기 | settings/customize, components/customize/*, PUT .../customization | 재설계 | 인터뷰: 축소. 코드 최대 복잡도, JSON 무검증 저장 → **테마 프리셋 6종 + 레이아웃 2종(grid/list) + 강조색 1개 + 소셜 링크**. 배지·masonry·carousel·세부 색 편집 삭제 (Q4) | 13 | E2E: 프리셋 선택 → 공유 페이지에 반영. 단위: 설정 스키마 검증 | 미착수 |
 | F28 | 프로필 (이름·소개·아바타) | settings/profile, GET/PUT /api/users | 개선 | 요청 취소·에러 상태 정비 | 14 | E2E: 수정 후 공유 페이지 프로필에 반영 | 미착수 |
-| F29 | 화면 설정 | settings/appearance (저장 안 되는 스텁) | 재설계 | 인터뷰: 살림 → **테마(라이트·다크·시스템) + 언어**. 글자 크기(브라우저 확대로 대체)·컴팩트 모드 삭제 (Q5) | 15 | E2E: 설정 변경 → 새로고침 후 유지 | 미착수 |
+| F29 | 화면 설정 | settings/appearance (저장 안 되는 스텁) | 재설계 | 인터뷰: 살림 → **스킨(앱 팔레트, 기본 B) + 모드(라이트·다크·시스템) + 언어** (스킨은 2026-11-08 사용자 요청, `decisions/app-skin.md`). 글자 크기(브라우저 확대로 대체)·컴팩트 모드 삭제 (Q5) | 15 | E2E: 설정 변경 → 새로고침 후 유지, 스킨 변경이 공유 페이지에는 영향 없음 | 미착수 |
 | F30 | 사용자 문의 (헬프 센터) | settings/inquiries, /api/inquiries, UserInquiry | 개선 | 에러 상태 없음(catch에서 삼킴), type·priority 입력 미검증, 요청 취소 없음 | 16 | E2E: 문의 등록 → 내 목록에 표시 → 관리자 답변 후 상태 변경 | 미착수 |
 | F31 | 공지사항 열람 | [locale]/notices, GET /api/notices | 유지 | | 17 | E2E: 게시된 공지만 목록에 표시, 고정 공지 상단 | 미착수 |
 | F32 | 세션 관리 | api/auth/active-sessions, revoke-all-sessions, cleanup-sessions, 사이드바 "만료 세션 정리" | 재설계 | 인터뷰: 살림. 사용자 UI 없음(API 미호출), 토큰 쿼리스트링, 토큰 앞 8자 응답. 인증 라이브러리 교체에 종속 | 18 | E2E: 내 로그인 기기 목록, "다른 기기 모두 로그아웃" 후 다른 세션 무효 | 미착수 |
