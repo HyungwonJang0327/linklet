@@ -7,11 +7,19 @@
 ## 실행
 
 ```bash
-# 사전: Docker Desktop 실행 중, 루트 node_modules (없으면 스크립트가 npm ci)
+# 사전: Docker Desktop 실행 중, 루트 node_modules (없으면 스크립트가 npm ci), chromium (pnpm exec playwright install chromium)
 cd v2
-pnpm baseline:up      # 컨테이너 기동 → db push → next build → next start -p 3001 → /api/health healthy
-pnpm baseline:down    # 서버 종료 → 컨테이너·볼륨 삭제 → .next 원복
+pnpm baseline:up          # 컨테이너 기동 → db push → next build → next start -p 3001 → /api/health healthy
+pnpm test:e2e:baseline    # = BASELINE=1 playwright test --project=baseline  (e2e/baseline/**/*.spec.ts 만)
+pnpm baseline:down        # 서버 종료 → 컨테이너·볼륨 삭제 → .next 원복
 ```
+
+### Playwright `baseline` project (`v2/playwright.config.ts`)
+
+- `BASELINE=1` 이면 project 목록이 `baseline` 하나(baseURL `http://localhost:3001`, Desktop Chrome)로 바뀌고 `webServer` 가 꺼진다. 기준선 서버는 config 가 띄우지 않으므로 `pnpm baseline:up` 이 선행 조건이다.
+- 기본 `pnpm test:e2e`(chromium project)는 `**/baseline/**` 을 `testIgnore` 로 제외한다 — 기준선 spec 이 v2 E2E 결과에 섞이지 않는다 (T7).
+- `CI` 환경변수가 있으면 `BASELINE=1` 이어도 기준선 project 를 만들지 않는다 (로컬 전용, T8).
+- **User-Agent**: 기존 앱 공유 API(`/api/wishlists/share/{id}`)는 비브라우저 UA(`curl`·`python`·`bot` 등)에 403 을 돌려준다(`lib/rate-limit.ts` `isLikelyBot`). `baseline` project 의 `use` 에 Desktop Chrome 디바이스를 넣었고, Playwright 는 `page` 뿐 아니라 **`request` fixture 에도 같은 `userAgent`·`baseURL` 을 적용**하므로(`runBeforeCreateRequestContext` 가 `use` 옵션을 병합) 이후 spec 이 API 를 직접 쳐도 403 을 받지 않는다. 비브라우저 UA 동작을 고정하려면 `request.get(url, { headers: { 'user-agent': 'curl/8.0' } })` 처럼 요청마다 덮어쓴다.
 
 | 항목           | 값                                                                           |
 | -------------- | ---------------------------------------------------------------------------- |
