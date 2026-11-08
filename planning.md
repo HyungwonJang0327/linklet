@@ -106,6 +106,7 @@
 | v2가 쓸 Neon DB(기존 DB의 새 브랜치 / 새 프로젝트) | 첫 배포 때 (Phase 5, 로컬은 Docker Postgres) |
 | id 생성 방식 (cuid2 / UUID v7) | Phase 1 스키마 작업 |
 | `down.sql` 생성 명령 | Phase 1 (Prisma 7 문서 확인) |
+| 기준선 E2E 시드 방법 (psql SQL / 루트 Prisma 래퍼 / API 생성) | Phase 0 다음 항목 전 (메인 추천 psql SQL) |
 | 로그인 직후 위시리스트 0개면 `/wishlists/new` 직행 여부 | Phase 4 (F13·F14, designer 제안) |
 | 꾸미기 화면(F27) 주된 행동에 "링크 복사하기" 포함 여부 (INTENT 시나리오 3) | Phase 6 (F27) |
 | 기존 S3 버킷 삭제 | 교체 후 (사용자 작업) |
