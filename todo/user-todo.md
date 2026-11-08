@@ -4,12 +4,12 @@
 
 ## 즉시
 
-- [ ] **`REVALIDATE_SECRET_TOKEN` 교체** — 과거 커밋 `2b39a31` 에 토큰 값이 하드코딩되어 공개 이력에 남아 있다 (AUDIT H13). 운영(Vercel Production 환경변수)과 로컬 `.env.*` 모두 새 무작위 값으로 바꾸고 재배포. 교체 후 알려주면 `.gitleaksignore` 에 해당 fingerprint를 추가해 전체 이력 스캔을 통과시킨다
+- [x] **`REVALIDATE_SECRET_TOKEN` 교체** (2026-10-04 확인 — 운영에서 옛 값 401) — 과거 커밋 `2b39a31` 에 토큰 값이 하드코딩되어 공개 이력에 남아 있다 (AUDIT H13). 운영(Vercel Production 환경변수)과 로컬 `.env.*` 모두 새 무작위 값으로 바꾸고 재배포. 교체 후 알려주면 `.gitleaksignore` 에 해당 fingerprint를 추가해 전체 이력 스캔을 통과시킨다
   - 완료 조건: 운영 `/api/revalidate`·`/api/auth/cleanup-sessions` 가 옛 값으로 401/403
 
 ## v2 CI 첫 통과 직후
 
-- [ ] main 브랜치 보호 켜기 (PR 필수, 필수 체크 `v2 CI / quality`·`Secret scan / gitleaks`, 강제 push·삭제 금지) — 설정 방법은 에이전트가 안내하거나 사용자 승인 후 `gh api` 로 적용
+- [x] main 브랜치 보호 켜기 (PR 필수·승인 0명, 필수 체크 `quality`·`gitleaks`, 강제 push·삭제 금지, 관리자 예외 허용) — 사용자 승인 후 `gh api` 로 적용 (2026-10-04, PR #1 병합 `15ef23d`)
 
 ## 기능 이식 시점
 

@@ -4,3 +4,5 @@
 7feab176461fdd77d43de4cca289c240af3c4ad8:blog/jwt-vs-session-authentication.md:generic-api-key:46
 audit/legacy-docs/blog/jwt-vs-session-authentication.md:generic-api-key:42
 audit/legacy-docs/blog/jwt-vs-session-authentication.md:generic-api-key:46
+# H13 — 과거 클라이언트 코드에 하드코딩됐던 토큰. 운영·로컬 교체 완료, 운영에서 옛 값 401 확인 (2026-10-04)
+2b39a31d5d7228801ee10a1f8501a0417295c509:components/settings/settings-sidebar.tsx:generic-api-key:71
