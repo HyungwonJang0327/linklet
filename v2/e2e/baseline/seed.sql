@@ -14,8 +14,13 @@ BEGIN;
 
 TRUNCATE TABLE "users", "wishlists", "wishlist_items", "sessions", "accounts" RESTART IDENTITY CASCADE;
 
+-- 사용자 2명: baseline-user 는 읽기 전용 시나리오(공유 페이지·목록·한도), baseline-editor 는 생성·수정·삭제 시나리오 전용.
+-- 분리 이유: 위시리스트 한도가 사용자당 2개(APP_CONFIG.maxWishlistsPerUser.free)라 baseline-user 로는 생성이 403 이고,
+-- spec 파일이 병렬로 돌 때 public.spec.ts 가 단언하는 시드 행을 auth.spec.ts 가 지우거나 재시드(TRUNCATE)하면 안 되기 때문
 INSERT INTO "users" ("id", "email", "name", "locale", "isAdmin", "createdAt", "updatedAt")
-VALUES ('baseline-user', 'baseline@example.com', 'Baseline Tester', 'kr', false, now(), now());
+VALUES
+  ('baseline-user',   'baseline@example.com',        'Baseline Tester', 'kr', false, now(), now()),
+  ('baseline-editor', 'baseline-editor@example.com', 'Baseline Editor', 'kr', false, now(), now());
 
 -- 위시리스트: 공개 1 + 비공개 1. customization NULL → 공유 페이지가 기본값(제목을 h1 로 표시)을 쓴다
 INSERT INTO "wishlists" ("id", "title", "description", "shareUrl", "isPublic", "userId", "createdAt", "updatedAt")
@@ -30,8 +35,10 @@ VALUES
   ('baseline-item-2', 'Baseline Item 2 - Keyboard',   'https://example.com/products/keyboard',   NULL,         '$89.00',   'example.com', 1, false, 'baseline-wishlist-public', now(), now()),
   ('baseline-item-3', 'Baseline Item 3 - Mug',        'https://example.com/products/mug',        '/file.svg',  '¥1,500',   'example.com', 2, true,  'baseline-wishlist-public', now(), now());
 
--- 세션: 로그인 흐름 E2E 가 next-auth.session-token 쿠키로 주입한다 (T8). 만료는 먼 미래
+-- 세션: 로그인 흐름 E2E(auth.spec.ts) 가 next-auth.session-token 쿠키로 주입한다 (T8). 만료는 먼 미래
 INSERT INTO "sessions" ("id", "sessionToken", "userId", "expires")
-VALUES ('baseline-session', 'baseline-session-token', 'baseline-user', '2099-01-01T00:00:00Z');
+VALUES
+  ('baseline-session',        'baseline-session-token',        'baseline-user',   '2099-01-01T00:00:00Z'),
+  ('baseline-editor-session', 'baseline-editor-session-token', 'baseline-editor', '2099-01-01T00:00:00Z');
 
 COMMIT;

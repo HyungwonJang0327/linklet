@@ -13,4 +13,4 @@ SEED_FILE="$BASELINE_DIR/seed.sql"
 
 log "seed.sql 적용 (linklet-baseline-db / $BASELINE_DB_NAME)"
 compose exec -T db psql -v ON_ERROR_STOP=1 -q -U "$BASELINE_DB_USER" -d "$BASELINE_DB_NAME" <"$SEED_FILE"
-log "시드 완료 — users 1 · wishlists 2 · wishlist_items 3 · sessions 1"
+log "시드 완료 — users 2 · wishlists 2 · wishlist_items 3 · sessions 2"
