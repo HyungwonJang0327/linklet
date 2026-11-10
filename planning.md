@@ -91,7 +91,8 @@
 | 앱 스킨 | 앱 화면 팔레트를 사용자가 선택(F29 확장). 스킨=색·반경·그림자만, 모드(라이트·다크·시스템)와 독립. 출시 3종 canvas(기본)·paper·pop. 공유 페이지는 제외(F27) | app-skin.md |
 | 디자인 토큰 | 원본 `design/mockups/tokens.css`. 공통(타이포·간격) / 스킨(반경·그림자) / 스킨×모드(색) / 프리셋(`--p-*`) 4층, `<html data-skin data-mode>` 변수 교체. Tailwind 4 `@theme inline` 으로 연결, 시스템 폰트. 대비 전 조합 통과 | design-tokens.md |
 | UI 리디자인 | v2는 새 시각 디자인. 최대한 직관적으로, UX로 유명한 서비스들(애플·토스·Pinterest·Airbnb·Linear·Stripe 등)의 장점(UX 원칙 12개). Phase 0에서 방향 → 핵심 화면 HTML 시안(`design/mockups/`) → 토큰 | roadmap.md |
-| 마이그레이션 | `migrate dev` + `down.sql`, `db push` 금지, 운영 적용은 사용자 | db-migration.md |
+| 마이그레이션 | `migrate dev` + `down.sql`(`migrate diff --to-migrations` 를 `pnpm db:migrate` 래퍼로), `db push` 금지, 운영 적용은 사용자 | db-migration.md |
+| ID 생성 | PK UUID v7(`uuid(7) @db.Uuid`), Better Auth `generateId: false` 로 통일, 공유 ID 는 `nanoid(12)` | db-migration.md M5 |
 | URL | 복수형·케밥·동사 금지, `/{locale}/wishlists`, `ko/en/ja`, 필터는 URL 쿼리, 하위 호환 없음 | url-design.md |
 | 의존성 | 5가지 기준 확인 + 기록 후 추가 | dependencies.md |
 | 시간·값·로그 | UTC 저장·ISO 직렬화·표시는 프론트 / 코드 값 영어 / 로그에 시크릿·개인정보 금지 | CLAUDE.md 4-2 (고정 규약) |
@@ -104,8 +105,6 @@
 | Cloudflare 계정 유무 (R2) | 이미지 업로드 이식(F20, Phase 4) 때 — 사용자 작업 |
 | Vercel 프리뷰 프로젝트(`v2/` 루트) 운영 여부 | 첫 배포 때 (Phase 5) |
 | v2가 쓸 Neon DB(기존 DB의 새 브랜치 / 새 프로젝트) | 첫 배포 때 (Phase 5, 로컬은 Docker Postgres) |
-| id 생성 방식 (cuid2 / UUID v7) | Phase 1 스키마 작업 |
-| `down.sql` 생성 명령 | Phase 1 (Prisma 7 문서 확인) |
 | 로그인 직후 위시리스트 0개면 `/wishlists/new` 직행 여부 | Phase 4 (F13·F14, designer 제안) |
 | 꾸미기 화면(F27) 주된 행동에 "링크 복사하기" 포함 여부 (INTENT 시나리오 3) | Phase 6 (F27) |
 | 기존 S3 버킷 삭제 | 교체 후 (사용자 작업) |

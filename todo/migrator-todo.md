@@ -25,9 +25,9 @@
   - 메모(2026-11-10 기준선 실측): 기존 앱은 ISR 재검증을 `http://localhost:3000` 에 하드코딩해 POST 한다. v2 는 외부·자기 호출 URL 을 `shared/config/env.ts` 값으로만 만들고 로컬 포트 하드코딩 금지(F01 검증 항목에 포함)
   - 완료 조건: 단위 테스트 — 이메일·토큰 필드가 출력되지 않음 / 커밋: `feat(api): 서버 구조화 로거 추가` / FEATURES: F07
 - [ ] Prisma 7.10.0 설치(`prisma@7.10.0` 명시) + `prisma.config.ts` + `server/db.ts` 인스턴스 1개 + Neon 어댑터
-  - 선행: planning 미결 "id 생성 방식" 결정 (`/decide`)
+  - 선행 결정 완료(2026-11-11): PK `uuid(7) @db.Uuid`, Better Auth `generateId: false` — `decisions/db-migration.md` M5
   - 완료 조건: typecheck 통과, `new PrismaClient` 1곳 / 커밋: `chore(db): Prisma 7과 DB 클라이언트 설정` / FEATURES: F02
-- [ ] `down.sql` 생성 스크립트 — Prisma 7 문서의 `migrate diff` 옵션 확인 후 `pnpm db:migrate` 래퍼
+- [ ] `down.sql` 생성 스크립트 — `pnpm db:migrate {이름}` 래퍼: `migrate diff --from-schema --to-migrations --script > down.sql` → `migrate dev --name` → 새 폴더로 이동 (`decisions/db-migration.md` M2, 2026-11-11 확정). 섀도 DB 필요 여부는 실행해서 확인·README 기록
   - 완료 조건: 빈 DB에 up → down → up 성공 / 커밋: `chore(db): 마이그레이션 down.sql 생성 스크립트` / FEATURES: F02
 - [ ] 첫 마이그레이션 — 위시리스트·아이템·공지·문의 (FK 인덱스, `price` 숫자형, 상태값 영어 소문자). 인증 테이블은 F08에서
   - 완료 조건: `migration.sql` + `down.sql`, up/down/up 수동 확인 / 커밋: `feat(db): 첫 스키마 마이그레이션` / FEATURES: F02
