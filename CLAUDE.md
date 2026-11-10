@@ -289,7 +289,7 @@ pnpm test                  # Vitest (src/**/*.test.ts)
 pnpm test:coverage         # 커버리지 — T4 대상 80% 미만이면 실패
 pnpm test:e2e              # Playwright (e2e/, 포트 3002에 빌드·실행)
 pnpm build
-# DB 작업은 Phase 1에서 스크립트 확정: prisma migrate dev 는 로컬 DB만, 운영 적용은 사용자가 직접
+pnpm db:up / db:down / db:down:clean   # 로컬 Docker Postgres (dev 5433 · test 5434, v2/README.md). prisma migrate dev 는 로컬 DB만, 운영 적용은 사용자가 직접
 ```
 
 CI(`.github/workflows/v2-ci.yml`)는 PR마다 lint → format:check → typecheck → test:coverage → build 를 돈다. 시크릿 스캔(`secret-scan.yml`)은 모든 PR·main push.
