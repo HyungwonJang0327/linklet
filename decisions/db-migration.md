@@ -5,7 +5,8 @@
 | # | 항목 | 결정 |
 |---|---|---|
 | M1 | 생성 방식 | `prisma migrate dev --name {snake_case_설명}` 로만. 파일명은 Prisma 기본(`YYYYMMDDHHMMSS_{이름}/migration.sql`). **`prisma db push` 금지** (예외: 기존 앱 기준선 E2E 전용 로컬 컨테이너 — `testing.md` T8) |
-| M2 | 되돌리기 | 마이그레이션마다 역방향 SQL `down.sql` 을 같은 폴더에 함께 커밋. `prisma migrate diff` 로 생성 — 정확한 명령은 Prisma 7 문서 확인 후 스크립트화(Phase 1) |
+| M2 | 되돌리기 | 마이그레이션마다 역방향 SQL `down.sql` 을 같은 폴더에 함께 커밋. 생성은 Prisma 7 공식 절차(2026-11-11 문서 확인): **스키마를 고친 뒤 `migrate dev` 전에** `prisma migrate diff --from-schema prisma/schema.prisma --to-migrations prisma/migrations --script > down.sql` → `migrate dev --name {이름}` → 새 폴더로 `down.sql` 이동. 이 세 단계를 `pnpm db:migrate {이름}` 래퍼 하나로. 수동 SQL(뷰·트리거)은 `--create-only` 후 양쪽에 손으로 추가. 운영 롤백은 `prisma db execute --file down.sql` + `migrate resolve --rolled-back`(실패한 마이그레이션만) |
+| M5 | ID 생성 | **PK는 UUID v7** — `String @id @default(uuid(7)) @db.Uuid`(Prisma Client 생성, 시간 순 정렬, 16바이트). Better Auth 는 `advanced.database.generateId: false` 로 자체 생성을 끄고 CLI 가 만든 인증 모델에 같은 `@default` 를 붙여 **전 테이블 한 방식**. 공유 ID(R8)는 PK 와 별도로 `@default(nanoid(12))` 추측 불가 문자열. 번호 id·serial 없음 |
 | M3 | 적용 순서 | 로컬 Docker DB → CI(빈 DB에 전체 적용 검증) → dev DB → 운영. **운영 적용은 사용자가 직접 실행**. `.claude/settings.json` 에서 마이그레이션 적용 명령은 항상 확인 |
 | — | 연결 | 런타임은 pooled `DATABASE_URL`(Neon 어댑터), CLI(`prisma.config.ts`)는 `DATABASE_URL_UNPOOLED` |
 | — | 시드 | `prisma/seed.ts` — 개발·테스트용 사용자·위시리스트·아이템. 운영에는 실행하지 않는다(환경 가드) |
@@ -36,3 +37,4 @@
 
 - 2026-09-27 최초 결정 (사용자: 추천대로)
 - 2026-10-04 M1에 기준선 E2E 전용 로컬 DB 예외 명시 (testing T8)
+- 2026-11-11 M2 `down.sql` 명령 확정(`--to-migrations`, 래퍼 스크립트화 — 사용자: 추천안. 기각: `--to-config-datasource` 는 로컬 DB 최신 전제·CI 검증 어려움 / 수기 작성은 빠뜨리기 쉬움), M5 ID 생성 UUID v7 추가(사용자: 추천안. 기각: cuid2 정렬 불가·문자열 인덱스 / Better Auth 기본값 혼용은 형식 두 가지)
