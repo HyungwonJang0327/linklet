@@ -1,0 +1,22 @@
+<!-- fixture-url: https://example-shop.test/products/price-data-attribute -->
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<title>가격 data 속성 | Example Shop</title>
+</head>
+<body itemscope itemtype="https://schema.org/Product">
+<span itemprop="name">데스크 매트 (라지)</span>
+<meta itemprop="description" content="메타 설명(텍스트가 없어 무시됨)">
+<div itemprop="offers" itemscope itemtype="https://schema.org/Offer">
+  <meta itemprop="price" content="12000">
+  <meta itemprop="priceCurrency" content="KRW">
+</div>
+<button class="buy-button" data-price="12000" data-product-price="12000"></button>
+<img itemprop="image" content="https://cdn.example-shop.test/mat/large.jpg" src="/mat/large-thumb.jpg" alt="데스크 매트">
+<p class="product-description">
+  부드러운 인조 가죽 데스크 매트.
+  라지 사이즈.
+</p>
+</body>
+</html>

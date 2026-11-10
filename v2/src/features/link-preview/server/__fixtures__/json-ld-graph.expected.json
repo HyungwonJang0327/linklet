@@ -1,0 +1,11 @@
+{
+  "success": true,
+  "data": {
+    "url": "https://example-shop.test/en/products/json-ld-graph",
+    "title": "Ceramic Pour-Over Dripper",
+    "description": "Hand-glazed ceramic dripper for 1–2 cups.",
+    "imageUrl": "https://cdn.example-shop.test/images/dripper.jpg",
+    "price": "€19,99",
+    "siteName": "Example Shop EU"
+  }
+}

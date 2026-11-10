@@ -1,0 +1,11 @@
+{
+  "success": true,
+  "data": {
+    "url": "https://gmarket-like.example-shop.test/item?goodscode=4004",
+    "title": "접이식 캠핑 의자 (그린)",
+    "description": "가볍고 튼튼한 접이식 의자",
+    "imageUrl": "https://gdimg.example-shop.test/4004/600.jpg",
+    "price": "27,500",
+    "siteName": "gmarket-like.example-shop.test"
+  }
+}
