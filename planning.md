@@ -83,7 +83,7 @@
 | 정상 응답 | `{ data }` / `{ data, nextCursor }`, 커서, 빈 배열, 204, null 명시, 문자열 id | api-response.md |
 | 공유 URL | `/w/{shareId}` — PK와 별도 공유 전용 ID, 재발급 가능 | api-response.md |
 | 입력 검증 | `features/*/schema.ts` Zod 공유, Route Handler에서 파싱 | api-response.md |
-| 테스트 | 순수 로직·서비스(Docker Postgres)·계약·E2E, 대상 한정 커버리지 80%, 기준선 E2E는 `v2/e2e/baseline/` + 로컬 Docker 전용 DB(로컬만) | testing.md |
+| 테스트 | 순수 로직·서비스(Docker Postgres)·계약·E2E, 대상 한정 커버리지 80%, 기준선 E2E는 `v2/e2e/baseline/` + 로컬 Docker 전용 DB(로컬만) + psql 고정 SQL 시드 | testing.md |
 | 로드맵 | Phase 0~8(준비·기반·인증·미리보기·핵심 흐름·공유+첫 배포·꾸미기·관리자·교체), 기간 산정 없이 시간 날 때 진행 | roadmap.md, todo/mvp-todo.md |
 | UI 시각 방향 | **B 깨끗한 캔버스** — 흰 배경·잉크·파랑 강조, 그림자 없는 1px 선, 2열 그리드. 조건: 공유 페이지 15px 이상, 빈 상태·랜딩 온도감 검토 | design-direction.md |
 | 카테고리 | 계기 3종 생일·기념일·언젠가(`birthday`·`occasion`·`someday`), 미선택 `null`·칩 없음, 생성 흐름에서 묻지 않음 | category.md |
@@ -106,7 +106,6 @@
 | v2가 쓸 Neon DB(기존 DB의 새 브랜치 / 새 프로젝트) | 첫 배포 때 (Phase 5, 로컬은 Docker Postgres) |
 | id 생성 방식 (cuid2 / UUID v7) | Phase 1 스키마 작업 |
 | `down.sql` 생성 명령 | Phase 1 (Prisma 7 문서 확인) |
-| 기준선 E2E 시드 방법 (psql SQL / 루트 Prisma 래퍼 / API 생성) | Phase 0 다음 항목 전 (메인 추천 psql SQL) |
 | 로그인 직후 위시리스트 0개면 `/wishlists/new` 직행 여부 | Phase 4 (F13·F14, designer 제안) |
 | 꾸미기 화면(F27) 주된 행동에 "링크 복사하기" 포함 여부 (INTENT 시나리오 3) | Phase 6 (F27) |
 | 기존 S3 버킷 삭제 | 교체 후 (사용자 작업) |
