@@ -1,0 +1,11 @@
+{
+  "success": true,
+  "data": {
+    "url": "https://example-shop.test/products/json-ld-product",
+    "title": "러닝화 에어라이트 270",
+    "description": "가벼운 메시 소재의 데일리 러닝화",
+    "imageUrl": "https://cdn.example-shop.test/images/airlite-270.jpg",
+    "price": "KRW 129000",
+    "siteName": "Example Shop App"
+  }
+}

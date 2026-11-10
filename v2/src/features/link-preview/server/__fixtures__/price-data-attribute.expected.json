@@ -1,0 +1,11 @@
+{
+  "success": true,
+  "data": {
+    "url": "https://example-shop.test/products/price-data-attribute",
+    "title": "데스크 매트 (라지)",
+    "description": "부드러운 인조 가죽 데스크 매트. 라지 사이즈.",
+    "imageUrl": "https://cdn.example-shop.test/mat/large.jpg",
+    "price": "12000",
+    "siteName": "example-shop.test"
+  }
+}

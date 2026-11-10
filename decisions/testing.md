@@ -11,6 +11,7 @@
 | T5 | 통합 테스트 DB | Docker Postgres — 로컬(Docker 설치·실행 확인 2026-09-27)과 CI(GitHub Actions service container). 테스트마다 깨끗한 DB |
 | T6 | 파일 위치 | 단위·통합은 소스 옆 `*.test.ts`, E2E는 `e2e/*.spec.ts` |
 | T7 | 기존 앱 기준선 E2E | `v2/e2e/baseline/` — v2의 Playwright를 쓰고, 기존 앱(`next start -p 3001`)을 대상으로 하는 별도 project. 기본 `pnpm test:e2e` 에서는 제외. 실행 DB는 T8. 교체 시 함께 정리 |
+| T9 | 기준선 E2E 시드 | 기준선 컨테이너의 psql 에 **고정 SQL 파일**(`v2/e2e/baseline/seed.sql`)을 흘린다 — 사용자·위시리스트·아이템·세션(`sessions` 행, 만료 먼 미래). 의존성 없음, 기존 스키마는 동결이라 SQL 고정이 안전. 실행은 `baseline:up` 끝 또는 테스트 `globalSetup` 에서 `docker compose exec psql`. 매 `down` 마다 DB가 사라지므로 시드는 멱등(`ON CONFLICT DO NOTHING` 또는 TRUNCATE 후 INSERT) |
 | T8 | 기준선 E2E 실행 DB | 로컬 Docker Postgres의 **기준선 전용 컨테이너**에 기존 앱 `prisma/schema.prisma` 를 `prisma db push` 로 적용(기존 마이그레이션은 드리프트 H5로 재현 불가). 데이터는 테스트가 직접 시드하고, 로그인은 `sessions` 행 + `next-auth.session-token` 쿠키 주입(기존 앱은 DB 세션). 기존 앱은 래퍼로 실행 — 기존 앱이 쓰는 env 키 전부를 로컬·더미 값으로 지정하고 하나라도 빠지면 중단(`next build/start` 가 `.env.production` 을 자동 로드하므로). **로컬 실행만, CI 제외**. `db push` 는 이 컨테이너에서만 허용하는 예외 |
 
 E2E 인증: Google OAuth는 자동화하지 않는다. 테스트 DB에 시드한 사용자·세션을 주입해 로그인 상태를 만든다. 실제 Google 로그인은 수동 확인(FEATURES F08).
@@ -47,3 +48,4 @@ E2E 인증: Google OAuth는 자동화하지 않는다. 테스트 DB에 시드한
 - 2026-09-27 최초 결정 (사용자: 추천대로)
 - 2026-10-04 T7 기준선 E2E 위치 추가 (사용자: 추천대로)
 - 2026-10-04 T8 기준선 E2E 실행 DB 추가 (사용자: A 로컬 Docker + db push)
+- 2026-11-10 T9 기준선 E2E 시드 방법 — psql 고정 SQL (사용자: 추천안. 기각: 루트 Prisma 클라이언트 래퍼 — 루트 코드 의존·모듈 해석 복잡 / 세션 주입 후 API 생성 — 기존 API 버그에 테스트가 의존)

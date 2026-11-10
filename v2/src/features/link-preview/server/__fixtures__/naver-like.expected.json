@@ -1,0 +1,11 @@
+{
+  "success": true,
+  "data": {
+    "url": "https://naver-like.example-shop.test/products/2002",
+    "title": "울 블렌드 머플러 (차콜)",
+    "description": "부드러운 울 혼방 머플러",
+    "imageUrl": "https://shop-phinf.example-shop.test/2002/main_1.jpg?type=w860",
+    "price": "39,000",
+    "siteName": "naverlikestore"
+  }
+}

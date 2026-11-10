@@ -1,0 +1,11 @@
+{
+  "success": true,
+  "data": {
+    "url": "https://example-shop.test/en/products/entities-whitespace",
+    "title": "Salt & Pepper Mill Set \"Classic\" '24",
+    "description": "Two-piece set. Adjustable grind. Ships in 2 days.",
+    "imageUrl": "https://cdn.example-shop.test/images/mill%20set.jpg",
+    "price": "$1,299.50",
+    "siteName": "Example  Shop US"
+  }
+}

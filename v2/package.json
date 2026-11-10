@@ -13,7 +13,11 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage",
-    "test:e2e": "playwright test"
+    "test:e2e": "playwright test",
+    "test:e2e:baseline": "BASELINE=1 playwright test --project=baseline",
+    "baseline:up": "bash e2e/baseline/run-baseline.sh",
+    "baseline:seed": "bash e2e/baseline/seed-baseline.sh",
+    "baseline:down": "bash e2e/baseline/stop-baseline.sh"
   },
   "dependencies": {
     "next": "16.3.6",

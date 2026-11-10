@@ -1,0 +1,28 @@
+<!-- fixture-url: https://example-shop.test/en/products/json-ld-graph -->
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Graph Product | Example Shop</title>
+<meta property="og:title" content="Ceramic Pour-Over Dripper">
+<meta property="og:description" content="Hand-glazed ceramic dripper for 1–2 cups.">
+<meta property="og:image" content="https://cdn.example-shop.test/images/dripper.jpg">
+<meta property="og:site_name" content="Example Shop EU">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    { "@type": "Organization", "name": "Example Shop EU" },
+    {
+      "@type": "Product",
+      "name": "Ceramic Pour-Over Dripper",
+      "offers": { "@type": "Offer", "price": "24.99", "priceCurrency": "EUR" }
+    }
+  ]
+}
+</script>
+</head>
+<body>
+<p class="price">€ 19,99 <span class="old-price">€ 24,99</span></p>
+</body>
+</html>

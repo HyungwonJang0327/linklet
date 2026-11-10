@@ -1,0 +1,11 @@
+{
+  "success": true,
+  "data": {
+    "url": "https://coupang-like.example-shop.test/vp/products/1001",
+    "title": "샘플 전기포트 1.7L, 실버, 1개",
+    "description": "쿠팡형 샘플몰 전기포트 상세",
+    "imageUrl": "https://thumbnail.example-shop.test/products/1001/main.jpg",
+    "price": "29,900",
+    "siteName": "coupang-like.example-shop.test"
+  }
+}

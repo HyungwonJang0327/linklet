@@ -1,0 +1,8 @@
+{
+  "success": true,
+  "data": {
+    "url": "https://example-shop.test/pages/title-only",
+    "title": "제목만 있는 페이지 — Example Shop",
+    "siteName": "example-shop.test"
+  }
+}

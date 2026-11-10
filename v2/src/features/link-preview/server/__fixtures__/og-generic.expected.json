@@ -1,0 +1,11 @@
+{
+  "success": true,
+  "data": {
+    "url": "https://example-shop.test/products/og-generic",
+    "title": "무선 키보드 K1 (화이트)",
+    "description": "조용한 타건감의 블루투스 키보드. 멀티 페어링 3대 지원.",
+    "imageUrl": "https://cdn.example-shop.test/images/k1-white-1200.jpg",
+    "price": "KRW 59000",
+    "siteName": "Example Shop"
+  }
+}

@@ -1,0 +1,31 @@
+<!-- fixture-url: https://example-shop.test/products/json-ld-product -->
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<title>JSON-LD 상품 | Example Shop</title>
+<meta property="og:title" content="러닝화 에어라이트 270">
+<meta property="og:image" content="https://cdn.example-shop.test/images/airlite-270.jpg">
+<meta name="description" content="가벼운 메시 소재의 데일리 러닝화">
+<meta name="application-name" content="Example Shop App">
+<script type="application/ld+json">
+[
+  { "@context": "https://schema.org", "@type": "WebPage", "name": "JSON-LD 상품" },
+  {
+    "@context": "https://schema.org",
+    "@type": "Product",
+    "name": "러닝화 에어라이트 270",
+    "image": ["https://cdn.example-shop.test/images/airlite-270.jpg"],
+    "offers": [
+      { "@type": "Offer", "price": 129000, "priceCurrency": "KRW", "availability": "https://schema.org/InStock" },
+      { "@type": "Offer", "price": 139000, "priceCurrency": "KRW" }
+    ]
+  }
+]
+</script>
+</head>
+<body>
+<h1 class="product-title">러닝화 에어라이트 270</h1>
+<div class="price">119,000원(무시되어야 함 — JSON-LD 가 우선)</div>
+</body>
+</html>

@@ -1,0 +1,11 @@
+{
+  "success": true,
+  "data": {
+    "url": "https://example-shop.test/catalog/chairs/relative-image-srcset",
+    "title": "원목 스툴 45",
+    "description": "원목 스툴. 높이 45cm.",
+    "imageUrl": "https://example-shop.test/catalog/chairs/images/stool-900.jpg",
+    "price": "₩45,000",
+    "siteName": "example-shop.test"
+  }
+}

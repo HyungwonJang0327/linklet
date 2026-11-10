@@ -65,6 +65,8 @@ const eslintConfig = defineConfig([
     'out/**',
     'build/**',
     'next-env.d.ts',
+    // 기준선 실행 상태(.run/) — baseline:up 이 루트 .next 를 .run/next-backup 으로 옮겨 두는 동안 lint 대상이 되지 않게
+    'e2e/baseline/.run/**',
   ]),
 ])
 
