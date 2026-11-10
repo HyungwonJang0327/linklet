@@ -22,6 +22,7 @@
 - [ ] 환경변수 스키마 `shared/config/env.ts` (서버·클라이언트 분리, 부팅 시 검증)
   - 완료 조건: 단위 테스트 — 필수 키 누락 시 실패, 에러 출력에 값 없음 / 커밋: `feat(config): 환경변수 Zod 스키마와 부팅 검증` / FEATURES: F01
 - [ ] 서버 구조화 로거 `server/logger.ts` (JSON, 개인정보 키 차단)
+  - 메모(2026-11-10 기준선 실측): 기존 앱은 ISR 재검증을 `http://localhost:3000` 에 하드코딩해 POST 한다. v2 는 외부·자기 호출 URL 을 `shared/config/env.ts` 값으로만 만들고 로컬 포트 하드코딩 금지(F01 검증 항목에 포함)
   - 완료 조건: 단위 테스트 — 이메일·토큰 필드가 출력되지 않음 / 커밋: `feat(api): 서버 구조화 로거 추가` / FEATURES: F07
 - [ ] Prisma 7.10.0 설치(`prisma@7.10.0` 명시) + `prisma.config.ts` + `server/db.ts` 인스턴스 1개 + Neon 어댑터
   - 선행: planning 미결 "id 생성 방식" 결정 (`/decide`)
@@ -37,7 +38,7 @@
 - [ ] 디자인 토큰 `@theme` 적용 (`decisions/design-tokens.md` 기준, `data-skin`·`data-mode` 구조로 스킨 × 라이트·다크 — `decisions/app-skin.md`)
   - 완료 조건: 원색 클래스 0, 토큰만 사용 / 커밋: `design(ui): 디자인 토큰 적용` / FEATURES: F03
 - [ ] i18n 사전 3개(ko·en·ja) + 타입 안전 `t()` + enum→키 매핑 위치
-  - 완료 조건: 단위 테스트 — 3개 사전 키 집합 동일 / 커밋: `feat(i18n): 사전 3개와 타입 안전 t()` / FEATURES: F04
+  - 완료 조건: 단위 테스트 — 3개 사전 키 집합 동일, **플레이스홀더 문법이 `t()` 치환 규칙과 일치**(기존 앱 버그: 사전 `{title}` vs `t()` `{{key}}` — 2026-11-10 기준선 실측) / 커밋: `feat(i18n): 사전 3개와 타입 안전 t()` / FEATURES: F04
 - [ ] root layout `<html lang>` + `[locale]` 레이아웃 + 언어 코드 `ko/en/ja` 검증
   - 완료 조건: E2E — 주요 경로에 `<html lang>` / 커밋: `feat(i18n): 언어별 레이아웃과 html lang` / FEATURES: F03
 - [ ] `proxy.ts` — `/` 요청을 Accept-Language 기준 언어 경로로, 미지원 언어는 `ko`
