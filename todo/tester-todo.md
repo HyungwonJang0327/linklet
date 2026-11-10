@@ -15,7 +15,7 @@
   - 완료 조건: 기존 앱에서 통과. 알려진 버그(H1 `/w/w/`, `/login` 404, 없는 shareUrl 200, 비로그인 `/api/wishlists` 200, 공유 API 비브라우저 UA 403 — 2026-11-08 실측)는 현재 동작으로 고정하고 주석에 FEATURES ID / 커밋: `test(share): 기존 앱 공유 페이지 기준선 E2E` / FEATURES: F23–F25
 - [x] 로그인 흐름 (2026-11-10, 99f7550 시드 + 26a82eb spec 16건, 31 passed) — 세션 주입 → 위시리스트 생성 → 아이템 수동 추가 → 수정·받음 표시·삭제
   - 완료 조건: 기존 앱에서 통과 / 커밋: `test(wishlist): 기존 앱 핵심 흐름 기준선 E2E` / FEATURES: F13–F17, F19, F21
-- [ ] 메타데이터 파서 정답 fixture — 쇼핑몰 HTML 저장본 + 기존 파서 출력 JSON 쌍 (수집 스크립트는 네트워크 없이 기존 파서만 실행)
+- [x] 메타데이터 파서 정답 fixture (2026-11-10, 855b4a7 — 12쌍, 결함 16개 기록) — 쇼핑몰 HTML 저장본 + 기존 파서 출력 JSON 쌍 (수집 스크립트는 네트워크 없이 기존 파서만 실행)
   - 완료 조건: `v2/src/features/link-preview/server/__fixtures__/` 에 쌍, 사이트 종류(OG·JSON-LD·셀렉터)별 1개 이상 / 커밋: `test(link-preview): 기존 파서 정답 fixture 추가` / FEATURES: F18
 
 ## Phase 1

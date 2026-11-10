@@ -28,7 +28,7 @@
 
 - [x] 기준선 E2E 실행 환경 결정 (2026-10-04, bddcbb5 — 로컬 Docker 전용 컨테이너 + db push, testing T8) — 기존 앱을 어떤 DB로 띄울지(로컬 Docker Postgres에 기존 스키마 적용 방식 / dev DB 읽기 전용 시나리오만). tester 규칙상 dev·운영 DB에 테스트 금지, 기존 마이그레이션은 드리프트(H5)로 그대로 재현 안 됨 → `/decide`
   - 완료 조건: `decisions/testing.md` 에 기준선 E2E 환경 추가 / 커밋: `docs(decisions): 기준선 E2E 실행 환경 결정` / 담당: 메인
-- [ ] 기준선 E2E 3건 + 파서 정답 fixture → `tester-todo.md` Phase 0
+- [x] 기준선 E2E 3건 + 파서 정답 fixture → `tester-todo.md` Phase 0 (2026-11-10 — 스크립트·project·E2E 31건·fixture 12쌍 전부 완료)
 - [x] 디자인 검토(방향·핵심 화면·토큰 대비) → `designer-todo.md` Phase 0 (2026-11-08, 4건 모두 완료)
 
 ### UI 리디자인 (담당: 메인, `decisions/roadmap.md`)
