@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# 기존 앱(루트) 기준선 실행 — 한 번에: 전용 Postgres 기동 → db push → 빌드 → next start -p 3001 → /api/health 대기
+# 기존 앱(루트) 기준선 실행 — 한 번에: 전용 Postgres 기동 → db push → 시드 → 빌드 → next start -p 3001 → /api/health 대기
 # 로컬 전용·CI 제외 (decisions/testing.md T7·T8). 종료·정리는 stop-baseline.sh
 set -euo pipefail
 source "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/lib.sh"
@@ -30,6 +30,9 @@ compose up -d --wait
 log "prisma db push (루트 Prisma 6 CLI, 로컬 컨테이너)"
 [ -x "$PRISMA_BIN" ] && [ -x "$NEXT_BIN" ] || die "루트 node_modules/.bin 에 prisma·next 가 없습니다. 루트에서 npm ci 를 실행하세요."
 run_in_root "$PRISMA_BIN" db push --skip-generate
+
+# 3-1. 시드 — seed.sql 을 psql 로 흘린다 (T9). 서버 기동과 분리해 두어 psql 로 바로 확인할 수 있고, 재시드는 baseline:seed
+bash "$BASELINE_DIR/seed-baseline.sh"
 
 # 4. 기존 .next 보존 → 프로덕션 빌드
 if [ -d "$NEXT_DIR" ] && [ ! -d "$NEXT_BACKUP_DIR" ]; then

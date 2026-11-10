@@ -12,6 +12,8 @@ NEXT_BIN="$ROOT_DIR/node_modules/.bin/next"
 PRISMA_BIN="$ROOT_DIR/node_modules/.bin/prisma"
 
 export BASELINE_DB_PORT="${BASELINE_DB_PORT:-54329}"
+export BASELINE_DB_USER="${BASELINE_DB_USER:-baseline}"
+export BASELINE_DB_NAME="${BASELINE_DB_NAME:-linklet_baseline}"
 export BASELINE_APP_PORT="${BASELINE_APP_PORT:-3001}"
 BASELINE_APP_URL="http://localhost:$BASELINE_APP_PORT"
 
