@@ -11,7 +11,7 @@
 
 위에서부터 순서대로. 각 항목은 FEATURES 한 행 안의 커밋 하나다.
 
-- [ ] Docker Postgres 로컬 환경 — `v2/docker-compose.yml`(테스트 DB 포트 분리), `pnpm db:up`/`db:down` 스크립트
+- [x] Docker Postgres 로컬 환경 (2026-11-11, 97c2d28 — dev 5433 · test 5434) — `v2/docker-compose.yml`(테스트 DB 포트 분리), `pnpm db:up`/`db:down` 스크립트
   - 완료 조건: 로컬에서 기동·접속 확인, 운영·dev 접속 문자열 없음 / 커밋: `chore(db): 로컬 Docker Postgres 구성` / FEATURES: F02
 - [ ] `server-only`·`zod` 설치 + `decisions/dependencies.md` 목록 기록
   - 완료 조건: 표에 두 줄 추가, 설치 버전 기록 / 커밋: `chore(deps): zod·server-only 추가` / FEATURES: F07
@@ -26,6 +26,7 @@
   - 완료 조건: 단위 테스트 — 이메일·토큰 필드가 출력되지 않음 / 커밋: `feat(api): 서버 구조화 로거 추가` / FEATURES: F07
 - [ ] Prisma 7.10.0 설치(`prisma@7.10.0` 명시) + `prisma.config.ts` + `server/db.ts` 인스턴스 1개 + Neon 어댑터
   - 선행 결정 완료(2026-11-11): PK `uuid(7) @db.Uuid`, Better Auth `generateId: false` — `decisions/db-migration.md` M5
+  - 결정할 것: 통합 테스트 DB URL 을 어떤 키로 넘길지(테스트 setup 에서 `DATABASE_URL` 덮기 vs `TEST_DATABASE_URL`) — CI service container 와 같은 키. `shared/config/env.ts` 는 `DATABASE_URL`·`DATABASE_URL_UNPOOLED` 둘 다 필수
   - 완료 조건: typecheck 통과, `new PrismaClient` 1곳 / 커밋: `chore(db): Prisma 7과 DB 클라이언트 설정` / FEATURES: F02
 - [ ] `down.sql` 생성 스크립트 — `pnpm db:migrate {이름}` 래퍼: `migrate diff --from-schema --to-migrations --script > down.sql` → `migrate dev --name` → 새 폴더로 이동 (`decisions/db-migration.md` M2, 2026-11-11 확정). 섀도 DB 필요 여부는 실행해서 확인·README 기록
   - 완료 조건: 빈 DB에 up → down → up 성공 / 커밋: `chore(db): 마이그레이션 down.sql 생성 스크립트` / FEATURES: F02
