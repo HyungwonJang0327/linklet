@@ -110,6 +110,24 @@ describe('createHandler', () => {
     expect(unexpected).toHaveBeenCalledWith(thrown, { route: '/api/test', method: 'POST' })
   })
 
+  it('route 의 percent-encoding 은 디코드해 넘긴다 (`%40` 으로 이메일 마스킹을 우회하지 못하게), 깨진 인코딩은 원문', async () => {
+    const unexpected = vi.mocked(logger.unexpected)
+    unexpected.mockClear()
+    const boom = createHandler(() => {
+      throw new Error('x')
+    })
+    await boom(new NextRequest('http://localhost/api/w/john.doe%40gmail.com'), ctxOf())
+    expect(unexpected).toHaveBeenLastCalledWith(expect.any(Error), {
+      route: '/api/w/john.doe@gmail.com',
+      method: 'GET',
+    })
+    await boom(new NextRequest('http://localhost/api/w/%E0%A4%A'), ctxOf())
+    expect(unexpected).toHaveBeenLastCalledWith(expect.any(Error), {
+      route: '/api/w/%E0%A4%A',
+      method: 'GET',
+    })
+  })
+
   it('로거가 throw 해도 500 INTERNAL JSON 이 나간다', async () => {
     vi.mocked(logger.unexpected).mockImplementationOnce(() => {
       throw new Error('logger down')

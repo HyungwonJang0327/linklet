@@ -61,11 +61,23 @@ export function createHandler<P extends RouteParams = RouteParams>(
 /**
  * 예상 못한 실패의 기록 지점 (E5) — 호출 지점은 이 함수 하나. AppError 는 로거가 걸러 기록하지 않는다.
  * route 는 pathname 만 — 쿼리스트링(토큰·검색어)은 로그에 넣지 않는다.
+ * pathname 은 percent-decoding 을 시도한 뒤 넘긴다 — `%40` 같은 인코딩이 마스킹 규칙을 우회하지 않게 (실패하면 원문).
  */
 function handleError(request: NextRequest, error: unknown): Response {
   return toErrorResponse(error, (unexpected) =>
-    logger.unexpected(unexpected, { route: request.nextUrl.pathname, method: request.method }),
+    logger.unexpected(unexpected, {
+      route: decodePathname(request.nextUrl.pathname),
+      method: request.method,
+    }),
   )
+}
+
+function decodePathname(pathname: string): string {
+  try {
+    return decodeURIComponent(pathname)
+  } catch {
+    return pathname
+  }
 }
 
 type Schema = z.core.$ZodType
