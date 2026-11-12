@@ -17,12 +17,13 @@
   - 완료 조건: 표에 두 줄 추가, 설치 버전 기록 / 커밋: `chore(deps): zod·server-only 추가` / FEATURES: F07
 - [x] `AppError` + 에러 코드 9종 + 응답 헬퍼(`{data}`·`{data, nextCursor}`·`{error}`·204) + 예상 못한 에러 → 500 일반 문구 (2026-11-12, 0e93f66 + 보안 반영 2dbb8a4·f04c92c — 테스트 40건, 커버리지 100%)
   - 완료 조건: `shared/lib` 단위 테스트(스키마 일치, `details: error.message` 없음) / 커밋: `feat(api): 응답·에러 헬퍼와 AppError 추가` / FEATURES: F07
-- [ ] Route Handler 래퍼 — Zod 파싱 실패 → `400 VALIDATION_FAILED` + `details: {path, code}[]`
+- [x] Route Handler 래퍼 (2026-11-12, 1c738b7 ESLint + 3cf3799 — 위치 (A) `server/api-handler.ts`, 테스트 75건) — Zod 파싱 실패 → `400 VALIDATION_FAILED` + `details: {path, code}[]`
   - 포함: ESLint `no-restricted-imports` 로 `zod`(classic) import 금지, `zod/mini` 만 허용 (dependencies.md)
   - 결정할 것: 래퍼 위치 — (A) `server/api-handler.ts` 에 두고 `server/logger` 직접 import(단순) / (B) `shared/lib` 에 두고 로거 주입 팩토리. 메인 추천 (A) — Route Handler 는 `server/` import 허용, shared/lib → server 역방향 금지 유지
   - Zod 실패 → `new AppError('VALIDATION_FAILED', issues.map(i => ({ path: i.path.map(String).join('.').slice(0,100), code: i.code })))`. Zod message 는 details 에 넣지 않는다
   - 완료 조건: 단위 테스트 / 커밋: `feat(api): Route Handler 입력 파싱 래퍼 추가` / FEATURES: F07
 - [ ] 환경변수 스키마 `shared/config/env.ts` (서버·클라이언트 분리, 부팅 시 검증)
+  - 메모: env 실패는 요청 컨텍스트가 아니므로 `z.safeParse` 직접 + `toFieldErrors`(값 미포함) 출력 후 종료. 서버 스키마만 `server-only`, 클라이언트는 `NEXT_PUBLIC_` 만. 외부·자기 호출 URL 키(`NEXT_PUBLIC_APP_URL`) 필수 — 로컬 포트 하드코딩 금지
   - 완료 조건: 단위 테스트 — 필수 키 누락 시 실패, 에러 출력에 값 없음 / 커밋: `feat(config): 환경변수 Zod 스키마와 부팅 검증` / FEATURES: F01
 - [ ] 서버 구조화 로거 `server/logger.ts` (JSON, 개인정보 키 차단)
   - 요구사항(security-reviewer 2026-11-12): 절대 throw 하지 않음(내부 try/catch) · 허용 목록 필드만(level·event·requestId·route·method·status·code·errorName·message·durationMs, Prisma meta 는 target·modelName 만) · message 정규화(≤300자, 개행→공백, 이메일·JWT·Bearer/token=/key=/secret= 값·32자+ hex/base64·URL 쿼리스트링 마스킹, PrismaClientValidationError 는 첫 줄만) · stack 은 Sentry 로만, 콘솔은 프레임 ≤10 경로만 · AppError 는 기록 안 함 · 테스트: 이메일·토큰이 message/cause/meta 에 있어도 로그에 없음, throw 하는 getter, Prisma validation 첫 줄
@@ -39,6 +40,7 @@
 - [ ] 시드 `prisma/seed.ts` + 환경 가드(운영·원격 DB면 즉시 종료)
   - 완료 조건: 로컬 시드 후 앱 기동, 가드 단위 테스트 / 커밋: `feat(db): 개발·테스트 시드와 환경 가드` / FEATURES: F02
 - [ ] 헬스 체크 `GET /api/health` (실패 시 일반 문구)
+  - 확인: `export const GET = createHandler(...)` 가 Next typegen route 검사(`RouteHandler<P>` vs ParamMap)와 호환되는지 — 첫 실제 route 파일
   - 완료 조건: 단위 테스트 — DB 실패 시 내부 메시지 없음 / 커밋: `feat(api): 헬스 체크 API 추가` / FEATURES: I01
 - [ ] 디자인 토큰 `@theme` 적용 (`decisions/design-tokens.md` 기준, `data-skin`·`data-mode` 구조로 스킨 × 라이트·다크 — `decisions/app-skin.md`)
   - 완료 조건: 원색 클래스 0, 토큰만 사용 / 커밋: `design(ui): 디자인 토큰 적용` / FEATURES: F03
