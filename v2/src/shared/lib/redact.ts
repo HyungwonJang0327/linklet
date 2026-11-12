@@ -21,15 +21,19 @@ const REDACTION_RULES: ReadonlyArray<readonly [RegExp, string]> = [
   [/\b([a-z][a-z0-9+.-]*:\/\/)[^\s/@'"`<>]+@/gi, '$1***@'],
   // JWT — base64url 세 조각
   [/\b[A-Za-z0-9_-]{8,}\.[A-Za-z0-9_-]{8,}\.[A-Za-z0-9_-]{8,}\b/g, REDACTED],
-  // Bearer 토큰
+  // Cookie / Set-Cookie 헤더 — 값 전체(줄 끝까지). 키 규칙보다 앞: `a=1; csrf=2` 조각이 아니라 통째로 지운다
+  [/(\b(?:set-)?cookie\s*:)[^\r\n]*/gi, '$1 ***'],
+  // Bearer · Basic 토큰 (RFC 7235 — 스킴 이름은 대소문자 무관)
   [/\bBearer\s+[^\s'"`,;]+/gi, 'Bearer ***'],
-  // `token=…`·`api_key: …`·`"client_secret": "…"` — 키 이름에 민감어가 들어 있으면 값을 지운다
+  [/\bBasic\s+[A-Za-z0-9+/=_-]+/gi, 'Basic ***'],
+  // `token=…`·`api_key: …`·`"client_secret": "…"` — 키 이름에 민감어가 들어 있으면 값을 지운다.
+  // 민감어는 부분 일치(`pass` ⊃ password·passwd, `auth` ⊃ authorization, `sig` ⊃ signature) — 과잉 마스킹 허용
   [
-    /([\w-]*(?:token|key|secret|password|passwd|pwd|authorization|credential|cookie|session)[\w-]*)(["']?\s*[=:]\s*["']?)[^\s&,;"'`]+/gi,
+    /([\w-]*(?:token|key|secret|pass|pwd|auth|credential|cookie|session|sig|private|csrf|otp|state)[\w-]*)(["']?\s*[=:]\s*["']?)[^\s&,;"'`]+/gi,
     '$1$2***',
   ],
-  // 이메일
-  [/[A-Za-z0-9._%+-]+@[A-Za-z0-9-]+(?:\.[A-Za-z0-9-]+)+/g, '***@***'],
+  // 이메일 — 유니코드 로컬파트·도메인, `@` 가 `%40` 으로 인코딩된 형태(URL 경로·쿼리)도
+  [/[\p{L}\p{N}._%+-]+(?:@|%40)[\p{L}\p{N}-]+(?:\.[\p{L}\p{N}-]+)+/gu, '***@***'],
   // URL 쿼리스트링 (서명·토큰이 흔히 실린다)
   [/(\b[a-z][a-z0-9+.-]*:\/\/[^\s?#'"`<>]*)\?[^\s#'"`<>]*/gi, '$1?***'],
   // 32자+ hex (세션 ID·해시·API 키)
