@@ -21,7 +21,7 @@ describe('ok', () => {
   })
 
   it('생성은 201 로 지정할 수 있다', async () => {
-    const res = ok({ id: '1' }, { status: 201, headers: { Location: '/api/wishlists/1' } })
+    const res = ok({ id: '1' }, { status: 201, location: '/api/wishlists/1' })
     expect(res.status).toBe(201)
     expect(res.headers.get('location')).toBe('/api/wishlists/1')
     expect(await res.json()).toEqual({ data: { id: '1' } })
@@ -151,5 +151,65 @@ describe('toErrorResponse', () => {
     const line = spy.mock.calls[0]?.[0] as string
     expect(line).not.toContain('secret')
     expect(JSON.parse(line)).toMatchObject({ name: 'NonError', message: 'string' })
+  })
+})
+
+describe('security-reviewer 지적 반영 (H8 회귀)', () => {
+  it('로그 훅이 throw 해도 500 INTERNAL JSON 이 나간다', async () => {
+    const spy = vi.spyOn(console, 'error').mockImplementation(() => {})
+    const res = toErrorResponse(new Error('x'), () => {
+      throw new Error('logger down')
+    })
+    expect(res.status).toBe(500)
+    expect(await res.json()).toEqual({
+      error: { code: 'INTERNAL', message: UNEXPECTED_ERROR_MESSAGE },
+    })
+    spy.mockRestore()
+  })
+
+  it('message getter 가 throw 하는 Error 도 로그 1줄 + 500 JSON', async () => {
+    class Hostile extends Error {
+      override get message(): string {
+        throw new Error('nope')
+      }
+    }
+    const spy = vi.spyOn(console, 'error').mockImplementation(() => {})
+    const res = toErrorResponse(new Hostile())
+    expect(res.status).toBe(500)
+    expect(await res.json()).toEqual({
+      error: { code: 'INTERNAL', message: UNEXPECTED_ERROR_MESSAGE },
+    })
+    expect(spy).toHaveBeenCalledTimes(1)
+    expect(String(spy.mock.calls[0]?.[0])).toContain('unreadable')
+    spy.mockRestore()
+  })
+
+  it('Prisma 모양 Error(code·meta·cause) 도 본문은 code·message 두 키뿐', async () => {
+    const token = crypto.randomUUID()
+    const err = Object.assign(new Error(`Invalid invocation: { email: "${token}@example.com" }`), {
+      code: 'P2002',
+      meta: { target: ['email'] },
+      cause: new Error(token),
+    })
+    const spy = vi.spyOn(console, 'error').mockImplementation(() => {})
+    const res = toErrorResponse(err)
+    const body = (await res.json()) as { error: Record<string, unknown> }
+    expect(Object.keys(body.error)).toEqual(['code', 'message'])
+    expect(JSON.stringify(body)).not.toContain(token)
+    expect(JSON.stringify(body)).not.toContain('P2002')
+    spy.mockRestore()
+  })
+
+  it('ok 는 Location 외 헤더를 받지 않아 Content-Type 을 바꿀 수 없다', () => {
+    const res = ok({ a: 1 }, { status: 201, location: '/api/wishlists/1' })
+    expect(res.headers.get('content-type')).toContain('application/json')
+    expect(res.headers.get('location')).toBe('/api/wishlists/1')
+    expect(res.headers.get('set-cookie')).toBeNull()
+  })
+
+  it('ok(undefined) 는 개발자 실수로 보고 throw, okList 의 nextCursor undefined 는 null 로', async () => {
+    expect(() => ok(undefined)).toThrow(TypeError)
+    const res = okList([], undefined as unknown as null)
+    expect(await res.json()).toEqual({ data: [], nextCursor: null })
   })
 })
