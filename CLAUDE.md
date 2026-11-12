@@ -108,6 +108,7 @@ v2/
 ### 타입
 - TypeScript strict. **`any` 금지** (ESLint 에러). 외부 데이터는 `unknown` 으로 받아 Zod로 좁힌다
 - 요청·폼 타입은 Zod 스키마에서 `z.infer` 로 만든다. DB 타입을 손으로 복제하지 않는다 (리뉴얼 전 `types/index.ts` 드리프트)
+- Zod 는 **`zod/mini` 만 import** (classic `zod` 는 클라이언트 92KB gzip — `decisions/dependencies.md`). ESLint 로 금지
 - 서버 전용 모듈은 `import 'server-only'`
 
 ### 상태 관리
