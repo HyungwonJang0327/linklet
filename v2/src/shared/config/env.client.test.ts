@@ -67,8 +67,7 @@ describe('클라이언트 환경변수 스키마 (env.client.ts)', () => {
     )
     expect(JSON.parse(String(errorSpy.mock.calls[0]?.[0]))).toEqual({
       level: 'error',
-      event: 'env.invalid',
-      scope: 'client',
+      event: 'env.invalid.client',
       details: [{ path: 'NEXT_PUBLIC_APP_URL', code: 'invalid_type' }],
     })
   })

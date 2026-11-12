@@ -7,6 +7,8 @@ import { AppError } from '@/shared/lib/api-error'
 import { toErrorResponse } from '@/shared/lib/api-response'
 import { parseOrThrow } from '@/shared/lib/validation'
 
+import { logger } from './logger'
+
 // Route Handler 래퍼 — decisions/api-response.md V2, error-handling.md E2·E5, architecture.md A4
 // app/api/* 는 이 래퍼로 감싼 함수만 export 한다. 입력은 parseBody·parseQuery·parseParams 로 Zod 파싱한 뒤 서비스 호출.
 //
@@ -19,7 +21,7 @@ import { parseOrThrow } from '@/shared/lib/validation'
 //   })
 //
 // 위치가 server/ 인 이유: 로거(server/logger)를 직접 import 하기 위해. shared/lib → server 역방향은 금지.
-// 로거가 들어오면 아래 handleError 한 곳만 바꾼다.
+// 예상 못한 실패의 기록은 아래 handleError 한 곳에서만 한다.
 
 /** Next 16 동적 세그먼트 값 — `[id]` 는 string, `[...slug]` 는 string[] */
 export type RouteParams = Record<string, string | string[] | undefined>
@@ -51,14 +53,19 @@ export function createHandler<P extends RouteParams = RouteParams>(
     try {
       return await fn({ request, params: context.params })
     } catch (error) {
-      return handleError(error)
+      return handleError(request, error)
     }
   }
 }
 
-/** 예상 못한 실패의 기록 지점 — server/logger 가 생기면 두 번째 인자로 넘긴다 (E5). 호출 지점은 이 함수 하나 */
-function handleError(error: unknown): Response {
-  return toErrorResponse(error)
+/**
+ * 예상 못한 실패의 기록 지점 (E5) — 호출 지점은 이 함수 하나. AppError 는 로거가 걸러 기록하지 않는다.
+ * route 는 pathname 만 — 쿼리스트링(토큰·검색어)은 로그에 넣지 않는다.
+ */
+function handleError(request: NextRequest, error: unknown): Response {
+  return toErrorResponse(error, (unexpected) =>
+    logger.unexpected(unexpected, { route: request.nextUrl.pathname, method: request.method }),
+  )
 }
 
 type Schema = z.core.$ZodType

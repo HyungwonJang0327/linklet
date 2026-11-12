@@ -13,6 +13,12 @@ import {
   parseQuery,
   type RouteParams,
 } from './api-handler'
+import { logger } from './logger'
+
+// server/logger 는 검증된 env 를 로드하므로 여기서는 mock — 래퍼가 "무엇을 넘기는지"(route·method)만 본다
+vi.mock('./logger', () => ({
+  logger: { info: vi.fn(), warn: vi.fn(), error: vi.fn(), unexpected: vi.fn() },
+}))
 
 // decisions/api-response.md V2, error-handling.md E2 — 래퍼가 모든 throw 를 { error } 응답으로 바꾸고, 입력 파싱 실패는 400
 
@@ -87,16 +93,33 @@ describe('createHandler', () => {
     expect((await res.json()).error.code).toBe('INTERNAL')
   })
 
-  it('예상된 실패(AppError)는 로그를 남기지 않고, 예상 못한 실패만 한 줄 남긴다 (E5)', async () => {
-    const spy = vi.spyOn(console, 'error').mockImplementation(() => {})
+  it('예상된 실패(AppError)는 로거에 넘기지 않고, 예상 못한 실패만 logger.unexpected 로 (E5)', async () => {
+    const unexpected = vi.mocked(logger.unexpected)
+    unexpected.mockClear()
     await createHandler(() => {
       throw new AppError('FORBIDDEN')
     })(new NextRequest(BASE), ctxOf())
-    expect(spy).not.toHaveBeenCalled()
+    expect(unexpected).not.toHaveBeenCalled()
+
+    const thrown = new TypeError('x')
     await createHandler(() => {
-      throw new TypeError('x')
+      throw thrown
+    })(new NextRequest(`${BASE}?token=abc`, { method: 'POST' }), ctxOf())
+    expect(unexpected).toHaveBeenCalledTimes(1)
+    // route 는 pathname 만 — 쿼리스트링은 로그에 가지 않는다
+    expect(unexpected).toHaveBeenCalledWith(thrown, { route: '/api/test', method: 'POST' })
+  })
+
+  it('로거가 throw 해도 500 INTERNAL JSON 이 나간다', async () => {
+    vi.mocked(logger.unexpected).mockImplementationOnce(() => {
+      throw new Error('logger down')
+    })
+    vi.spyOn(console, 'error').mockImplementation(() => {})
+    const res = await createHandler(() => {
+      throw new Error('x')
     })(new NextRequest(BASE), ctxOf())
-    expect(spy).toHaveBeenCalledTimes(1)
+    expect(res.status).toBe(500)
+    expect((await res.json()).error.code).toBe('INTERNAL')
   })
 })
 

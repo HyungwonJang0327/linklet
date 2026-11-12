@@ -1,8 +1,10 @@
 import type * as z from 'zod/mini'
 
+import { formatLogLine } from '@/shared/lib/log-format'
 import { toFieldErrors } from '@/shared/lib/validation'
 
 // 환경변수 검증 실패 처리 — env.ts(서버)·env.client.ts(클라이언트)가 함께 쓴다. server-only 없음.
+// server/logger 는 env 를 import 하므로(역방향·순환) 여기서는 쓸 수 없다 → 순수 포맷 함수 shared/lib/log-format 만 쓴다.
 // FEATURES F01: 기존 앱은 비밀값 앞 10자를 출력했다. 여기서는 어떤 경로로도 값이 나가지 않는다 —
 // Zod issue 는 `input` 에 원본 값을 들고 있으므로 issue 객체를 그대로 로그·에러에 넣지 않고 path·code 만 뽑는다.
 
@@ -21,7 +23,7 @@ export function failInvalidEnv(
   issues: readonly z.core.$ZodIssue[],
 ): never {
   const details = toFieldErrors(issues)
-  console.error(JSON.stringify({ level: 'error', event: 'env.invalid', scope, details }))
+  console.error(formatLogLine({ level: 'error', event: `env.invalid.${scope}`, details }))
   const keys = [...new Set(details.map((detail) => detail.path))].join(', ')
   throw new Error(`Invalid environment variables (${scope}): ${keys}`)
 }

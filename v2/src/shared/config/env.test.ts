@@ -116,8 +116,8 @@ describe('서버 환경변수 스키마 (env.ts)', () => {
 
     const [line] = logLines(errorSpy)
     const parsed = JSON.parse(line ?? '')
-    expect(Object.keys(parsed).sort()).toEqual(['details', 'event', 'level', 'scope'])
-    expect(parsed).toMatchObject({ level: 'error', event: 'env.invalid', scope: 'server' })
+    expect(Object.keys(parsed).sort()).toEqual(['details', 'event', 'level'])
+    expect(parsed).toMatchObject({ level: 'error', event: 'env.invalid.server' })
     expect(parsed.details).toEqual([
       { path: 'NEXT_PUBLIC_APP_URL', code: 'invalid_format' },
       { path: 'DATABASE_URL', code: 'invalid_format' },

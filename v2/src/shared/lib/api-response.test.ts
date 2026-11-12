@@ -128,7 +128,7 @@ describe('toErrorResponse', () => {
     expect(onUnexpectedError).toHaveBeenCalledWith(original)
   })
 
-  it('기본 로그 훅은 에러 이름·메시지만 한 줄 JSON 으로 남긴다', () => {
+  it('기본 로그 훅은 에러 이름·메시지만 한 줄 JSON 으로 남긴다 (stack 없음 — 환경을 모르는 shared 안전망)', () => {
     const spy = vi.spyOn(console, 'error').mockImplementation(() => {})
     toErrorResponse(new RangeError('out of range'))
     expect(spy).toHaveBeenCalledTimes(1)
@@ -137,9 +137,18 @@ describe('toErrorResponse', () => {
     expect(JSON.parse(line as string)).toEqual({
       level: 'error',
       event: 'unexpected_error',
-      name: 'RangeError',
+      errorName: 'RangeError',
       message: 'out of range',
     })
+  })
+
+  it('기본 로그 훅도 마스킹한다 — 메시지의 이메일·접속 문자열이 출력에 없다', () => {
+    const token = crypto.randomUUID()
+    const spy = vi.spyOn(console, 'error').mockImplementation(() => {})
+    toErrorResponse(new Error(`postgresql://u:${token}@h/db for ${token}@example.com`))
+    const line = String(spy.mock.calls[0]?.[0])
+    expect(line).not.toContain(token)
+    expect(JSON.parse(line).message).toBe('postgresql://*** for ***@***')
   })
 
   it('기본 로그 훅은 Error 가 아닌 값의 내용을 남기지 않는다 (타입만)', () => {
@@ -147,7 +156,7 @@ describe('toErrorResponse', () => {
     toErrorResponse('raw secret string')
     const line = spy.mock.calls[0]?.[0] as string
     expect(line).not.toContain('secret')
-    expect(JSON.parse(line)).toMatchObject({ name: 'NonError', message: 'string' })
+    expect(JSON.parse(line)).toMatchObject({ errorName: 'NonError', message: 'string' })
   })
 })
 
