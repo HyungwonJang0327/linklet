@@ -22,10 +22,12 @@
   - 결정할 것: 래퍼 위치 — (A) `server/api-handler.ts` 에 두고 `server/logger` 직접 import(단순) / (B) `shared/lib` 에 두고 로거 주입 팩토리. 메인 추천 (A) — Route Handler 는 `server/` import 허용, shared/lib → server 역방향 금지 유지
   - Zod 실패 → `new AppError('VALIDATION_FAILED', issues.map(i => ({ path: i.path.map(String).join('.').slice(0,100), code: i.code })))`. Zod message 는 details 에 넣지 않는다
   - 완료 조건: 단위 테스트 / 커밋: `feat(api): Route Handler 입력 파싱 래퍼 추가` / FEATURES: F07
-- [ ] 환경변수 스키마 `shared/config/env.ts` (서버·클라이언트 분리, 부팅 시 검증)
+- [x] 환경변수 스키마 `shared/config/env.ts` (서버·클라이언트 분리, 부팅 시 검증) (2026-11-12, 9bb7615 — 테스트 19건, 값 출력 0 고정)
   - 메모: env 실패는 요청 컨텍스트가 아니므로 `z.safeParse` 직접 + `toFieldErrors`(값 미포함) 출력 후 종료. 서버 스키마만 `server-only`, 클라이언트는 `NEXT_PUBLIC_` 만. 외부·자기 호출 URL 키(`NEXT_PUBLIC_APP_URL`) 필수 — 로컬 포트 하드코딩 금지
   - 완료 조건: 단위 테스트 — 필수 키 누락 시 실패, 에러 출력에 값 없음 / 커밋: `feat(config): 환경변수 Zod 스키마와 부팅 검증` / FEATURES: F01
 - [ ] 서버 구조화 로거 `server/logger.ts` (JSON, 개인정보 키 차단)
+  - 추가 요구(env 항목 메모): `postgres(ql)://user:pass@host` 접속 문자열 전체 마스킹. `shared/config/env-failure.ts` 는 역방향 금지라 로거를 못 쓴다 → 로거의 순수 포맷·마스킹 함수를 `shared/lib/log-format.ts` 에 두고 `server/logger` 가 감싸는 구조 검토
+  - 포함: ESLint `no-restricted-syntax` 로 `process.env` 직접 참조 금지(`shared/config/**`·`instrumentation.ts` 제외)
   - 요구사항(security-reviewer 2026-11-12): 절대 throw 하지 않음(내부 try/catch) · 허용 목록 필드만(level·event·requestId·route·method·status·code·errorName·message·durationMs, Prisma meta 는 target·modelName 만) · message 정규화(≤300자, 개행→공백, 이메일·JWT·Bearer/token=/key=/secret= 값·32자+ hex/base64·URL 쿼리스트링 마스킹, PrismaClientValidationError 는 첫 줄만) · stack 은 Sentry 로만, 콘솔은 프레임 ≤10 경로만 · AppError 는 기록 안 함 · 테스트: 이메일·토큰이 message/cause/meta 에 있어도 로그에 없음, throw 하는 getter, Prisma validation 첫 줄
   - 메모(2026-11-10 기준선 실측): 기존 앱은 ISR 재검증을 `http://localhost:3000` 에 하드코딩해 POST 한다. v2 는 외부·자기 호출 URL 을 `shared/config/env.ts` 값으로만 만들고 로컬 포트 하드코딩 금지(F01 검증 항목에 포함)
   - 완료 조건: 단위 테스트 — 이메일·토큰 필드가 출력되지 않음 / 커밋: `feat(api): 서버 구조화 로거 추가` / FEATURES: F07
