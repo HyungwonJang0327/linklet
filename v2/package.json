@@ -15,6 +15,11 @@
     "test:coverage": "vitest run --coverage",
     "test:e2e": "playwright test",
     "test:e2e:baseline": "BASELINE=1 playwright test --project=baseline",
+    "db:up": "docker compose up -d --wait",
+    "db:down": "docker compose down",
+    "db:down:clean": "docker compose down -v",
+    "db:test:up": "docker compose up -d --wait db-test",
+    "db:test:down": "docker compose rm -sfv db-test",
     "baseline:up": "bash e2e/baseline/run-baseline.sh",
     "baseline:seed": "bash e2e/baseline/seed-baseline.sh",
     "baseline:down": "bash e2e/baseline/stop-baseline.sh"
@@ -22,7 +27,9 @@
   "dependencies": {
     "next": "16.3.6",
     "react": "19.2.8",
-    "react-dom": "19.2.8"
+    "react-dom": "19.2.8",
+    "server-only": "^0.0.1",
+    "zod": "^4.6.7"
   },
   "devDependencies": {
     "@playwright/test": "1.63.0",

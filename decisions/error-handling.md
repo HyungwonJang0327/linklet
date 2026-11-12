@@ -24,12 +24,12 @@ type FieldError = { path: string; code: string }   // 검증 실패 시 필드�
 | `UPSTREAM_FAILED` | 502 | 외부 서비스 실패 (메타데이터 대상 사이트·저장소) | ✓ |
 | `INTERNAL` | 500 | 예상 못한 실패 | ✓ |
 
-- `message`: 개발자용 영어. **화면에 표시하지 않는다**
+- `message`: 개발자용 영어. **화면에 표시하지 않는다**. 값은 코드 표의 **고정 문구뿐** — `AppError` 에 커스텀 문구 인자가 없다(2026-11-12, H8 재발 경로 차단). 맥락은 `details` 로만
 - 응답은 공용 헬퍼로만 만든다. Route Handler에서 `NextResponse.json({ error: ... })` 를 직접 쓰지 않는다
 
 ### E2. 예상된 실패 / 예상 못한 실패
 
-- 예상된 실패: 서비스가 `AppError(code, status, details?)` 를 throw
+- 예상된 실패: 서비스가 `AppError(code, details?)` 를 throw (status 는 코드 표에서 자동)
 - 예상 못한 실패: 그 외 모든 예외. 응답 헬퍼가 `500 INTERNAL` + 일반 메시지로 바꾸고, 로그(E5)를 남긴다. 원본 메시지·스택은 응답에 넣지 않는다
 - 재시도 가능 여부는 응답 필드로 두지 않고 `code` 로 판단한다 (위 표). TanStack Query 재시도 정책이 이 표를 따른다
 
@@ -89,3 +89,4 @@ type FieldError = { path: string; code: string }   // 검증 실패 시 필드�
 ## 갱신 이력
 
 - 2026-09-27 최초 결정 (사용자: E5만 Sentry 추가, 나머지 추천대로)
+- 2026-11-12 E1 message 고정 문구화, E2 `AppError(code, details?)` 시그니처 (security-reviewer F07 지적 → 사용자: message 인자 제거 추천안. 기각: 린트+런타임 가드 3겹)

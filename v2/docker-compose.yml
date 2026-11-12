@@ -1,0 +1,45 @@
+# v2 로컬 Postgres (decisions/testing.md T5, decisions/db-migration.md M3)
+# - 로컬 전용. CI 는 GitHub Actions service container 를 쓰므로 이 파일을 읽지 않는다
+# - 접속 정보는 더미 고정값(시크릿 아님). 운영·dev(Neon) 접속 문자열은 여기에 절대 넣지 않는다
+# - db      : 개발용. named volume 으로 데이터 유지 (pnpm db:down:clean 으로 삭제)
+# - db-test : 통합 테스트용. tmpfs 라 내려가면 사라진다. "테스트마다 깨끗한 DB" 는 테스트 setup 이 책임진다
+# - 호스트 포트: 5433(dev)·5434(test). 5432 는 다른 로컬 Postgres, 54329 는 기준선(e2e/baseline) 과 겹치지 않게
+# - 변수는 포트 덮어쓰기용 뿐. .env 의 다른 키를 참조하지 않는다 (compose 는 v2/.env 를 ${} 치환에만 읽는다)
+name: linklet-v2
+
+x-postgres-common: &postgres-common
+  image: postgres:17-alpine # Neon 기본 메이저(17)와 동일. 기준선 컨테이너와 같은 이미지
+  healthcheck:
+    # -h localhost: initdb 중 임시 서버는 unix 소켓만 열어 TCP 검사로 '진짜' 기동을 구분한다
+    test: ['CMD-SHELL', 'pg_isready -h localhost -U $$POSTGRES_USER -d $$POSTGRES_DB']
+    interval: 1s
+    timeout: 3s
+    retries: 30
+
+services:
+  db:
+    <<: *postgres-common
+    container_name: linklet-v2-db
+    environment:
+      POSTGRES_USER: linklet
+      POSTGRES_PASSWORD: linklet
+      POSTGRES_DB: linklet_dev
+    ports:
+      - '127.0.0.1:${LINKLET_DEV_DB_PORT:-5433}:5432'
+    volumes:
+      - db-data:/var/lib/postgresql/data
+
+  db-test:
+    <<: *postgres-common
+    container_name: linklet-v2-db-test
+    environment:
+      POSTGRES_USER: linklet
+      POSTGRES_PASSWORD: linklet
+      POSTGRES_DB: linklet_test
+    ports:
+      - '127.0.0.1:${LINKLET_TEST_DB_PORT:-5434}:5432'
+    tmpfs:
+      - /var/lib/postgresql/data
+
+volumes:
+  db-data:
