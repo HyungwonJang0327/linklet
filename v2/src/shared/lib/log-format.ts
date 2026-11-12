@@ -194,7 +194,10 @@ function redactLines(text: string): string {
     .join('\n')
 }
 
-/** V8 스택에서 `at …` 프레임만 ≤ STACK_MAX_FRAMES 개, 각 프레임은 `file:line:col` 위치만(함수 이름·인자 없음). 프레임이 없으면 undefined */
+/**
+ * V8 스택에서 `at …` 프레임만 ≤ STACK_MAX_FRAMES 개, 각 프레임은 `file:line:col` 위치만(함수 이름·인자 없음). 프레임이 없으면 undefined.
+ * 개발자 홈 디렉터리(`/Users/<이름>`·`/home/<이름>`)는 `~` 로 — 계정 이름도 개인정보다
+ */
 function summarizeStack(stack: string): string | undefined {
   const frames = stack.split(/\r?\n/).filter((line) => /^\s*at\s/.test(line))
   if (frames.length === 0) return undefined
@@ -202,10 +205,13 @@ function summarizeStack(stack: string): string | undefined {
     .slice(0, STACK_MAX_FRAMES)
     .map((frame) => {
       const location = /((?:[A-Za-z]:)?[^\s()]+:\d+:\d+)\)?\s*$/.exec(frame)?.[1]
-      return location === undefined ? '<anonymous>' : redact(location).slice(0, ROUTE_MAX)
+      if (location === undefined) return '<anonymous>'
+      return redact(location.replace(HOME_DIR_PATTERN, '~')).slice(0, ROUTE_MAX)
     })
     .join('\n')
 }
+
+const HOME_DIR_PATTERN = /\/(?:Users|home)\/[^/]+/g
 
 function pickDetails(value: readonly unknown[]): FieldError[] {
   const out: FieldError[] = []

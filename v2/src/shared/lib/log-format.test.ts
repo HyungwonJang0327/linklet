@@ -133,6 +133,19 @@ describe('summarizeError', () => {
     expect(summary.stack).not.toContain('boom')
   })
 
+  it('프레임의 홈 디렉터리(/Users/<이름>·/home/<이름>)는 ~ 로 — 계정 이름이 남지 않는다', () => {
+    const user = `dev${hex(3)}`
+    const error = new Error('x')
+    error.stack = [
+      'Error: x',
+      `    at f (/Users/${user}/projects/linklet/v2/src/a.ts:1:2)`,
+      `    at g (file:///home/${user}/linklet/b.ts:3:4)`,
+    ].join('\n')
+    const summary = summarizeError(error)
+    expect(summary.stack).toBe('~/projects/linklet/v2/src/a.ts:1:2\nfile://~/linklet/b.ts:3:4')
+    expect(summary.stack).not.toContain(user)
+  })
+
   it('위치 없는 프레임은 <anonymous>, 프레임이 하나도 없으면 stack 키 자체가 없다', () => {
     const anon = new Error('x')
     anon.stack = 'Error: x\n    at <anonymous>\n    at new Promise (<anonymous>)'
