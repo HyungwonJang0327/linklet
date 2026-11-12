@@ -23,8 +23,10 @@
 | vitest · @vitest/coverage-v8 | 단위·통합 테스트, 커버리지 | testing | ✗ | MIT | 2026-09-28 |
 | @playwright/test | E2E | testing | ✗ | Apache-2.0 | 2026-09-28 |
 | lucide-react | 아이콘 (heroicons 대신 하나만) | tech-stack 갱신 | 사용 아이콘만(트리 셰이킹) — 설치 시 크기 기록 | ISC | 결정 2026-09-28, 설치는 첫 UI |
+| zod 4.6.7 | 입력 검증 — **`zod/mini` 만 import** (classic `zod` 는 64개 로케일·JSON Schema 변환기를 끌고 와 92KB gzip, mini 는 같은 스키마 5.5KB — esbuild 측정 2026-11-12). 공유 스키마·서버 모두 mini 하나. classic import 는 ESLint `no-restricted-imports` 로 금지(F07) | api-response 입력 검증 | 폼 스키마 공유 시 포함 — 5.5KB gzip | MIT | 2026-11-12 |
+| server-only 0.0.1 | 서버 전용 모듈 표시(`import 'server-only'`) | CLAUDE.md §4 타입 | ✗ (클라이언트에서 import 하면 빌드 에러가 목적) | MIT | 2026-11-12 — 기준 2(6개월 내 릴리스) 예외: 2022-09 이후 변경 없음, Vercel 공식·내용 한 줄·Next 문서 권장 |
 
-설치 예정(해당 기능 이식 때 이 표에 추가): better-auth·@better-auth/prisma-adapter(F08), prisma·@prisma/client·@prisma/adapter-neon 7.10.0(F02), zod(F07), @tanstack/react-query(F13), @aws-sdk/client-s3(F20, R2), @sentry/nextjs(F06), cheerio(F18), @dnd-kit/*(F22), server-only(서버 모듈)
+설치 예정(해당 기능 이식 때 이 표에 추가): better-auth·@better-auth/prisma-adapter(F08), prisma·@prisma/client·@prisma/adapter-neon 7.10.0(F02), @tanstack/react-query(F13), @aws-sdk/client-s3(F20, R2), @sentry/nextjs(F06), cheerio(F18), @dnd-kit/*(F22)
 
 로컬 도구(패키지 아님): gitleaks 8.30.1 (brew) — pre-commit 훅. CI는 gitleaks/gitleaks-action@v3 (개인 계정 리포는 라이선스 불필요).
 
@@ -34,6 +36,8 @@
 - 무료 티어 예산과 공유 페이지 성능 목표가 있어 크기·비용을 확인해야 한다
 
 ## 기각된 대안
+
+- **classic `zod` 그대로** (2026-11-12, 사용자: zod/mini 추천안) — 익숙한 체이닝 API지만 클라이언트 92KB gzip. **서버 classic + 공유 스키마만 mini** — API 두 벌이 섞여 리뷰 부담·실수 위험
 
 - 자유 추가 — 현재 상태의 원인
 - 번들 크기 상한(숫자) 고정 — 이 규모에서는 기록·확인으로 충분
