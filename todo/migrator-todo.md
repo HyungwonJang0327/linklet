@@ -15,14 +15,17 @@
   - 완료 조건: 로컬에서 기동·접속 확인, 운영·dev 접속 문자열 없음 / 커밋: `chore(db): 로컬 Docker Postgres 구성` / FEATURES: F02
 - [x] `server-only`·`zod` 설치 + `decisions/dependencies.md` 목록 기록 (2026-11-12 — zod 4.6.7 은 `zod/mini` 만 사용 결정, server-only 0.0.1)
   - 완료 조건: 표에 두 줄 추가, 설치 버전 기록 / 커밋: `chore(deps): zod·server-only 추가` / FEATURES: F07
-- [ ] `AppError` + 에러 코드 9종 + 응답 헬퍼(`{data}`·`{data, nextCursor}`·`{error}`·204) + 예상 못한 에러 → 500 일반 문구
+- [x] `AppError` + 에러 코드 9종 + 응답 헬퍼(`{data}`·`{data, nextCursor}`·`{error}`·204) + 예상 못한 에러 → 500 일반 문구 (2026-11-12, 0e93f66 + 보안 반영 2dbb8a4·f04c92c — 테스트 40건, 커버리지 100%)
   - 완료 조건: `shared/lib` 단위 테스트(스키마 일치, `details: error.message` 없음) / 커밋: `feat(api): 응답·에러 헬퍼와 AppError 추가` / FEATURES: F07
 - [ ] Route Handler 래퍼 — Zod 파싱 실패 → `400 VALIDATION_FAILED` + `details: {path, code}[]`
   - 포함: ESLint `no-restricted-imports` 로 `zod`(classic) import 금지, `zod/mini` 만 허용 (dependencies.md)
+  - 결정할 것: 래퍼 위치 — (A) `server/api-handler.ts` 에 두고 `server/logger` 직접 import(단순) / (B) `shared/lib` 에 두고 로거 주입 팩토리. 메인 추천 (A) — Route Handler 는 `server/` import 허용, shared/lib → server 역방향 금지 유지
+  - Zod 실패 → `new AppError('VALIDATION_FAILED', issues.map(i => ({ path: i.path.map(String).join('.').slice(0,100), code: i.code })))`. Zod message 는 details 에 넣지 않는다
   - 완료 조건: 단위 테스트 / 커밋: `feat(api): Route Handler 입력 파싱 래퍼 추가` / FEATURES: F07
 - [ ] 환경변수 스키마 `shared/config/env.ts` (서버·클라이언트 분리, 부팅 시 검증)
   - 완료 조건: 단위 테스트 — 필수 키 누락 시 실패, 에러 출력에 값 없음 / 커밋: `feat(config): 환경변수 Zod 스키마와 부팅 검증` / FEATURES: F01
 - [ ] 서버 구조화 로거 `server/logger.ts` (JSON, 개인정보 키 차단)
+  - 요구사항(security-reviewer 2026-11-12): 절대 throw 하지 않음(내부 try/catch) · 허용 목록 필드만(level·event·requestId·route·method·status·code·errorName·message·durationMs, Prisma meta 는 target·modelName 만) · message 정규화(≤300자, 개행→공백, 이메일·JWT·Bearer/token=/key=/secret= 값·32자+ hex/base64·URL 쿼리스트링 마스킹, PrismaClientValidationError 는 첫 줄만) · stack 은 Sentry 로만, 콘솔은 프레임 ≤10 경로만 · AppError 는 기록 안 함 · 테스트: 이메일·토큰이 message/cause/meta 에 있어도 로그에 없음, throw 하는 getter, Prisma validation 첫 줄
   - 메모(2026-11-10 기준선 실측): 기존 앱은 ISR 재검증을 `http://localhost:3000` 에 하드코딩해 POST 한다. v2 는 외부·자기 호출 URL 을 `shared/config/env.ts` 값으로만 만들고 로컬 포트 하드코딩 금지(F01 검증 항목에 포함)
   - 완료 조건: 단위 테스트 — 이메일·토큰 필드가 출력되지 않음 / 커밋: `feat(api): 서버 구조화 로거 추가` / FEATURES: F07
 - [ ] Prisma 7.10.0 설치(`prisma@7.10.0` 명시) + `prisma.config.ts` + `server/db.ts` 인스턴스 1개 + Neon 어댑터

@@ -24,7 +24,7 @@
   - 완료 조건: 수동 실행(workflow_dispatch)으로 전체 이력 통과 확인 / 커밋: `ci(ci): 주간 전체 이력 시크릿 스캔 추가`
 
 - [ ] `eslint.config.mjs` globalIgnores 에 `coverage/**` 추가 — gitignore 된 커버리지 산출물이 lint warning 1건을 낸다(2026-11-11 migrator 발견) / 커밋: `chore(config): 커버리지 산출물을 lint 대상에서 제외`
-- [ ] 첫 단위 테스트가 생기면 `v2/vitest.config.mts` 의 `passWithNoTests: true` 제거 — 완료 조건: 설정에서 제거 후 `pnpm test` 통과 / 커밋: `chore(config): Vitest passWithNoTests 제거`
+- [x] 첫 단위 테스트가 생기면 `v2/vitest.config.mts` 의 `passWithNoTests: true` 제거 (2026-11-12, 0e93f66 — F07 헬퍼 커밋에서 처리) — 완료 조건: 설정에서 제거 후 `pnpm test` 통과 / 커밋: `chore(config): Vitest passWithNoTests 제거`
 - [ ] CI에 Docker Postgres service container + 통합 테스트 실행 — T5
   - 완료 조건: PR에서 DB 통합 테스트가 깨끗한 DB로 실행 / 커밋: `ci(ci): v2 CI에 테스트용 Postgres 추가`
 - [ ] CI에 E2E 단계 추가 (Playwright chromium 설치, 시드 DB)
