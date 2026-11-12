@@ -13,11 +13,12 @@
 
 - [x] Docker Postgres 로컬 환경 (2026-11-11, 97c2d28 — dev 5433 · test 5434) — `v2/docker-compose.yml`(테스트 DB 포트 분리), `pnpm db:up`/`db:down` 스크립트
   - 완료 조건: 로컬에서 기동·접속 확인, 운영·dev 접속 문자열 없음 / 커밋: `chore(db): 로컬 Docker Postgres 구성` / FEATURES: F02
-- [ ] `server-only`·`zod` 설치 + `decisions/dependencies.md` 목록 기록
+- [x] `server-only`·`zod` 설치 + `decisions/dependencies.md` 목록 기록 (2026-11-12 — zod 4.6.7 은 `zod/mini` 만 사용 결정, server-only 0.0.1)
   - 완료 조건: 표에 두 줄 추가, 설치 버전 기록 / 커밋: `chore(deps): zod·server-only 추가` / FEATURES: F07
 - [ ] `AppError` + 에러 코드 9종 + 응답 헬퍼(`{data}`·`{data, nextCursor}`·`{error}`·204) + 예상 못한 에러 → 500 일반 문구
   - 완료 조건: `shared/lib` 단위 테스트(스키마 일치, `details: error.message` 없음) / 커밋: `feat(api): 응답·에러 헬퍼와 AppError 추가` / FEATURES: F07
 - [ ] Route Handler 래퍼 — Zod 파싱 실패 → `400 VALIDATION_FAILED` + `details: {path, code}[]`
+  - 포함: ESLint `no-restricted-imports` 로 `zod`(classic) import 금지, `zod/mini` 만 허용 (dependencies.md)
   - 완료 조건: 단위 테스트 / 커밋: `feat(api): Route Handler 입력 파싱 래퍼 추가` / FEATURES: F07
 - [ ] 환경변수 스키마 `shared/config/env.ts` (서버·클라이언트 분리, 부팅 시 검증)
   - 완료 조건: 단위 테스트 — 필수 키 누락 시 실패, 에러 출력에 값 없음 / 커밋: `feat(config): 환경변수 Zod 스키마와 부팅 검증` / FEATURES: F01
