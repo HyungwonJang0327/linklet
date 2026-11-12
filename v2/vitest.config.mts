@@ -4,13 +4,16 @@ import { defineConfig } from 'vitest/config'
 // decisions/testing.md — 단위·통합은 소스 옆 *.test.ts, 커버리지 80%는 T4 대상에만
 export default defineConfig({
   resolve: {
-    alias: { '@': fileURLToPath(new URL('./src', import.meta.url)) },
+    alias: {
+      '@': fileURLToPath(new URL('./src', import.meta.url)),
+      // `import 'server-only'` 는 기본 조건에서 throw 한다(react-server 조건에서만 빈 모듈).
+      // 테스트는 서버 코드이므로 패키지가 제공하는 빈 모듈로 바꿔 끼운다.
+      'server-only': fileURLToPath(new URL('./node_modules/server-only/empty.js', import.meta.url)),
+    },
   },
   test: {
     environment: 'node',
     include: ['src/**/*.test.ts'],
-    // 첫 테스트가 생기면 제거한다 (todo/tester-todo.md)
-    passWithNoTests: true,
     coverage: {
       provider: 'v8',
       include: [
