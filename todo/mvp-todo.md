@@ -58,12 +58,13 @@
 - F04 i18n 사전 3개 + 타입 안전 `t()` + 키 집합 테스트
 - F03 root layout `<html lang>` + `[locale]` 레이아웃
 - F05 `proxy.ts` Accept-Language 리다이렉트 (`ko/en/ja`)
-- F06 `not-found`·`error`·`global-error` + Sentry (사용자: Sentry DSN 발급 선행)
+- F06 `not-found`·`error`·`global-error` + Sentry (사용자: Sentry DSN 발급 선행) — Sentry 요구(2026-11-12): `captureException` 전에 `beforeSend` 로 `exception.values[].value`·breadcrumbs·request 에 `redact()` 적용, `sendDefaultPii: false`, console 통합 끔(이중 전송)
 - CI에 E2E 단계 추가 (Playwright 브라우저 설치, Docker Postgres) — 완료 기준 5의 틀
 
 ## Phase 2 — 인증 (F08–F10)
 
 - [ ] F08 Better Auth + Prisma 어댑터, Google 로그인·로그아웃, 인증 테이블 마이그레이션 (사용자: OAuth 리디렉션 URI 추가 선행)
+  - env·로그 요구(security-reviewer 2026-11-12): `BETTER_AUTH_SECRET` minLength 32, `BETTER_AUTH_URL` origin == `NEXT_PUBLIC_APP_URL` origin 교차 검증, **production 이면 `NEXT_PUBLIC_APP_URL`·`BETTER_AUTH_URL`·`R2_PUBLIC_BASE_URL` https 강제**(Better Auth 는 https 일 때만 Secure 쿠키), Better Auth `logger` 옵션을 우리 `logger` 로 연결(기본 로거가 에러 객체·요청 정보를 찍는지 확인), `generateId: false`(db-migration M5)
 - [ ] F10 권한 판정 계층 (본인·타인·관리자·비로그인 판정표 테스트)
 - [ ] F09 라우트 보호 (`proxy.ts` + 서버 세션 확인)
 - [ ] E2E 세션 주입 헬퍼 (시드 사용자·세션)

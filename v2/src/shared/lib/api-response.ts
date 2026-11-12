@@ -3,6 +3,7 @@ import 'server-only'
 import { NextResponse } from 'next/server'
 
 import { AppError, type ApiErrorBody, isAppError } from './api-error'
+import { formatLogLine, summarizeError } from './log-format'
 
 // 응답 헬퍼 — decisions/api-response.md R1~R5, error-handling.md E1·E2·E5
 // 응답 JSON 은 이 파일의 함수로만 만든다. Route Handler 에서 NextResponse.json 을 직접 쓰지 않는다.
@@ -50,7 +51,8 @@ export type UnexpectedErrorHandler = (error: unknown) => void
  * catch 한 값을 응답으로. AppError 는 그대로, 그 외 모든 값(Error·문자열·undefined)은
  * 500 INTERNAL + 코드 표의 고정 문구(원본 message·stack 은 절대 본문에 넣지 않는다 — AUDIT H8). 예상 못한 실패에서만 `onUnexpectedError` 를 호출한다 (E5).
  * 로그가 실패해도 응답은 반드시 `{ error }` JSON 으로 나간다 — 핸들러의 throw 는 삼킨다.
- * 기본 핸들러는 에러 이름·메시지(길이 제한)만 남긴다 — 요청 본문·개인정보 없음. 마스킹은 server/logger 가 맡는다.
+ * 기본 핸들러는 log-format 으로 마스킹한 이름·메시지·코드만 남긴다(stack 없음 — 환경을 모르는 shared 라 운영 기준으로).
+ * 요청 컨텍스트(route·환경 분기)가 필요한 실제 기록은 server/api-handler 가 server/logger 를 넘긴다.
  */
 export function toErrorResponse(
   error: unknown,
@@ -65,20 +67,17 @@ export function toErrorResponse(
   return fail(new AppError('INTERNAL'))
 }
 
-const LOG_MESSAGE_MAX = 200
-
+/** 로거가 주입되지 않았을 때의 안전망 — summarizeError 가 getter throw·Prisma 메시지·개인정보를 처리한다 */
 function logUnexpectedError(error: unknown): void {
-  // getter 가 throw 하는 Error 서브클래스도 있으므로 속성 접근을 보호한다
-  let name = 'NonError'
-  let message: string = typeof error
-  if (error instanceof Error) {
-    try {
-      name = String(error.name)
-      message = String(error.message).slice(0, LOG_MESSAGE_MAX)
-    } catch {
-      name = 'Error'
-      message = '(unreadable)'
-    }
-  }
-  console.error(JSON.stringify({ level: 'error', event: 'unexpected_error', name, message }))
+  const summary = summarizeError(error)
+  console.error(
+    formatLogLine({
+      level: 'error',
+      event: 'unexpected_error',
+      errorName: summary.name,
+      message: summary.message,
+      code: summary.code,
+      meta: summary.meta,
+    }),
+  )
 }

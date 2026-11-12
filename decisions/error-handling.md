@@ -57,6 +57,9 @@ type FieldError = { path: string; code: string }   // 검증 실패 시 필드�
   - 트레이스 샘플링은 낮게 시작 (무료 스팬 한도 안)
   - `beforeSend` 에서 요청 본문·쿠키·Authorization 헤더 제거
 - **금지**: 이메일·이름·토큰·세션 ID·요청 본문·쿼리스트링 토큰을 어떤 로그·이벤트에도 남기지 않는다. 사용자 식별은 내부 ID만
+- **구현 규칙** (2026-11-12, F01·F07 security-reviewer 반영): 로그 줄은 `shared/lib/log-format` 의 **허용 목록 키만**(`level·event·requestId·route·method·status·code·errorName·message·durationMs·stack·details·meta`) 담고, 모든 문자열 필드는 `shared/lib/redact` 를 거친다(접속 문자열·userinfo·JWT·Bearer/Basic·Cookie·민감어 키 값·이메일·URL 쿼리·32자+ 토큰). 로거는 **절대 throw 하지 않는다**. `AppError` 는 기록하지 않는다. 운영 콘솔에는 stack 을 넣지 않는다(Sentry 로만)
+- **패턴으로 못 잡는 값은 종류로 통제한다**: `requestId` 는 서버가 만든 UUID 만(`x-request-id` 헤더 그대로 쓰지 않음) · 요청 검증 실패 `details` 는 로그에 넣지 않음 · 동적 URL 세그먼트에 이메일·이름을 쓰지 않음(url-design) · 한글 이름·전화·IP 는 애초에 로그 필드에 들어오지 않게
+- **알려진 한계**: `/` 가 섞인 표준 base64 는 32자 미만 조각이면 남는다(`key=`·Bearer 규칙 밖에서 맨몸으로 찍힐 때). 32자 미만 토큰(`sk_live_`+22자 등)은 길이 규칙 밖 — 민감어 키 규칙에 의존
 - 무료 한도 (Developer 플랜, 2026-09-27 확인): 사용자 1명, 에러 5천 건/월, 스팬 500만/월, 리플레이 50회/월, 보관 30일 — https://sentry.io/pricing/
 - 버전: `@sentry/nextjs` 11.x (peer: next ^14 · ^15 · ^16)
 
@@ -90,3 +93,4 @@ type FieldError = { path: string; code: string }   // 검증 실패 시 필드�
 
 - 2026-09-27 최초 결정 (사용자: E5만 Sentry 추가, 나머지 추천대로)
 - 2026-11-12 E1 message 고정 문구화, E2 `AppError(code, details?)` 시그니처 (security-reviewer F07 지적 → 사용자: message 인자 제거 추천안. 기각: 린트+런타임 가드 3겹)
+- 2026-11-12 E5 구현 규칙·종류 통제·알려진 한계 추가 (security-reviewer F01 검토)
