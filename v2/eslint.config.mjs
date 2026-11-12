@@ -22,7 +22,9 @@ const FEATURE_BOUNDARY_PATTERN = {
 }
 
 // CLAUDE.md §4-2 입력 검증 — 환경변수는 shared/config/env.ts(.client.ts) 가 부팅 시 검증한 객체로만 읽는다.
-// `process.env.X`·`process.env['X']`·`const e = process.env` 전부 금지. 예외는 스키마 파일·부팅 진입점·설정·테스트 스크립트.
+// `process.env.X`·`process.env['X']`·`const e = process.env`·`globalThis.process.env`·`const { env } = process`·`const p = process` 금지.
+// 예외는 스키마 파일·부팅 진입점·설정·테스트 스크립트.
+// 린트는 보조 가드다 — `globalThis['pro'+'cess']` 같은 우회는 못 잡는다. 1차 방어는 리뷰(security-reviewer)와 env 모듈 단일 진입점.
 const PROCESS_ENV_MESSAGE =
   '환경변수는 @/shared/config/env(.client) 로만 읽는다 — process.env 직접 참조 금지 (CLAUDE.md §4-2)'
 const PROCESS_ENV_SELECTORS = [
@@ -32,6 +34,22 @@ const PROCESS_ENV_SELECTORS = [
   },
   {
     selector: "MemberExpression[object.name='process'][property.value='env']",
+    message: PROCESS_ENV_MESSAGE,
+  },
+  {
+    // globalThis.process.env
+    selector:
+      "MemberExpression[object.object.name='globalThis'][object.property.name='process'][property.name='env']",
+    message: PROCESS_ENV_MESSAGE,
+  },
+  {
+    // const { env } = process
+    selector: "VariableDeclarator[init.name='process'][id.type='ObjectPattern']",
+    message: PROCESS_ENV_MESSAGE,
+  },
+  {
+    // const p = process (별칭 뒤에 p.env)
+    selector: "VariableDeclarator[init.name='process'][id.type='Identifier']",
     message: PROCESS_ENV_MESSAGE,
   },
 ]
