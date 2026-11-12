@@ -21,6 +21,21 @@ const FEATURE_BOUNDARY_PATTERN = {
     "다른 기능은 '@/features/{이름}' (index.ts)로만 import한다. 같은 기능 안에서는 상대 경로를 쓴다.",
 }
 
+// CLAUDE.md §4-2 입력 검증 — 환경변수는 shared/config/env.ts(.client.ts) 가 부팅 시 검증한 객체로만 읽는다.
+// `process.env.X`·`process.env['X']`·`const e = process.env` 전부 금지. 예외는 스키마 파일·부팅 진입점·설정·테스트 스크립트.
+const PROCESS_ENV_MESSAGE =
+  '환경변수는 @/shared/config/env(.client) 로만 읽는다 — process.env 직접 참조 금지 (CLAUDE.md §4-2)'
+const PROCESS_ENV_SELECTORS = [
+  {
+    selector: "MemberExpression[object.name='process'][property.name='env']",
+    message: PROCESS_ENV_MESSAGE,
+  },
+  {
+    selector: "MemberExpression[object.name='process'][property.value='env']",
+    message: PROCESS_ENV_MESSAGE,
+  },
+]
+
 const eslintConfig = defineConfig([
   ...nextVitals,
   ...nextTs,
@@ -63,6 +78,22 @@ const eslintConfig = defineConfig([
           ],
         },
       ],
+    },
+  },
+  {
+    // process.env 직접 참조 금지 — ignores 만 있는 블록은 "이 파일들을 뺀 나머지 전부"에 적용된다
+    ignores: [
+      'src/shared/config/**',
+      'src/instrumentation.ts',
+      '**/*.test.ts',
+      'next.config.*',
+      'playwright.config.*',
+      'vitest.config.*',
+      'prisma.config.*',
+      'e2e/**',
+    ],
+    rules: {
+      'no-restricted-syntax': ['error', ...PROCESS_ENV_SELECTORS],
     },
   },
   // Prettier와 충돌하는 스타일 규칙 끄기 (마지막에 둔다)
