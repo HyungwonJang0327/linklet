@@ -32,6 +32,7 @@
   - 메모(2026-11-10 기준선 실측): 기존 앱은 ISR 재검증을 `http://localhost:3000` 에 하드코딩해 POST 한다. v2 는 외부·자기 호출 URL 을 `shared/config/env.ts` 값으로만 만들고 로컬 포트 하드코딩 금지(F01 검증 항목에 포함)
   - 완료 조건: 단위 테스트 — 이메일·토큰 필드가 출력되지 않음 / 커밋: `feat(api): 서버 구조화 로거 추가` / FEATURES: F07
 - [ ] Prisma 7.10.0 설치(`prisma@7.10.0` 명시) + `prisma.config.ts` + `server/db.ts` 인스턴스 1개 + Neon 어댑터
+  - 로그·env 요구(security-reviewer 2026-11-12): Prisma `log: ['error']` 만, `errorFormat: 'minimal'`, Prisma 이벤트는 `logger` 경유. `P1001` 메시지의 Neon 호스트(`*.neon.tech:5432`) 마스킹 규칙 추가 여부 결정. `prisma.config.ts` 는 가능하면 `@/shared/config/env` 사용. `PrismaClientValidationError` 의 `error.name` 이 그 문자열인지 1건 확인(첫 줄 규칙 의존). `pg` 어댑터를 쓰면 운영 `sslmode=require` 강제
   - 선행 결정 완료(2026-11-11): PK `uuid(7) @db.Uuid`, Better Auth `generateId: false` — `decisions/db-migration.md` M5
   - 결정할 것: 통합 테스트 DB URL 을 어떤 키로 넘길지(테스트 setup 에서 `DATABASE_URL` 덮기 vs `TEST_DATABASE_URL`) — CI service container 와 같은 키. `shared/config/env.ts` 는 `DATABASE_URL`·`DATABASE_URL_UNPOOLED` 둘 다 필수
   - 완료 조건: typecheck 통과, `new PrismaClient` 1곳 / 커밋: `chore(db): Prisma 7과 DB 클라이언트 설정` / FEATURES: F02
@@ -40,6 +41,7 @@
 - [ ] 첫 마이그레이션 — 위시리스트·아이템·공지·문의 (FK 인덱스, `price` 숫자형, 상태값 영어 소문자). 인증 테이블은 F08에서
   - 완료 조건: `migration.sql` + `down.sql`, up/down/up 수동 확인 / 커밋: `feat(db): 첫 스키마 마이그레이션` / FEATURES: F02
 - [ ] 시드 `prisma/seed.ts` + 환경 가드(운영·원격 DB면 즉시 종료)
+  - 가드 출력에 `DATABASE_URL` 호스트를 찍지 않는다(키 이름·판정만)
   - 완료 조건: 로컬 시드 후 앱 기동, 가드 단위 테스트 / 커밋: `feat(db): 개발·테스트 시드와 환경 가드` / FEATURES: F02
 - [ ] 헬스 체크 `GET /api/health` (실패 시 일반 문구)
   - 확인: `export const GET = createHandler(...)` 가 Next typegen route 검사(`RouteHandler<P>` vs ParamMap)와 호환되는지 — 첫 실제 route 파일
