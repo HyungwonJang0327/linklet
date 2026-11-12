@@ -125,6 +125,18 @@ describe('서버 환경변수 스키마 (env.ts)', () => {
     expect(line).not.toContain(bad)
   })
 
+  it('공백만인 값은 미설정으로, 앞뒤 공백은 잘라 읽는다', async () => {
+    const token = randomUUID()
+    stubAll({ ...validValues(randomUUID()), BETTER_AUTH_SECRET: `  ${token}\t`, R2_BUCKET: '   ' })
+    const { env } = await loadEnv()
+    expect(env.BETTER_AUTH_SECRET).toBe(token)
+    expect(env.R2_BUCKET).toBeUndefined()
+
+    vi.resetModules()
+    stubAll({ ...validValues(randomUUID()), DATABASE_URL: ' \n ' })
+    await expect(loadEnv()).rejects.toThrow('DATABASE_URL')
+  })
+
   it('NODE_ENV 는 development·test·production 만', async () => {
     stubAll({ ...validValues(randomUUID()), NODE_ENV: 'prod' })
 
