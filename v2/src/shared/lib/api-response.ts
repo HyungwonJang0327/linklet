@@ -10,9 +10,6 @@ import { AppError, type ApiErrorBody, isAppError } from './api-error'
 export type ApiDataBody<T> = { data: T }
 export type ApiListBody<T> = { data: T[]; nextCursor: string | null }
 
-/** 예상 못한 실패의 고정 문구 — 원본 message·stack 은 절대 본문에 넣지 않는다 (AUDIT H8) */
-export const UNEXPECTED_ERROR_MESSAGE = 'Unexpected error'
-
 /** 허용하는 응답 헤더만 — Content-Type·Set-Cookie 등 임의 헤더로 형태를 바꿀 수 없게 한다 */
 type OkInit = { status?: 200 | 201; location?: string }
 
@@ -51,7 +48,7 @@ export type UnexpectedErrorHandler = (error: unknown) => void
 
 /**
  * catch 한 값을 응답으로. AppError 는 그대로, 그 외 모든 값(Error·문자열·undefined)은
- * 500 INTERNAL + 고정 문구. 예상 못한 실패에서만 `onUnexpectedError` 를 호출한다 (E5).
+ * 500 INTERNAL + 코드 표의 고정 문구(원본 message·stack 은 절대 본문에 넣지 않는다 — AUDIT H8). 예상 못한 실패에서만 `onUnexpectedError` 를 호출한다 (E5).
  * 로그가 실패해도 응답은 반드시 `{ error }` JSON 으로 나간다 — 핸들러의 throw 는 삼킨다.
  * 기본 핸들러는 에러 이름·메시지(길이 제한)만 남긴다 — 요청 본문·개인정보 없음. 마스킹은 server/logger 가 맡는다.
  */
@@ -65,7 +62,7 @@ export function toErrorResponse(
   } catch {
     console.error('{"level":"error","event":"unexpected_error","note":"error handler threw"}')
   }
-  return fail(new AppError('INTERNAL', UNEXPECTED_ERROR_MESSAGE))
+  return fail(new AppError('INTERNAL'))
 }
 
 const LOG_MESSAGE_MAX = 200

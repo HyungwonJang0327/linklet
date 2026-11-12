@@ -35,14 +35,18 @@ export function isRetryable(code: ErrorCode): boolean {
   return ERROR_CODE_TABLE[code].retryable
 }
 
-/** 예상된 실패. 서비스가 throw 하면 응답 헬퍼가 그대로 `{ error }` 로 바꾼다. 그 외 예외는 전부 500 INTERNAL */
+/**
+ * 예상된 실패. 서비스가 throw 하면 응답 헬퍼가 그대로 `{ error }` 로 바꾼다. 그 외 예외는 전부 500 INTERNAL.
+ * message 는 항상 코드 표의 고정 문구 — 사용자 입력·DB 값·업스트림 메시지가 본문에 섞일 경로를 구조로 막는다 (H8).
+ * 맥락이 필요하면 details(필드 경로·코드)로만 전달한다.
+ */
 export class AppError extends Error {
   readonly code: ErrorCode
   readonly status: number
   readonly details: FieldError[] | undefined
 
-  constructor(code: ErrorCode, message?: string, details?: FieldError[]) {
-    super(message ?? ERROR_CODE_TABLE[code].message)
+  constructor(code: ErrorCode, details?: FieldError[]) {
+    super(ERROR_CODE_TABLE[code].message)
     this.name = 'AppError'
     this.code = code
     this.status = statusOf(code)

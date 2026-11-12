@@ -55,14 +55,18 @@ describe('AppError', () => {
     }
   })
 
-  it('message 를 생략하면 코드별 기본 개발자 메시지를 쓴다', () => {
+  it('message 는 항상 코드 표의 고정 문구다 — 커스텀 문구를 넣을 인자가 없다 (H8)', () => {
     expect(new AppError('FORBIDDEN').message).toBe(ERROR_CODE_TABLE.FORBIDDEN.message)
-    expect(new AppError('FORBIDDEN', 'not the owner').message).toBe('not the owner')
+    // 생성자 시그니처는 (code, details?) — 두 번째 인자에 문자열을 넘기면 타입 에러
+    // @ts-expect-error 문자열 message 인자는 존재하지 않는다
+    expect(new AppError('FORBIDDEN', 'not the owner').message).toBe(
+      ERROR_CODE_TABLE.FORBIDDEN.message,
+    )
   })
 
   it('details 를 받으면 그대로 보존하고, 없으면 undefined 다', () => {
     const details = [{ path: 'productUrl', code: 'invalid_url' }]
-    expect(new AppError('VALIDATION_FAILED', undefined, details).details).toEqual(details)
+    expect(new AppError('VALIDATION_FAILED', details).details).toEqual(details)
     expect(new AppError('VALIDATION_FAILED').details).toBeUndefined()
   })
 

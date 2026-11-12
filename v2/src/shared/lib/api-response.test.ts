@@ -1,14 +1,7 @@
 import { afterEach, describe, expect, it, vi } from 'vitest'
 
-import { AppError } from './api-error'
-import {
-  fail,
-  noContent,
-  ok,
-  okList,
-  toErrorResponse,
-  UNEXPECTED_ERROR_MESSAGE,
-} from './api-response'
+import { AppError, ERROR_CODE_TABLE } from './api-error'
+import { fail, noContent, ok, okList, toErrorResponse } from './api-response'
 
 // decisions/api-response.md R1~R5, error-handling.md E1·E2·E5 — 헬퍼가 스키마대로만 응답한다
 
@@ -52,19 +45,23 @@ describe('noContent', () => {
 
 describe('fail', () => {
   it('{ error: { code, message } } + 코드에 매핑된 상태', async () => {
-    const res = fail(new AppError('NOT_FOUND', 'wishlist not found'))
+    const res = fail(new AppError('NOT_FOUND'))
     expect(res.status).toBe(404)
     expect(await res.json()).toEqual({
-      error: { code: 'NOT_FOUND', message: 'wishlist not found' },
+      error: { code: 'NOT_FOUND', message: ERROR_CODE_TABLE.NOT_FOUND.message },
     })
   })
 
   it('details 가 있으면 { path, code }[] 그대로 포함', async () => {
     const details = [{ path: 'productUrl', code: 'invalid_url' }]
-    const res = fail(new AppError('VALIDATION_FAILED', 'invalid body', details))
+    const res = fail(new AppError('VALIDATION_FAILED', details))
     expect(res.status).toBe(400)
     expect(await res.json()).toEqual({
-      error: { code: 'VALIDATION_FAILED', message: 'invalid body', details },
+      error: {
+        code: 'VALIDATION_FAILED',
+        message: ERROR_CODE_TABLE.VALIDATION_FAILED.message,
+        details,
+      },
     })
   })
 
@@ -102,7 +99,7 @@ describe('toErrorResponse', () => {
     expect(text).not.toContain('secret')
     expect(text).not.toContain('stack')
     expect(JSON.parse(text)).toEqual({
-      error: { code: 'INTERNAL', message: UNEXPECTED_ERROR_MESSAGE },
+      error: { code: 'INTERNAL', message: ERROR_CODE_TABLE.INTERNAL.message },
     })
   })
 
@@ -119,7 +116,7 @@ describe('toErrorResponse', () => {
     expect(text).not.toContain('secret')
     expect(text).not.toContain('looks like')
     expect(JSON.parse(text)).toEqual({
-      error: { code: 'INTERNAL', message: UNEXPECTED_ERROR_MESSAGE },
+      error: { code: 'INTERNAL', message: ERROR_CODE_TABLE.INTERNAL.message },
     })
   })
 
@@ -162,7 +159,7 @@ describe('security-reviewer 지적 반영 (H8 회귀)', () => {
     })
     expect(res.status).toBe(500)
     expect(await res.json()).toEqual({
-      error: { code: 'INTERNAL', message: UNEXPECTED_ERROR_MESSAGE },
+      error: { code: 'INTERNAL', message: ERROR_CODE_TABLE.INTERNAL.message },
     })
     spy.mockRestore()
   })
@@ -177,7 +174,7 @@ describe('security-reviewer 지적 반영 (H8 회귀)', () => {
     const res = toErrorResponse(new Hostile())
     expect(res.status).toBe(500)
     expect(await res.json()).toEqual({
-      error: { code: 'INTERNAL', message: UNEXPECTED_ERROR_MESSAGE },
+      error: { code: 'INTERNAL', message: ERROR_CODE_TABLE.INTERNAL.message },
     })
     expect(spy).toHaveBeenCalledTimes(1)
     expect(String(spy.mock.calls[0]?.[0])).toContain('unreadable')
