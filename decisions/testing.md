@@ -9,6 +9,7 @@
 | T3 | "테스트 없는 기능 금지"의 정의 | 새 서비스 함수·API·순수 로직은 같은 PR에 테스트 동반. 화면은 `audit/FEATURES.md` 동등성 확인 방법(E2E) 필수 |
 | T4 | 커버리지 80% 대상 | `src/shared/lib/**`, `src/features/*/schema.ts`, `src/features/*/server/service.ts`. Vitest v8 커버리지, CI에서 80% 미만이면 실패 |
 | T5 | 통합 테스트 DB | Docker Postgres — 로컬(Docker 설치·실행 확인 2026-09-27)과 CI(GitHub Actions service container). 테스트마다 깨끗한 DB |
+| T10 | 테스트 DB 접속 키 | 별도 `TEST_DATABASE_URL` 없음. Vitest `setupFiles` 가 `DATABASE_URL`·`DATABASE_URL_UNPOOLED` 를 테스트 DB(로컬 5434 `linklet_test`, CI service container) 값으로 덮는다. 덮기 전 들어 있던 값의 호스트가 localhost 가 아니면 즉시 실패(값 출력 금지) — dev·원격 DB 에 테스트가 붙는 사고 방지. env 스키마·`server/db.ts` 에 테스트 분기 없음 |
 | T6 | 파일 위치 | 단위·통합은 소스 옆 `*.test.ts`, E2E는 `e2e/*.spec.ts` |
 | T7 | 기존 앱 기준선 E2E | `v2/e2e/baseline/` — v2의 Playwright를 쓰고, 기존 앱(`next start -p 3001`)을 대상으로 하는 별도 project. 기본 `pnpm test:e2e` 에서는 제외. 실행 DB는 T8. 교체 시 함께 정리 |
 | T9 | 기준선 E2E 시드 | 기준선 컨테이너의 psql 에 **고정 SQL 파일**(`v2/e2e/baseline/seed.sql`)을 흘린다 — 사용자·위시리스트·아이템·세션(`sessions` 행, 만료 먼 미래). 의존성 없음, 기존 스키마는 동결이라 SQL 고정이 안전. 실행은 `baseline:up` 끝 또는 테스트 `globalSetup` 에서 `docker compose exec psql`. 매 `down` 마다 DB가 사라지므로 시드는 멱등(`ON CONFLICT DO NOTHING` 또는 TRUNCATE 후 INSERT) |
@@ -34,6 +35,7 @@ E2E 인증: Google OAuth는 자동화하지 않는다. 테스트 DB에 시드한
 - 기준선 DB를 기존 마이그레이션 + `migrate diff` 보충 SQL로 — 결과 스키마는 같고 보충 SQL이 또 하나의 드리프트가 된다
 - 기준선을 dev DB(Neon) 읽기 전용 시나리오로 — 로그인 흐름 고정 불가, dev 데이터 변동에 깨짐, 원격 DB에 테스트 실행
 - 기준선 E2E 생략(스크린샷·수동 체크리스트) — 동등성 자동 비교 불가
+- T10 별도 `TEST_DATABASE_URL` 키 — 실수로 dev DB 에 붙을 가능성은 낮지만 env 스키마·db.ts 에 `NODE_ENV=test` 분기가 들어가고 CI 키가 하나 더 늘어남
 
 ## 확장 지점
 
@@ -49,3 +51,4 @@ E2E 인증: Google OAuth는 자동화하지 않는다. 테스트 DB에 시드한
 - 2026-10-04 T7 기준선 E2E 위치 추가 (사용자: 추천대로)
 - 2026-10-04 T8 기준선 E2E 실행 DB 추가 (사용자: A 로컬 Docker + db push)
 - 2026-11-10 T9 기준선 E2E 시드 방법 — psql 고정 SQL (사용자: 추천안. 기각: 루트 Prisma 클라이언트 래퍼 — 루트 코드 의존·모듈 해석 복잡 / 세션 주입 후 API 생성 — 기존 API 버그에 테스트가 의존)
+- 2026-11-14 T10 테스트 DB 접속 키 — `DATABASE_URL` 덮기 (사용자: 추천안. 기각: `TEST_DATABASE_URL`)
