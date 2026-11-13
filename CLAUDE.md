@@ -74,7 +74,7 @@ v2/
 | UI | React | 19.x | 19.2.8 |
 | 언어 | TypeScript (strict + `noUncheckedIndexedAccess`) | 5.x | 5.9.3 |
 | 인증 | Better Auth + Prisma 어댑터 (Google, DB 세션, admin 플러그인) | 1.7.x | — (F08) |
-| ORM·DB | Prisma + Neon 어댑터 / PostgreSQL (Neon Free, 로컬 Docker) | **7.10.0 고정** | — (F02) |
+| ORM·DB | Prisma + `@prisma/adapter-pg` / PostgreSQL (Neon Free, 로컬 Docker) | **7.10.0 고정** | — (F02) |
 | 입력 검증 | Zod | 4.x | — (F07) |
 | 서버 상태 | TanStack Query | 5.x | — (F13) |
 | 스타일 | Tailwind CSS (`@theme` 토큰) | 4.x | 4.3.3 |
