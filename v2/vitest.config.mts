@@ -14,6 +14,8 @@ export default defineConfig({
   test: {
     environment: 'node',
     include: ['src/**/*.test.ts'],
+    // 통합 테스트 DB URL 덮기 + 비로컬 DB 가드 (decisions/testing.md T10)
+    setupFiles: ['./vitest.setup.ts'],
     coverage: {
       provider: 'v8',
       include: [
