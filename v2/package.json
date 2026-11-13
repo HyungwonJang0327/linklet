@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
+    "postinstall": "prisma generate",
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
@@ -20,11 +21,14 @@
     "db:down:clean": "docker compose down -v",
     "db:test:up": "docker compose up -d --wait db-test",
     "db:test:down": "docker compose rm -sfv db-test",
+    "db:generate": "prisma generate",
     "baseline:up": "bash e2e/baseline/run-baseline.sh",
     "baseline:seed": "bash e2e/baseline/seed-baseline.sh",
     "baseline:down": "bash e2e/baseline/stop-baseline.sh"
   },
   "dependencies": {
+    "@prisma/adapter-pg": "7.10.0",
+    "@prisma/client": "7.10.0",
     "next": "16.3.6",
     "react": "19.2.8",
     "react-dom": "19.2.8",
@@ -42,6 +46,7 @@
     "eslint-config-next": "16.3.6",
     "eslint-config-prettier": "10.1.8",
     "prettier": "3.9.9",
+    "prisma": "7.10.0",
     "tailwindcss": "^4",
     "typescript": "^5",
     "vitest": "5.0.2"

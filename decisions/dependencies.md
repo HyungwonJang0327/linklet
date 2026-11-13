@@ -25,8 +25,11 @@
 | lucide-react | 아이콘 (heroicons 대신 하나만) | tech-stack 갱신 | 사용 아이콘만(트리 셰이킹) — 설치 시 크기 기록 | ISC | 결정 2026-09-28, 설치는 첫 UI |
 | zod 4.6.7 | 입력 검증 — **`zod/mini` 만 import** (classic `zod` 는 64개 로케일·JSON Schema 변환기를 끌고 와 92KB gzip, mini 는 같은 스키마 5.5KB — esbuild 측정 2026-11-12). 공유 스키마·서버 모두 mini 하나. classic import 는 ESLint `no-restricted-imports` 로 금지(F07) | api-response 입력 검증 | 폼 스키마 공유 시 포함 — 5.5KB gzip | MIT | 2026-11-12 |
 | server-only 0.0.1 | 서버 전용 모듈 표시(`import 'server-only'`) | CLAUDE.md §4 타입 | ✗ (클라이언트에서 import 하면 빌드 에러가 목적) | MIT | 2026-11-12 — 기준 2(6개월 내 릴리스) 예외: 2022-09 이후 변경 없음, Vercel 공식·내용 한 줄·Next 문서 권장 |
+| prisma 7.10.0 (dev) | Prisma CLI — generate·migrate. `latest` 태그가 8.0 RC 라 버전 고정 | tech-stack | ✗ | Apache-2.0 | 2026-11-14 |
+| @prisma/client 7.10.0 | ORM 런타임 (`prisma-client` 생성기, Rust 엔진 없음) | tech-stack, db-migration | ✗ (`server/db.ts` 만 import, server-only) | Apache-2.0 | 2026-11-14 |
+| @prisma/adapter-pg 7.10.0 | driver adapter — 로컬·CI·Neon 모두 TCP 하나 (`adapter-neon` 기각: 로컬 Docker 에 wsproxy 없이 못 붙음 — tech-stack 2026-11-14). 전이 의존 `pg 8.23.1`(MIT)·`@types/pg`·`postgres-array`(MIT)·`@prisma/driver-adapter-utils`(Apache-2.0) | tech-stack | ✗ | Apache-2.0 | 2026-11-14 |
 
-설치 예정(해당 기능 이식 때 이 표에 추가): better-auth·@better-auth/prisma-adapter(F08), prisma·@prisma/client·@prisma/adapter-neon 7.10.0(F02), @tanstack/react-query(F13), @aws-sdk/client-s3(F20, R2), @sentry/nextjs(F06), cheerio(F18), @dnd-kit/*(F22)
+설치 예정(해당 기능 이식 때 이 표에 추가): better-auth·@better-auth/prisma-adapter(F08), @tanstack/react-query(F13), @aws-sdk/client-s3(F20, R2), @sentry/nextjs(F06), cheerio(F18), @dnd-kit/*(F22)
 
 로컬 도구(패키지 아님): gitleaks 8.30.1 (brew) — pre-commit 훅. CI는 gitleaks/gitleaks-action@v3 (개인 계정 리포는 라이선스 불필요).
 
@@ -53,3 +56,4 @@
 ## 갱신 이력
 
 - 2026-09-27 최초 결정 (사용자: 추천대로)
+- 2026-11-14 prisma·@prisma/client·@prisma/adapter-pg 7.10.0 추가 (F02). 어댑터는 neon → pg (tech-stack 변경 참조)

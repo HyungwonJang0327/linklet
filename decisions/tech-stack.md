@@ -10,7 +10,7 @@
 | 프레임워크 | Next.js App Router | 16.3.x |
 | UI | React | 19.x |
 | 인증 | Better Auth + `@better-auth/prisma-adapter` | 1.7.x |
-| ORM | Prisma + `@prisma/adapter-neon` | **7.10.0 고정** |
+| ORM | Prisma + `@prisma/adapter-pg` (2026-11-14 변경, 아래) | **7.10.0 고정** |
 | DB | PostgreSQL (Neon Free) | — |
 | 입력 검증 | Zod | 4.x |
 | 서버 상태 | TanStack Query | 5.x |
@@ -44,6 +44,9 @@
 ### Prisma 7.10.0 (고정)
 - 이유: 스키마 문법 유지로 이식 비용 최소. 7부터 Rust-free `prisma-client` 생성기, driver adapter 필수, `prisma.config.ts` 필수, 생성 경로(`output`) 필수, ESM 전용, `.env` 자동 로드 없음
 - 주의: `prisma` 패키지 `latest` 태그가 8.0 RC를 가리킨다 → 설치 시 버전 명시. 런타임은 pooled `DATABASE_URL`, CLI는 `DATABASE_URL_UNPOOLED`
+- **어댑터 (2026-11-14 변경)**: `@prisma/adapter-pg` 하나로 로컬 Docker·CI·운영 Neon 모두 TCP 접속. 운영(`NODE_ENV=production`)은 접속 문자열에 `sslmode=require` 가 없으면 부팅 실패. 이유: `@prisma/adapter-neon` 의 Neon 서버리스 드라이버는 Neon 프록시 전용이라 로컬 Postgres 에는 자체 wsproxy 없이 붙지 못함(neon.com/docs 확인) → 테스트가 운영과 다른 어댑터를 타게 됨
+  - 기각: 운영 neon + 로컬 pg 분기 — 어댑터 2개·분기 코드, 테스트가 운영 어댑터를 못 탐 / adapter-neon + 로컬 wsproxy 컨테이너 — compose·CI 서비스 추가, neonConfig 로컬 설정. 포기한 것: Neon HTTP 드라이버의 저지연 이점(Vercel Node 런타임에서는 미미)
+  - 출처: https://neon.com/docs/local/neon-local, https://github.com/neondatabase/serverless (자체 Postgres 는 "run your own WebSocket proxy"), https://www.prisma.io/docs/orm/overview/databases/database-drivers
 - 기각: Prisma 8 — RC, Better Auth peer 범위(5~7) 밖. 정식판 이후 별도 결정 / Drizzle — 데이터 계층 전면 재작성 필요
 - 출처: https://www.prisma.io/docs/orm/more/upgrade-guides/upgrading-versions/upgrading-to-prisma-7, https://neon.com/docs/guides/prisma
 
@@ -104,3 +107,4 @@
   - React는 create-next-app이 고정한 19.2.8로 시작 (19.x 범위)
   - pnpm은 `packageManager: pnpm@10.34.5` 로 고정 (pnpm이 자동 전환)
   - 시크릿 스캔: gitleaks — pre-commit(`.githooks/pre-commit`, `core.hooksPath`) + CI(gitleaks-action v3). 의존성 추가 없음
+- 2026-11-14 ORM 어댑터 `@prisma/adapter-neon` → `@prisma/adapter-pg` 로 변경 (사용자: 추천안 — 로컬·CI·운영 한 어댑터. 기각: 환경별 분기 / 로컬 wsproxy)

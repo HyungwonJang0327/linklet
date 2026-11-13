@@ -34,6 +34,9 @@ yarn-error.log*
 .env*
 !.env.example
 
+# prisma — 생성된 클라이언트 (pnpm db:generate 로 재생성)
+/src/generated/
+
 # vercel
 .vercel
 

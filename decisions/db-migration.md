@@ -8,7 +8,7 @@
 | M2 | 되돌리기 | 마이그레이션마다 역방향 SQL `down.sql` 을 같은 폴더에 함께 커밋. 생성은 Prisma 7 공식 절차(2026-11-11 문서 확인): **스키마를 고친 뒤 `migrate dev` 전에** `prisma migrate diff --from-schema prisma/schema.prisma --to-migrations prisma/migrations --script > down.sql` → `migrate dev --name {이름}` → 새 폴더로 `down.sql` 이동. 이 세 단계를 `pnpm db:migrate {이름}` 래퍼 하나로. 수동 SQL(뷰·트리거)은 `--create-only` 후 양쪽에 손으로 추가. 운영 롤백은 `prisma db execute --file down.sql` + `migrate resolve --rolled-back`(실패한 마이그레이션만) |
 | M5 | ID 생성 | **PK는 UUID v7** — `String @id @default(uuid(7)) @db.Uuid`(Prisma Client 생성, 시간 순 정렬, 16바이트). Better Auth 는 `advanced.database.generateId: false` 로 자체 생성을 끄고 CLI 가 만든 인증 모델에 같은 `@default` 를 붙여 **전 테이블 한 방식**. 공유 ID(R8)는 PK 와 별도로 `@default(nanoid(12))` 추측 불가 문자열. 번호 id·serial 없음 |
 | M3 | 적용 순서 | 로컬 Docker DB → CI(빈 DB에 전체 적용 검증) → dev DB → 운영. **운영 적용은 사용자가 직접 실행**. `.claude/settings.json` 에서 마이그레이션 적용 명령은 항상 확인 |
-| — | 연결 | 런타임은 pooled `DATABASE_URL`(Neon 어댑터), CLI(`prisma.config.ts`)는 `DATABASE_URL_UNPOOLED` |
+| — | 연결 | 런타임은 pooled `DATABASE_URL`(`@prisma/adapter-pg`, TCP — `tech-stack.md` 2026-11-14), CLI(`prisma.config.ts`)는 `DATABASE_URL_UNPOOLED`. 테스트는 같은 키를 setup 이 덮는다(`testing.md` T10) |
 | — | 시드 | `prisma/seed.ts` — 개발·테스트용 사용자·위시리스트·아이템. 운영에는 실행하지 않는다(환경 가드) |
 
 실데이터 없음(사용자 확인) → 데이터 이전 스크립트는 만들지 않는다. v2는 빈 DB에서 첫 마이그레이션부터 시작한다.

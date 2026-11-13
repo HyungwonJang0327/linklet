@@ -104,6 +104,19 @@ describe('redact', () => {
     }
   })
 
+  it('Neon 호스트(P1001 류)는 접속 문자열이 없어도 ***.neon.tech — 서브도메인·포트가 사라진다', () => {
+    const project = `ep-${hex(4)}-pooler`
+    const host = `${project}.c-2.ap-southeast-1.aws.neon.tech`
+    const out = redact(`Can't reach database server at \`${host}:5432\``)
+    expect(out).toBe("Can't reach database server at `***.neon.tech`")
+    expect(out).not.toContain(project)
+    expect(out).not.toContain('5432')
+    // 포트 없음·대문자 도메인도
+    expect(redact(`host ${host.toUpperCase()} down`)).toBe('host ***.neon.tech down')
+    // neon.tech 가 아닌 도메인은 건드리지 않는다
+    expect(redact('see https://neon.tech/docs')).toBe('see https://neon.tech/docs')
+  })
+
   it('다른 스킴의 user:pass@ 도 가린다 (mysql·redis·https)', () => {
     const pass = `p${hex(6)}`
     const out = redact(

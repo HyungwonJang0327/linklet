@@ -26,6 +26,8 @@ pnpm db:test:down     # 테스트 DB 만 정리 (tmpfs 라 데이터도 사라�
 - `.env.local` 접속 문자열은 `.env.example` 의 주석 예시를 쓴다. 로컬은 풀링 구분이 없어 `DATABASE_URL` 과 `DATABASE_URL_UNPOOLED` 가 같은 값
 - **운영·dev(Neon) 접속 문자열을 이 compose 나 로컬 스크립트에 절대 넣지 않는다.** 마이그레이션은 로컬 Docker → CI → dev → 운영 순서이며 운영 적용은 사용자가 직접(M3)
 - CI 는 GitHub Actions service container(T5) 를 쓰므로 compose 를 읽지 않는다
+- **테스트는 `vitest.setup.ts` 가 `DATABASE_URL`·`DATABASE_URL_UNPOOLED` 를 `5434/linklet_test` 로 덮는다**(T10, 별도 `TEST_DATABASE_URL` 없음). 덮기 전 값이 로컬 호스트가 아니면 즉시 실패(값 미출력). `src/server/db.integration.test.ts` 는 5434 에 TCP 접속이 안 되면 skip — 돌리려면 `pnpm db:test:up`
+- Prisma CLI(`prisma.config.ts`)는 `.env` 를 자동 로드하지 않아 `.env.local` → `.env` 순서로 직접 읽는다(셸 값 우선). 생성 클라이언트 `src/generated/prisma` 는 커밋하지 않고 `pnpm db:generate`(install 뒤 `postinstall` 포함)로 만든다
 - "테스트마다 깨끗한 DB"(T5)는 컨테이너가 아니라 테스트 setup 의 책임이다 (마이그레이션 적용 후 테이블 비우기 — F02 통합 테스트에서 확정)
 
 ### 왜 profile 이 아니라 서비스 이름으로 고르는가
