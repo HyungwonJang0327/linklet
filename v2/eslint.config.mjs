@@ -107,6 +107,7 @@ const eslintConfig = defineConfig([
       'next.config.*',
       'playwright.config.*',
       'vitest.config.*',
+      'vitest.setup.*',
       'prisma.config.*',
       'e2e/**',
     ],
