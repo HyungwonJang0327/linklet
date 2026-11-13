@@ -17,6 +17,9 @@ export const UNREADABLE = '(unreadable)'
 const REDACTION_RULES: ReadonlyArray<readonly [RegExp, string]> = [
   // postgres(ql):// 접속 문자열 전체 — userinfo 가 없어도 host·db 이름까지 지운다
   [/\bpostgres(?:ql)?:\/\/[^\s'"`<>]+/gi, 'postgresql://***'],
+  // Neon 호스트 — Prisma P1001("Can't reach database server at `ep-….aws.neon.tech:5432`") 류 메시지에 접속 문자열 없이 호스트만 실린다.
+  // 프로젝트를 식별할 수 있는 서브도메인과 포트를 지운다 (security-reviewer 2026-11-12 → 결정 2026-11-14)
+  [/\b[a-z0-9-]+(?:\.[a-z0-9-]+)*\.neon\.tech(?::\d{1,5})?\b/gi, '***.neon.tech'],
   // 그 외 스킴의 userinfo (`mysql://u:p@h`, `redis://:p@h`, `https://u:p@h`)
   [/\b([a-z][a-z0-9+.-]*:\/\/)[^\s/@'"`<>]+@/gi, '$1***@'],
   // JWT — base64url 세 조각
