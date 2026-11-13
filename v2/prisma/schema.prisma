@@ -1,0 +1,15 @@
+// Prisma 7 스키마 — decisions/db-migration.md, decisions/tech-stack.md(Prisma 7.10.0 고정), FEATURES F02
+// - 접속 문자열은 여기 두지 않는다. 런타임은 src/server/db.ts(DATABASE_URL, pooled), CLI 는 prisma.config.ts(DATABASE_URL_UNPOOLED)
+// - 생성물(src/generated/prisma)은 커밋하지 않는다 — `pnpm db:generate`(install 뒤 postinstall 에서도 실행)
+// - 모델은 첫 마이그레이션 항목(todo/migrator-todo.md)에서 추가한다. PK 는 `String @id @default(uuid(7)) @db.Uuid`(M5)
+
+generator client {
+  provider     = "prisma-client" // Prisma 7 기본 생성기 (Rust 엔진 없음, driver adapter 필수)
+  output       = "../src/generated/prisma"
+  runtime      = "nodejs"
+  moduleFormat = "esm" // Next 16·tsconfig `module: esnext` 와 일치
+}
+
+datasource db {
+  provider = "postgresql"
+}
