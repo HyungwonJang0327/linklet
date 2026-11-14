@@ -37,13 +37,13 @@
   - 선행 결정 완료(2026-11-11): PK `uuid(7) @db.Uuid`, Better Auth `generateId: false` — `decisions/db-migration.md` M5
   - 결정할 것: 통합 테스트 DB URL 을 어떤 키로 넘길지(테스트 setup 에서 `DATABASE_URL` 덮기 vs `TEST_DATABASE_URL`) — CI service container 와 같은 키. `shared/config/env.ts` 는 `DATABASE_URL`·`DATABASE_URL_UNPOOLED` 둘 다 필수
   - 완료 조건: typecheck 통과, `new PrismaClient` 1곳 / 커밋: `chore(db): Prisma 7과 DB 클라이언트 설정` / FEATURES: F02
-- [ ] `prisma.config.ts` 운영 호스트 가드 검토 — `.env.local` 에 운영 문자열이 들어오면 CLI 가 그 DB 에 migrate 할 수 있다. 시드 가드(아래)와 같은 판정 함수를 공유해 `DATABASE_URL_UNPOOLED` 가 로컬·CI 가 아니면 `migrate dev`/`db:migrate` 래퍼가 멈추게 (적용은 사용자 직접, M3). 2026-11-14 migrator 발견
+- [x] `prisma.config.ts` 운영 호스트 가드 (2026-11-14, 426f554 공용 모듈 + 0731f28 가드 + a341c43 setup 교체 — `decisions/db-migration.md` M6, 테스트 47건) — `.env.local` 에 운영 문자열이 들어오면 CLI 가 그 DB 에 migrate 할 수 있다. 시드 가드(아래)와 같은 판정 함수를 공유해 `DATABASE_URL_UNPOOLED` 가 로컬·CI 가 아니면 `migrate dev`/`db:migrate` 래퍼가 멈추게 (적용은 사용자 직접, M3). 2026-11-14 migrator 발견
   - 완료 조건: 단위 테스트(값 미출력) / 커밋: `chore(db): CLI 접속 문자열 환경 가드` / FEATURES: F02
-- [ ] `down.sql` 생성 스크립트 — `pnpm db:migrate {이름}` 래퍼: `migrate diff --from-schema --to-migrations --script > down.sql` → `migrate dev --name` → 새 폴더로 이동 (`decisions/db-migration.md` M2, 2026-11-11 확정). 섀도 DB 필요 여부는 실행해서 확인·README 기록
+- [x] `down.sql` 생성 스크립트 (2026-11-14, 0be595c `scripts/db-migrate.mts` — 임시 모델로 up→down→up 두 사이클·`--create-only` 실측 뒤 전부 삭제. 섀도 DB: `migrate dev` 는 자동, `--to-migrations` 는 래퍼가 임시 DB CREATE/DROP, 첫 마이그레이션은 `--to-empty` — README 기록) — `pnpm db:migrate {이름}` 래퍼: `migrate diff --from-schema --to-migrations --script > down.sql` → `migrate dev --name` → 새 폴더로 이동 (`decisions/db-migration.md` M2, 2026-11-11 확정). 섀도 DB 필요 여부는 실행해서 확인·README 기록
   - 완료 조건: 빈 DB에 up → down → up 성공 / 커밋: `chore(db): 마이그레이션 down.sql 생성 스크립트` / FEATURES: F02
-- [ ] 첫 마이그레이션 — 위시리스트·아이템·공지·문의 (FK 인덱스, `price` 숫자형, 상태값 영어 소문자). 인증 테이블은 F08에서
+- [ ] 첫 마이그레이션 — 위시리스트·아이템·공지·문의 (FK 인덱스, `price` 숫자형, 상태값 영어 소문자). 인증 테이블은 F08에서. **`pnpm db:migrate init` 으로 생성**(래퍼 첫 실전). `migrate dev` 는 TTY 에서 드리프트 시 reset 을 물을 수 있음(비 TTY 는 오류)
   - 완료 조건: `migration.sql` + `down.sql`, up/down/up 수동 확인 / 커밋: `feat(db): 첫 스키마 마이그레이션` / FEATURES: F02
-- [ ] 시드 `prisma/seed.ts` + 환경 가드(운영·원격 DB면 즉시 종료) — `prisma.config.ts` 가드와 판정 함수 공유. `migrations.seed` 를 prisma.config.ts 에 추가
+- [ ] 시드 `prisma/seed.ts` + 환경 가드(운영·원격 DB면 즉시 종료) — 가드는 `prisma/lib/local-db.mts` 의 `assertLocalDatabaseUrl`(우회 없음). `migrations.seed` 를 prisma.config.ts 에 추가, 시드 실행도 Node 24 `.mts` 직접 실행(새 의존성 없음)
   - 가드 출력에 `DATABASE_URL` 호스트를 찍지 않는다(키 이름·판정만)
   - 완료 조건: 로컬 시드 후 앱 기동, 가드 단위 테스트 / 커밋: `feat(db): 개발·테스트 시드와 환경 가드` / FEATURES: F02
 - [ ] 헬스 체크 `GET /api/health` (실패 시 일반 문구) — `db.$queryRaw` 로 DB 확인. `src/server/db.integration.test.ts` 가 TCP 프로브 실패 시 skip 하는 방식을 그대로 쓴다

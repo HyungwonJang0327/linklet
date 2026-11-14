@@ -25,6 +25,7 @@
 
 - [ ] `src/shared/lib/log-format.ts:2` 미사용 import `MESSAGE_MAX_LENGTH` 제거 — lint warning 1건(2026-11-14 migrator 발견) / 커밋: `refactor(api): 미사용 import 제거`
 - [ ] `src/instrumentation.ts` 의 `process.exit`/`exitCode` 가 Turbopack Edge 번들에서 "Ecmascript file had an error" 경고 2건(빌드는 성공, 2026-11-14 발견) — `NEXT_RUNTIME` 분기 뒤 동적 import 로 옮길지 경고 허용할지 / 커밋: `fix(config): instrumentation Edge 번들 경고 제거`
+- [ ] `scripts/db-migrate.mts` 검증 — 프로세스 spawn 중심이라 단위 테스트 없음(2026-11-14). 인자 파싱·새 폴더 탐색을 순수 함수로 빼 테스트하거나, CI service container 에서 스모크(임시 모델 → `db:migrate` → down.sql → `migrate deploy`) 잡 검토 / 커밋: `test(db): db:migrate 래퍼 스모크`
 - [ ] `eslint.config.mjs` globalIgnores 에 `coverage/**` 추가 — gitignore 된 커버리지 산출물이 lint warning 1건을 낸다(2026-11-11 migrator 발견) / 커밋: `chore(config): 커버리지 산출물을 lint 대상에서 제외`
 - [x] 첫 단위 테스트가 생기면 `v2/vitest.config.mts` 의 `passWithNoTests: true` 제거 (2026-11-12, 0e93f66 — F07 헬퍼 커밋에서 처리) — 완료 조건: 설정에서 제거 후 `pnpm test` 통과 / 커밋: `chore(config): Vitest passWithNoTests 제거`
 - [ ] CI build step 에 더미 `NEXT_PUBLIC_APP_URL`(예: `http://localhost:3002`) — `env.client.ts` 를 import 하는 첫 컴포넌트가 생기면 정적 프리렌더가 env 없이 실패 / 커밋: `ci(ci): 빌드 단계에 더미 공개 env 추가`

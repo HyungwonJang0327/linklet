@@ -109,6 +109,7 @@ const eslintConfig = defineConfig([
       'vitest.config.*',
       'vitest.setup.*',
       'prisma.config.*',
+      'scripts/**', // DB 스크립트(pnpm db:migrate) — CLI 와 같은 방식으로 env 를 읽는다
       'e2e/**',
     ],
     rules: {
