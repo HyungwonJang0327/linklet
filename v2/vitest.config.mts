@@ -13,7 +13,8 @@ export default defineConfig({
   },
   test: {
     environment: 'node',
-    include: ['src/**/*.test.ts'],
+    // prisma/lib 는 CLI·스크립트·테스트가 공유하는 순수 모듈(로컬 DB 가드) — 소스 옆 테스트(T6)를 포함한다
+    include: ['src/**/*.test.ts', 'prisma/lib/**/*.test.ts'],
     // 통합 테스트 DB URL 덮기 + 비로컬 DB 가드 (decisions/testing.md T10)
     setupFiles: ['./vitest.setup.ts'],
     coverage: {
