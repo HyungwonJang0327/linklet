@@ -45,6 +45,8 @@ pnpm db:migrate add_view --create-only  # 적용하지 않고 폴더만 만든�
   - 스키마 변화가 없으면 멈춘다. 빈 마이그레이션이 필요하면 `--create-only` — `down.sql` 은 `-- This is an empty migration.` 자리표시자
 - **섀도 DB**: `migrate dev` 는 로컬 `linklet` 이 superuser 라 임시 섀도 DB 를 스스로 만들고 지운다(설정 불필요). 반면 `migrate diff --to-migrations` 는 `datasource.shadowDatabaseUrl` 이 없으면 거부하므로, 스크립트가 같은 서버에 `linklet_shadow_{시각}` DB 를 `CREATE` 해 `LINKLET_SHADOW_DATABASE_URL` 로 `prisma.config.ts` 에 넘기고 끝나면 `DROP` 한다. 이 변수는 사람이 `.env` 에 둘 키가 아니다
 - 되돌리기(로컬 확인 절차, 실측): `pnpm exec prisma db execute --file prisma/migrations/{폴더}/down.sql` → `_prisma_migrations` 에서 그 행 삭제(`echo "DELETE FROM \"_prisma_migrations\" WHERE migration_name = '{폴더}';" | pnpm exec prisma db execute --stdin`) → `pnpm exec prisma migrate dev`(또는 `migrate deploy`)로 다시 적용. `migrate resolve --rolled-back` 은 **실패 상태**의 마이그레이션에만 쓴다
+- **이력**: 첫 마이그레이션 `20261114005504_init`(위시리스트·아이템·공지·문의 + User 최소, FEATURES F02)은 `pnpm db:migrate init` 으로 생성했다 — `--to-empty` 경로, 로컬 dev DB 에서 up → down.sql → `migrate deploy` 재적용까지 확인(2026-11-14). 인증 테이블은 F08 에서 추가한다
+- **테스트 DB**: `src/server/db.integration.test.ts` 의 모델 접근 테스트는 테스트 DB(5434)에 마이그레이션이 있어야 통과한다. 지금은 `pnpm db:test:up` 뒤 `DATABASE_URL_UNPOOLED=postgresql://linklet:linklet@127.0.0.1:5434/linklet_test pnpm exec prisma migrate deploy` 를 **수동 1회** 적용한다(compose 더미 값, 시크릿 아님). 자동 적용·테스트마다 비우기는 시드 항목에서 setup 으로 옮긴다
 
 ### 접속 문자열 환경 가드
 
