@@ -1,7 +1,7 @@
 // Prisma 7 스키마 — decisions/db-migration.md, decisions/tech-stack.md(Prisma 7.10.0 고정), FEATURES F02
 // - 접속 문자열은 여기 두지 않는다. 런타임은 src/server/db.ts(DATABASE_URL, pooled), CLI 는 prisma.config.ts(DATABASE_URL_UNPOOLED)
 // - 생성물(src/generated/prisma)은 커밋하지 않는다 — `pnpm db:generate`(install 뒤 postinstall 에서도 실행)
-// - 모델은 첫 마이그레이션 항목(todo/migrator-todo.md)에서 추가한다. PK 는 `String @id @default(uuid(7)) @db.Uuid`(M5)
+// - 모델은 아래 "첫 마이그레이션(init) 범위" 절부터. PK 는 `String @id @default(uuid(7)) @db.Uuid`(M5)
 
 generator client {
   provider     = "prisma-client" // Prisma 7 기본 생성기 (Rust 엔진 없음, driver adapter 필수)
@@ -12,4 +12,149 @@ generator client {
 
 datasource db {
   provider = "postgresql"
+}
+
+// ---------------------------------------------------------------------------
+// 첫 마이그레이션(init) 범위 — FEATURES F02. 인증 테이블(session·account·verification, admin 플러그인 필드)은 F08 에서 추가한다.
+// 공통 규약: PK `uuid(7) @db.Uuid`(M5) · FK 도 `@db.Uuid` · DateTime 은 전부 `Timestamptz(3)`(UTC, CLAUDE.md §4-2) ·
+//   테이블 이름은 snake_case 복수형 `@@map` · 상태·구분 값은 소문자 영어 enum · 길이 제한은 DB 가 아니라 Zod(features/*/schema.ts)
+// 폐기(만들지 않음): viewCount·clickCount(D05), QnA(D03), ErrorLog(Sentry 대체), customization Json(F27 때 컬럼으로), locale `kr/jp`(U3)
+// ---------------------------------------------------------------------------
+
+/// 언어 코드 — decisions/url-design.md U3 (ISO 639-1, 기본 ko)
+enum Locale {
+  ko
+  en
+  ja
+}
+
+/// 앱 스킨 — decisions/app-skin.md (색·반경·그림자 팔레트, 기본 canvas)
+enum AppSkin {
+  canvas
+  paper
+  pop
+}
+
+/// 앱 모드 — decisions/app-skin.md (스킨과 독립, 기본 system)
+enum AppMode {
+  light
+  dark
+  system
+}
+
+/// 위시리스트 계기 카테고리 — decisions/category.md (미선택은 컬럼 null, 칩 없음)
+enum WishlistCategory {
+  birthday
+  occasion
+  someday
+}
+
+/// 문의 구분 — FEATURES F30·F35 (기존 QUESTION 등 대문자 → 소문자)
+enum InquiryType {
+  question
+  feedback
+  bug_report
+  feature_request
+}
+
+/// 문의 상태 — FEATURES F30·F35 (기존 PENDING 등 대문자 → 소문자)
+enum InquiryStatus {
+  pending
+  in_progress
+  answered
+  closed
+}
+
+/// 사용자 — Better Auth 핵심 필드(id·name·email·emailVerified·image·createdAt·updatedAt, 공식 문서 2026-11-14 확인) + 앱 필드(bio·locale·skin·mode — F28·F29·app-skin.md).
+/// session·account·verification 과 admin 플러그인 필드(role·banned 등)는 F08 마이그레이션에서 추가한다. M5: Better Auth 는 generateId: false 로 이 @default 를 쓴다
+model User {
+  id            String   @id @default(uuid(7)) @db.Uuid
+  name          String
+  email         String   @unique
+  emailVerified Boolean  @default(false)
+  image         String?
+  bio           String?
+  locale        Locale   @default(ko)
+  skin          AppSkin  @default(canvas)
+  mode          AppMode  @default(system)
+  createdAt     DateTime @default(now()) @db.Timestamptz(3)
+  updatedAt     DateTime @updatedAt @db.Timestamptz(3)
+
+  wishlists Wishlist[]
+  inquiries Inquiry[]
+
+  @@map("users")
+}
+
+/// 위시리스트 — FEATURES F13~F16. 소유자 필수(기존 nullable·SetNull 폐기), shareId 는 PK 와 별도의 추측 불가 공유 ID(api-response R8·M5, 경로 접두사 없음 — CLAUDE.md 함정 1)
+model Wishlist {
+  id          String            @id @default(uuid(7)) @db.Uuid
+  userId      String            @db.Uuid
+  user        User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  title       String
+  description String?
+  shareId     String            @unique @default(nanoid(12))
+  isPublic    Boolean           @default(true)
+  category    WishlistCategory?
+  createdAt   DateTime          @default(now()) @db.Timestamptz(3)
+  updatedAt   DateTime          @updatedAt @db.Timestamptz(3)
+
+  items WishlistItem[]
+
+  @@index([userId])
+  @@map("wishlists")
+}
+
+/// 아이템 — FEATURES F17~F22. price 는 숫자형 + ISO 4217 통화 분리(F02 "price 숫자형"), position 은 순서(F22, 기존 priority), isReceived 는 기존 isCompleted(용어표)
+model WishlistItem {
+  id          String   @id @default(uuid(7)) @db.Uuid
+  wishlistId  String   @db.Uuid
+  wishlist    Wishlist @relation(fields: [wishlistId], references: [id], onDelete: Cascade)
+  title       String
+  description String?
+  productUrl  String
+  imageUrl    String?
+  siteName    String?
+  price       Decimal? @db.Decimal(14, 2)
+  currency    String?  @db.Char(3)
+  position    Int      @default(0)
+  isReceived  Boolean  @default(false)
+  createdAt   DateTime @default(now()) @db.Timestamptz(3)
+  updatedAt   DateTime @updatedAt @db.Timestamptz(3)
+
+  @@index([wishlistId, position])
+  @@map("wishlist_items")
+}
+
+/// 공지 — FEATURES F31·F36. 공개 목록은 isPublished=true 를 고정 상단(isPinned) → 최신순으로 읽는다
+model Notice {
+  id          String   @id @default(uuid(7)) @db.Uuid
+  title       String
+  content     String
+  isPublished Boolean  @default(false)
+  isPinned    Boolean  @default(false)
+  createdAt   DateTime @default(now()) @db.Timestamptz(3)
+  updatedAt   DateTime @updatedAt @db.Timestamptz(3)
+
+  @@index([isPublished, isPinned, createdAt])
+  @@map("notices")
+}
+
+/// 문의 — FEATURES F30·F35 (기존 UserInquiry 에서 priority·category 제거, 사용자 결정 2026-11-14). QnA(D03)는 문의로 통일
+model Inquiry {
+  id          String        @id @default(uuid(7)) @db.Uuid
+  userId      String        @db.Uuid
+  user        User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  type        InquiryType
+  subject     String
+  content     String
+  response    String?
+  status      InquiryStatus @default(pending)
+  respondedAt DateTime?     @db.Timestamptz(3)
+  createdAt   DateTime      @default(now()) @db.Timestamptz(3)
+  updatedAt   DateTime      @updatedAt @db.Timestamptz(3)
+
+  @@index([userId])
+  @@index([status])
+  @@map("inquiries")
 }
