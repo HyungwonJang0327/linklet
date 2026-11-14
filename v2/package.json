@@ -22,6 +22,7 @@
     "db:test:up": "docker compose up -d --wait db-test",
     "db:test:down": "docker compose rm -sfv db-test",
     "db:generate": "prisma generate",
+    "db:migrate": "node scripts/db-migrate.mts",
     "baseline:up": "bash e2e/baseline/run-baseline.sh",
     "baseline:seed": "bash e2e/baseline/seed-baseline.sh",
     "baseline:down": "bash e2e/baseline/stop-baseline.sh"
