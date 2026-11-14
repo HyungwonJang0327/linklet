@@ -93,6 +93,7 @@
 | UI 리디자인 | v2는 새 시각 디자인. 최대한 직관적으로, UX로 유명한 서비스들(애플·토스·Pinterest·Airbnb·Linear·Stripe 등)의 장점(UX 원칙 12개). Phase 0에서 방향 → 핵심 화면 HTML 시안(`design/mockups/`) → 토큰 | roadmap.md |
 | 마이그레이션 | `migrate dev` + `down.sql`(`migrate diff --to-migrations` 를 `pnpm db:migrate` 래퍼로), `db push` 금지, 운영 적용은 사용자 | db-migration.md |
 | ID 생성 | PK UUID v7(`uuid(7) @db.Uuid`), Better Auth `generateId: false` 로 통일, 공유 ID 는 `nanoid(12)` | db-migration.md M5 |
+| 데이터 모델 | 첫 마이그레이션 = User(최소, Better Auth 핵심 필드 + locale·skin·mode) · Wishlist · WishlistItem(price Decimal + currency) · Notice · Inquiry(priority·category 제거). 소문자 enum, Timestamptz, snake_case 복수 테이블 | data-model.md |
 | URL | 복수형·케밥·동사 금지, `/{locale}/wishlists`, `ko/en/ja`, 필터는 URL 쿼리, 하위 호환 없음 | url-design.md |
 | 의존성 | 5가지 기준 확인 + 기록 후 추가 | dependencies.md |
 | 시간·값·로그 | UTC 저장·ISO 직렬화·표시는 프론트 / 코드 값 영어 / 로그에 시크릿·개인정보 금지 | CLAUDE.md 4-2 (고정 규약) |
