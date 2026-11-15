@@ -23,6 +23,7 @@ type FieldError = { path: string; code: string }   // 검증 실패 시 필드�
 | `RATE_LIMITED` | 429 | 요청 빈도 초과 | ✓ |
 | `UPSTREAM_FAILED` | 502 | 외부 서비스 실패 (메타데이터 대상 사이트·저장소) | ✓ |
 | `INTERNAL` | 500 | 예상 못한 실패 | ✓ |
+| `UNAVAILABLE` | 503 | 서비스 일시 불가 — 헬스 체크(I01)가 DB 에 닿지 못할 때. 일반 API 는 DB 실패를 `INTERNAL` 로 둔다(서비스 계층이 DB 예외를 분류하지 않는다) | ✓ |
 
 - `message`: 개발자용 영어. **화면에 표시하지 않는다**. 값은 코드 표의 **고정 문구뿐** — `AppError` 에 커스텀 문구 인자가 없다(2026-11-12, H8 재발 경로 차단). 맥락은 `details` 로만
 - 응답은 공용 헬퍼로만 만든다. Route Handler에서 `NextResponse.json({ error: ... })` 를 직접 쓰지 않는다
@@ -94,3 +95,4 @@ type FieldError = { path: string; code: string }   // 검증 실패 시 필드�
 - 2026-09-27 최초 결정 (사용자: E5만 Sentry 추가, 나머지 추천대로)
 - 2026-11-12 E1 message 고정 문구화, E2 `AppError(code, details?)` 시그니처 (security-reviewer F07 지적 → 사용자: message 인자 제거 추천안. 기각: 린트+런타임 가드 3겹)
 - 2026-11-12 E5 구현 규칙·종류 통제·알려진 한계 추가 (security-reviewer F01 검토)
+- 2026-11-15 E1 에 `UNAVAILABLE` 503 추가 — 헬스 체크 I01 실패 응답 (사용자: 503 신설. 기각: DB 예외를 그대로 throw 해 `500 INTERNAL` — 코드 추가 없이 끝나지만 HTTP 의미론상 503 이 정확)
