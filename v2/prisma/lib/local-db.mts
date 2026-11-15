@@ -1,4 +1,4 @@
-// 로컬 DB 판정 — prisma.config.ts(CLI 가드)·scripts/db-migrate.mts(래퍼)·vitest.setup.ts(테스트 DB 가드)·prisma/seed.ts(시드 가드)가 공유하는 순수 모듈.
+// 로컬 DB 판정 — prisma.config.ts(CLI 가드)·scripts/db-migrate.mts(래퍼)·vitest.setup.ts(테스트 DB 가드)·prisma/seed.mts(시드 가드)·vitest.global-setup.mts·src/server/test-db.ts가 공유하는 순수 모듈.
 // 근거: decisions/db-migration.md M3(운영 적용은 사용자 직접), decisions/testing.md T10, todo/migrator-todo.md(CLI 접속 문자열 환경 가드), FEATURES F02
 // - 이 파일은 Node(타입 스트리핑)·Prisma CLI 로더·Vitest 가 모두 직접 import 한다 → `server-only`·`@/` alias·process.env 를 쓰지 않는다
 // - 어떤 함수도 접속 문자열 값을 메시지에 넣지 않는다. 키 이름·판정·우회 방법만
@@ -7,12 +7,21 @@
 export const LOCAL_DB_HOSTS: ReadonlySet<string> = new Set(['127.0.0.1', 'localhost', '[::1]'])
 
 /**
+ * 접속 대상을 URL 호스트가 아닌 곳으로 바꾸는 쿼리 파라미터. pg-connection-string 은 `?host=`·`?hostaddr=`·`?port=` 가 있으면
+ * URL 의 host·port 를 무시하고 그 값으로 접속한다(2.14.1 소스 확인, security-reviewer 2026-11-15) → 이 파라미터가 있으면 "로컬임을 확인할 수 없음"으로 거부
+ */
+export const HOST_OVERRIDE_PARAMS: readonly string[] = ['host', 'hostaddr', 'port']
+
+/**
  * 접속 문자열의 호스트가 로컬인가. 해석 불가·호스트 없음(unix 소켓 등)·그 외 호스트는 모두 false — 로컬임을 확인할 수 없으면 거부한다.
  * postgresql: 은 non-special scheme 이라 URL 이 호스트를 소문자화·IPv4 정규화하지 않는다 → 소문자 비교만 하고 `127.1` 같은 축약형은 거부한다.
+ * `?host=`·`?hostaddr=`·`?port=` 가 붙은 문자열은 URL 호스트가 로컬이어도 거부한다(드라이버가 쿼리 값으로 접속하므로).
  */
 export function isLocalDatabaseUrl(value: string): boolean {
   try {
-    return LOCAL_DB_HOSTS.has(new URL(value).hostname.toLowerCase())
+    const url = new URL(value)
+    if (HOST_OVERRIDE_PARAMS.some((param) => url.searchParams.has(param))) return false
+    return LOCAL_DB_HOSTS.has(url.hostname.toLowerCase())
   } catch {
     return false
   }

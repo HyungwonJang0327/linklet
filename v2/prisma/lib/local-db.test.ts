@@ -16,6 +16,7 @@ const LOCAL_URLS = [
   'postgresql://linklet:linklet@LOCALHOST/linklet_dev',
   'postgres://linklet@[::1]:5434/linklet_test',
   'postgresql://127.0.0.1/db',
+  'postgresql://linklet:linklet@127.0.0.1:5433/linklet_dev?sslmode=disable&schema=public', // 접속 대상을 바꾸지 않는 쿼리는 통과
 ]
 
 const REMOTE_URLS = [
@@ -27,6 +28,10 @@ const REMOTE_URLS = [
   'postgresql://u:p@127.1/app', // 축약형 — URL 이 정규화하지 않으므로 거부
   'postgresql://u:p@localhost.evil.example/app',
   'postgresql://u:p@0.0.0.0/app',
+  // URL 호스트는 로컬이지만 pg 가 쿼리 값으로 접속하는 형태 — 로컬임을 확인할 수 없어 거부 (security-reviewer 2026-11-15)
+  'postgresql://u:p@127.0.0.1:5433/db?host=db.example.com',
+  'postgresql://u:p@localhost/db?hostaddr=203.0.113.9',
+  'postgresql://u:p@127.0.0.1:5433/db?sslmode=require&port=6543',
 ]
 
 const UNPARSEABLE = [

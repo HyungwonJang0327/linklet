@@ -17,6 +17,8 @@ export default defineConfig({
     include: ['src/**/*.test.ts', 'prisma/lib/**/*.test.ts'],
     // 통합 테스트 DB URL 덮기 + 비로컬 DB 가드 (decisions/testing.md T10)
     setupFiles: ['./vitest.setup.ts'],
+    // 테스트 DB 에 prisma migrate deploy 자동 적용 — 메인 프로세스 1회, DB 가 안 떠 있으면 안내만 (decisions/testing.md T5)
+    globalSetup: ['./vitest.global-setup.mts'],
     coverage: {
       provider: 'v8',
       include: [
