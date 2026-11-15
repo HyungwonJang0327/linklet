@@ -12,6 +12,7 @@ export const ERROR_CODE_TABLE = {
   RATE_LIMITED: { status: 429, retryable: true, message: 'Too many requests' },
   UPSTREAM_FAILED: { status: 502, retryable: true, message: 'Upstream service failed' },
   INTERNAL: { status: 500, retryable: true, message: 'Internal error' },
+  UNAVAILABLE: { status: 503, retryable: true, message: 'Service unavailable' },
 } as const satisfies Record<string, { status: number; retryable: boolean; message: string }>
 
 export type ErrorCode = keyof typeof ERROR_CODE_TABLE
