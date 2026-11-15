@@ -12,7 +12,9 @@ import { assertLocalDatabaseUrl, prismaCommandNeedsDatabase } from './prisma/lib
 //   migrate 류 명령이 자체 오류를 낸다. 이 파일은 ESLint process.env 금지 규칙의 예외 목록에 있다.
 // - `shared/config/env` 를 쓰지 않는 이유: `server-only` 가 CLI 로더에서 throw 하고, 런타임 전체 키 검증을 CLI 가 요구하지 않는다.
 // - 파일 이름: 7.10 CLI 는 prisma7.config.* 를 먼저, 없으면 prisma.config.* 를 읽는다(둘 다 지원, 경고 없음). 이 리포는 prisma.config.ts 하나만 둔다.
-// - migrations.seed 는 시드 항목에서 추가한다.
+// - migrations.seed: `prisma db seed`(= pnpm db:seed) 가 실행하는 명령. Prisma 7 은 `migrate dev`/`reset` 뒤 자동 시드가 없다(공식 문서 2026-11-15 확인).
+//   시드 스크립트(prisma/seed.mts)는 자체 로컬 가드(우회 없음)를 또 거친다 — `db seed` 는 DB 명령이라 아래 M6 가드도 통과해야 하므로 이중 가드(의도).
+//   `--disable-warning=MODULE_TYPELESS_PACKAGE_JSON`: 생성 클라이언트가 `.ts` 라 Node 가 내는 모듈 형식 경고만 끈다(동작 영향 없음).
 //
 // 접속 문자열 환경 가드 (todo/migrator-todo.md, M3 "운영 적용은 사용자 직접"):
 // - `.env.local` 에 운영·dev(Neon) 문자열이 들어오면 CLI 가 그 DB 에 migrate 할 수 있다 → DATABASE_URL_UNPOOLED 가 있고 호스트가
@@ -48,6 +50,7 @@ export default defineConfig({
   schema: 'prisma/schema.prisma',
   migrations: {
     path: 'prisma/migrations',
+    seed: 'node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON prisma/seed.mts',
   },
   datasource: {
     // CLI(unpooled). 런타임 pooled URL 은 server/db.ts 가 DATABASE_URL 로 읽는다

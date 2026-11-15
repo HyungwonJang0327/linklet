@@ -49,6 +49,20 @@ pnpm db:migrate add_view --create-only  # 적용하지 않고 폴더만 만든�
 - **이력**: 첫 마이그레이션 `20261114005504_init`(위시리스트·아이템·공지·문의 + User 최소, FEATURES F02)은 `pnpm db:migrate init` 으로 생성했다 — `--to-empty` 경로, 로컬 dev DB 에서 up → down.sql → `migrate deploy` 재적용까지 확인(2026-11-14). 인증 테이블은 F08 에서 추가한다
 - **테스트 DB**: 마이그레이션 적용은 `pnpm test` 의 globalSetup 이 자동으로 한다(위 "로컬 DB" 절). 손으로 적용할 일은 없다 — tmpfs 라 `pnpm db:test:down` 뒤 다시 올리면 빈 DB 로 시작하고 다음 `pnpm test` 가 다시 적용한다
 
+## 시드 (`pnpm db:seed`)
+
+근거: `decisions/db-migration.md` 시드 행(운영에는 실행하지 않는다)·`decisions/data-model.md`. 스크립트는 `prisma/seed.mts` — `prisma.config.ts` 의 `migrations.seed` 가 가리키고, Prisma 7 은 `prisma db seed` 로만 시드를 돌린다(`migrate dev`·`reset` 뒤 자동 시드 없음).
+
+```bash
+pnpm db:up && pnpm db:seed   # 로컬 dev DB(5433)에 개발용 더미 데이터. 다시 돌려도 행이 늘지 않는다(고정 UUID upsert)
+```
+
+- 내용: 더미 사용자 1(`dev@linklet.test`, 예약 도메인) · 위시리스트 3(카테고리·공개 여부 혼합, 공유 ID `seedbirthday`·`seedsomeday1`·`seedprivate1` 고정) · 아이템 6(KRW·USD·JPY·EUR·가격 없음, 받음 혼합) · 공지 2(공개 고정 1·비공개 1) · 문의 1. 실제 사람·실제 상품 링크 없음(`example.com`)
+- 멱등: 모든 행을 고정 UUID(`00000000-0000-7000-8000-…`)로 upsert — 손으로 바꾼 시드 행은 시드 상태로 돌아오고, 개발 중 만든 다른 행은 건드리지 않는다
+- 가드(우회 없음): `NODE_ENV=production` · `DATABASE_URL_UNPOOLED` 미설정 · 호스트가 로컬이 아니면 연결 시도 없이 종료. `LINKLET_ALLOW_REMOTE_DB` 는 읽지 않는다. `prisma db seed` 는 DB 명령이라 `prisma.config.ts` 의 가드도 먼저 거친다(이중). 출력은 키 이름·판정·행 수만
+- 테스트는 이 시드에 의존하지 않는다 — 통합 테스트는 자기 fixture 를 만들고 `beforeEach` 에서 `src/server/test-db.ts` 의 `resetTestDatabase` 로 비운다(T5)
+- `src/server/db.ts` 밖에서 `new PrismaClient` 를 쓰는 유일한 곳이다(CLAUDE.md 함정 6 의 CLI 시드 예외 — 사용자 결정 2026-11-15). 앱 코드에서 import 하지 않는다
+
 ### 접속 문자열 환경 가드
 
 판정은 `prisma/lib/local-db.mts` 하나 — 호스트가 `127.0.0.1`·`localhost`·`[::1]` 이면 로컬, 해석 불가·그 외는 전부 비로컬. 메시지에 값(호스트·비밀번호)은 절대 넣지 않는다.
@@ -57,6 +71,7 @@ pnpm db:migrate add_view --create-only  # 적용하지 않고 폴더만 만든�
 | ------------------------------------------- | ----------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | `prisma.config.ts` (Prisma CLI 전체)        | `DATABASE_URL_UNPOOLED`·`LINKLET_SHADOW_DATABASE_URL` | DB 에 붙는 명령(`migrate`·`db`·`studio`·그 외 전부)에서 throw. `generate`·`validate`·`format`·`version` 은 검사하지 않는다(Vercel·CI 의 `postinstall: prisma generate` 가 운영 env 와 함께 돌기 때문) | 셸에서 `LINKLET_ALLOW_REMOTE_DB=1 pnpm exec prisma migrate deploy` — `.env` 파일 값은 인정하지 않는다(env 로드 전에 읽음). dev·운영 적용은 이 방식으로 사용자가 직접(M3) |
 | `pnpm db:migrate`                           | `DATABASE_URL_UNPOOLED`                               | 미설정·비로컬 모두 거부                                                                                                                                                                               | **없음** — 운영에 `migrate dev` 를 돌릴 일은 없다                                                                                                                        |
+| `pnpm db:seed` (`prisma/seed.mts`)          | `DATABASE_URL_UNPOOLED`·`NODE_ENV`                    | 미설정·비로컬·production 모두 거부(연결 시도 없음)                                                                                                                                                    | **없음** — `LINKLET_ALLOW_REMOTE_DB` 를 읽지 않는다. `db seed` 는 CLI 가드도 먼저 거친다                                                                                 |
 | `vitest.setup.ts`·`vitest.global-setup.mts` | `DATABASE_URL`·`DATABASE_URL_UNPOOLED` (덮기 전 값)   | 즉시 실패                                                                                                                                                                                             | 없음                                                                                                                                                                     |
 
 CI service container 는 `127.0.0.1` 이라 모두 통과한다.
