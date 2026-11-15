@@ -12,6 +12,7 @@ function mockEnv(nodeEnv: 'development' | 'test' | 'production', databaseUrl: st
 // 가짜 접속 문자열(시크릿 아님)
 const LOCAL_URL = 'postgresql://linklet:linklet@127.0.0.1:5434/linklet_test'
 const REMOTE_URL = 'postgresql://u:p@db.example.com/app'
+const LOCAL_DEV_URL = 'postgresql://linklet:linklet@127.0.0.1:5433/linklet_dev' // 로컬이지만 테스트 DB 가 아님
 
 describe('server/test-db — 테스트 전용 가드', () => {
   afterEach(() => {
@@ -39,6 +40,15 @@ describe('server/test-db — 테스트 전용 가드', () => {
     const executeRaw = vi.fn()
     const fakeDb = { $executeRaw: executeRaw } as unknown as Parameters<typeof resetTestDatabase>[0]
     await expect(resetTestDatabase(fakeDb)).rejects.toThrow('not a local database host')
+    expect(executeRaw).not.toHaveBeenCalled()
+  })
+
+  it('로컬이어도 DB 이름이 linklet_test 가 아니면 쿼리 없이 거부한다 (dev DB 보호)', async () => {
+    mockEnv('test', LOCAL_DEV_URL)
+    const { resetTestDatabase } = await import('./test-db')
+    const executeRaw = vi.fn()
+    const fakeDb = { $executeRaw: executeRaw } as unknown as Parameters<typeof resetTestDatabase>[0]
+    await expect(resetTestDatabase(fakeDb)).rejects.toThrow('not the test database')
     expect(executeRaw).not.toHaveBeenCalled()
   })
 
