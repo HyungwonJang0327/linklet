@@ -18,7 +18,8 @@
 | [error-handling.md](error-handling.md) | 에러 응답 스키마·실패 구분·문구·경계·로그 |
 | [api-response.md](api-response.md) | 정상 응답 형태·페이지네이션·공유 ID·입력 검증 |
 | [testing.md](testing.md) | 테스트 기준선·커버리지 대상·테스트 DB |
-| [db-migration.md](db-migration.md) | 마이그레이션 생성·되돌리기·적용 순서 |
+| [db-migration.md](db-migration.md) | 마이그레이션 생성·되돌리기·적용 순서·CLI 접속 가드 |
+| [data-model.md](data-model.md) | 첫 마이그레이션 범위·공통 규칙·모델별 필드 |
 | [url-design.md](url-design.md) | 페이지·API 경로, 언어 코드, 하위 호환 |
 | [dependencies.md](dependencies.md) | 의존성 추가 기준과 기록 |
 | [roadmap.md](roadmap.md) | Phase 구성·투입 시간·첫 배포 시점 |
