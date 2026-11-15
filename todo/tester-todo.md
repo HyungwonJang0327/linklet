@@ -29,7 +29,8 @@
 - [ ] `eslint.config.mjs` globalIgnores 에 `coverage/**` 추가 — gitignore 된 커버리지 산출물이 lint warning 1건을 낸다(2026-11-11 migrator 발견) / 커밋: `chore(config): 커버리지 산출물을 lint 대상에서 제외`
 - [x] 첫 단위 테스트가 생기면 `v2/vitest.config.mts` 의 `passWithNoTests: true` 제거 (2026-11-12, 0e93f66 — F07 헬퍼 커밋에서 처리) — 완료 조건: 설정에서 제거 후 `pnpm test` 통과 / 커밋: `chore(config): Vitest passWithNoTests 제거`
 - [ ] CI build step 에 더미 `NEXT_PUBLIC_APP_URL`(예: `http://localhost:3002`) — `env.client.ts` 를 import 하는 첫 컴포넌트가 생기면 정적 프리렌더가 env 없이 실패 / 커밋: `ci(ci): 빌드 단계에 더미 공개 env 추가`
-- [ ] CI에 Docker Postgres service container + 통합 테스트 실행 — T5. 현재 `src/server/db.integration.test.ts` 는 5434 TCP 접속 실패 시 skip 되어 CI 에서 돌지 않는다(2026-11-14). service container 는 `linklet/linklet/linklet_test` 를 5434 로 노출하면 setup(`vitest.setup.ts`, T10)이 그대로 맞는다
+- [ ] CI에 Docker Postgres service container + 통합 테스트 실행 — T5. 현재 `src/server/db.integration.test.ts` 는 5434 TCP 접속 실패 시 skip 되어 CI 에서 돌지 않는다(2026-11-14). service container 는 `linklet/linklet/linklet_test` 를 5434 로 노출하면 setup(`vitest.setup.ts`, T10)이 그대로 맞는다. 2026-11-15 이후 `vitest.global-setup.mts` 가 닿기만 하면 `migrate deploy` 를 자동 적용하므로 추가 코드 없음(컨테이너 포트가 5432 면 `LINKLET_TEST_DB_PORT=5432`)
+- [ ] 통합 테스트 파일 간 격리 — Vitest 는 파일을 병렬(forks)로 돌리는데 통합 테스트는 `beforeEach` 에서 테스트 DB 전체를 TRUNCATE 한다(`server/test-db`). 지금은 통합 파일 1개라 문제 없지만 **두 번째 통합 파일(F08 이후)을 만들기 전에** 반드시 결정: `*.integration.test.ts` 를 별도 project 로 `fileParallelism: false`, 또는 `poolMatchGlobs` 로 직렬. (2026-11-15 migrator 발견) / 커밋: `test(config): 통합 테스트 직렬 실행`
   - 완료 조건: PR에서 DB 통합 테스트가 깨끗한 DB로 실행 / 커밋: `ci(ci): v2 CI에 테스트용 Postgres 추가`
 - [ ] CI에 E2E 단계 추가 (Playwright chromium 설치, 시드 DB)
   - 완료 조건: PR에서 v2 E2E 실행·통과, 기준선 project는 제외 / 커밋: `ci(ci): v2 CI에 E2E 단계 추가`

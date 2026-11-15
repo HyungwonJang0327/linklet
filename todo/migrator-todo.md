@@ -44,10 +44,11 @@
 - [x] 첫 마이그레이션 — 위시리스트·아이템·공지·문의 + **User 최소**(사용자 결정 2026-11-14, `decisions/data-model.md`) (2026-11-14, `20261114005504_init` — schema·migration·통합 테스트·README 4커밋. 래퍼 첫 실전 `--to-empty` 경로 문제 없음, dev DB up→down→up 2사이클·test DB deploy 확인, 테스트 242건). 인증 테이블(session·account·verification·admin 필드)은 F08에서
   - 메모: `Inquiry.type` 에 기본값 없음 → F30 Zod 스키마에서 필수. Better Auth 는 `model User @@map("users")` 매핑·`generateId: false` 와 Prisma `@default(uuid(7))` 조합을 F08 에서 실측
   - 완료 조건: `migration.sql` + `down.sql`, up/down/up 수동 확인 / 커밋: `feat(db): 첫 스키마 마이그레이션` / FEATURES: F02
-- [ ] 시드 `prisma/seed.ts` + 환경 가드(운영·원격 DB면 즉시 종료) + **통합 테스트 setup**: 테스트 DB 에 `migrate deploy` 자동 적용·테스트마다 테이블 비우기(지금은 README 의 수동 1회 전제 — `db.integration.test.ts` 모델 count 테스트가 의존) — 가드는 `prisma/lib/local-db.mts` 의 `assertLocalDatabaseUrl`(우회 없음). `migrations.seed` 를 prisma.config.ts 에 추가, 시드 실행도 Node 24 `.mts` 직접 실행(새 의존성 없음)
+- [x] 시드 `prisma/seed.mts` + 환경 가드 + **통합 테스트 setup** (2026-11-15, `626d963`~`6fdb5e7` 9커밋 + security-reviewer 반영 `0d06d54`·`d81aa65`·`df15f31`·`e8c31a1` — 시드 전용 클라이언트(사용자 결정), 고정 UUID upsert 멱등, `vitest.global-setup.mts` 자동 `migrate deploy`, `server/test-db.resetTestDatabase` beforeEach, 테스트 268건) — 가드는 `prisma/lib/local-db.mts` 의 `assertLocalDatabaseUrl`(우회 없음). `migrations.seed` 를 prisma.config.ts 에 추가, 시드 실행도 Node 24 `.mts` 직접 실행(새 의존성 없음)
   - 가드 출력에 `DATABASE_URL` 호스트를 찍지 않는다(키 이름·판정만)
   - 완료 조건: 로컬 시드 후 앱 기동, 가드 단위 테스트 / 커밋: `feat(db): 개발·테스트 시드와 환경 가드` / FEATURES: F02
-- [ ] `scripts/db-migrate.mts` — `migrate dev` 가 돌리는 `prisma generate` 출력이 래퍼 로그에 안 보임. 끝에 `pnpm db:generate` 를 명시 실행할지 확인(2026-11-14 migrator 메모) / 커밋: `chore(db): db:migrate 뒤 generate 보장`
+  - **남은 수동 확인**: "시드 후 앱 기동" — `v2/.env.local` 이 아직 없어 `pnpm dev` 를 못 띄움. 사용자가 `.env.example` 을 복사해 로컬 값으로 `.env.local` 을 만든 뒤 `pnpm db:seed` → `pnpm dev` 확인(F02 동등성 확인 방법). 시드 데이터는 dev DB(5433)에 적재된 상태
+- [ ] `scripts/db-migrate.mts` — `migrate dev` 가 돌리는 `prisma generate` 출력이 래퍼 로그에 안 보임. 끝에 `pnpm db:generate` 를 명시 실행할지 확인(2026-11-14 migrator 메모). 참고: `vitest.global-setup.mts` 는 의도적으로 `migrate deploy` 만 하고 generate 는 안 한다(테스트마다 수 초 비용, 구버전 클라이언트는 typecheck 가 잡음) — 래퍼 끝에 generate 를 명시하면 충분(2026-11-15) / 커밋: `chore(db): db:migrate 뒤 generate 보장`
 - [ ] 헬스 체크 `GET /api/health` (실패 시 일반 문구) — `db.$queryRaw` 로 DB 확인. `src/server/db.integration.test.ts` 가 TCP 프로브 실패 시 skip 하는 방식을 그대로 쓴다
   - 확인: `export const GET = createHandler(...)` 가 Next typegen route 검사(`RouteHandler<P>` vs ParamMap)와 호환되는지 — 첫 실제 route 파일
   - 완료 조건: 단위 테스트 — DB 실패 시 내부 메시지 없음 / 커밋: `feat(api): 헬스 체크 API 추가` / FEATURES: I01
