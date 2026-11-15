@@ -53,11 +53,12 @@
   - 확인 완료: `export const GET = createHandler(...)` 가 Next typegen(`.next/types/validator.ts` `RouteHandlerConfig<"/api/health">`)에 그대로 통과 — `api-handler.ts` 변경 없음
   - 후속: F04 i18n 사전에 `errors.UNAVAILABLE` 추가(코드 10종 → 사전 키 테스트가 잡아야 함)
   - 완료 조건: 단위 테스트 — DB 실패 시 내부 메시지 없음 / 커밋: `feat(api): 헬스 체크 API 추가` / FEATURES: I01
-- [ ] 디자인 토큰 `@theme` 적용 (`decisions/design-tokens.md` 기준, `data-skin`·`data-mode` 구조로 스킨 × 라이트·다크 — `decisions/app-skin.md`)
+- [x] 디자인 토큰 `@theme` 적용 (2026-11-15, `436001f`~`493b51f` 5커밋 — 사본 `src/app/tokens.css` + 원본 동일성 테스트, `globals.css` 에 `@theme` 네임스페이스 initial·`@theme inline reference` 매핑·`@utility` 타이포 13종·`@custom-variant dark`·color-scheme, root `<html data-skin="canvas" data-mode="light">`, ESLint `dark:` 금지. `compile()` 테스트 27건으로 Tailwind 4.3 동작 고정, 빌드 CSS grep 확인, 테스트 304건) (`decisions/design-tokens.md` 기준, `data-skin`·`data-mode` 구조로 스킨 × 라이트·다크 — `decisions/app-skin.md`)
   - 완료 조건: 원색 클래스 0, 토큰만 사용 / 커밋: `design(ui): 디자인 토큰 적용` / FEATURES: F03
+- [ ] 토큰 후속 결정 2건 (2026-11-15 migrator 발견, 사용자 결정) — (a) `--text-shadow-*`·`--drop-shadow-*`·`--inset-shadow-*` 네임스페이스도 `initial` 로 비울지(토큰 체계 밖 장식 유틸리티가 남아 있음. 비우면 `@theme` 3줄 + 테스트 후보) (b) Tailwind 소스 스캔이 `*.test.ts` 도 읽어 `globals.test.ts` 의 후보 문자열과 코드 안 단어(`block`·`inline` 등)가 빌드 CSS 에 유틸리티로 들어감(수백 바이트) → `@source not "**/*.test.ts"` 제외 여부 / 커밋: `design(ui): 토큰 밖 그림자 네임스페이스 비움`, `chore(config): Tailwind 소스 스캔에서 테스트 제외`
 - [ ] i18n 사전 3개(ko·en·ja) + 타입 안전 `t()` + enum→키 매핑 위치 — `errors.{CODE}` 는 `ERROR_CODES` 10종(`UNAVAILABLE` 포함) 전부와 1:1 인지 테스트로 고정
   - 완료 조건: 단위 테스트 — 3개 사전 키 집합 동일, **플레이스홀더 문법이 `t()` 치환 규칙과 일치**(기존 앱 버그: 사전 `{title}` vs `t()` `{{key}}` — 2026-11-10 기준선 실측) / 커밋: `feat(i18n): 사전 3개와 타입 안전 t()` / FEATURES: F04
-- [ ] root layout `<html lang>` + `[locale]` 레이아웃 + 언어 코드 `ko/en/ja` 검증
+- [ ] root layout `<html lang>` + `[locale]` 레이아웃 + 언어 코드 `ko/en/ja` 검증 — 포함: 시스템 모드 인라인 스크립트(`data-mode` 를 첫 페인트 전에 채움, CSP nonce 방침 함께 결정 — design-tokens.md Phase 1 결정), `metadata` 의 `Create Next App` 교체
   - 완료 조건: E2E — 주요 경로에 `<html lang>` / 커밋: `feat(i18n): 언어별 레이아웃과 html lang` / FEATURES: F03
 - [ ] `proxy.ts` — `/` 요청을 Accept-Language 기준 언어 경로로, 미지원 언어는 `ko`
   - 완료 조건: E2E / 커밋: `feat(i18n): 언어 경로 리다이렉트 proxy` / FEATURES: F05
