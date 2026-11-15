@@ -23,7 +23,7 @@ import { assertLocalDatabaseUrl } from './lib/local-db.mts'
 //   3. 호스트가 로컬(127.0.0.1·localhost·[::1])이 아니면 거부 — prisma.config.ts 와 같은 판정 모듈(prisma/lib/local-db.mts)
 //   우회 없음: prisma.config.ts 의 LINKLET_ALLOW_REMOTE_DB 는 여기서 읽지 않는다(dev·운영에 시드를 넣을 일은 없다).
 //   `prisma db seed` 로 실행하면 prisma.config.ts 의 M6 가드도 먼저 거친다(이중 가드, 의도된 것).
-//   어떤 경로에서도 접속 문자열·호스트를 출력하지 않는다(키 이름·판정만).
+//   어떤 경로에서도 접속 문자열·호스트를 출력하지 않는다(키 이름·판정만). 실행 중 실패도 error.name·코드만 남기고 message 는 버린다.
 //
 // 멱등성: 모든 행을 **고정 UUID 로 upsert** 한다. 다시 돌려도 행 수가 늘지 않고, 손으로 바꾼 시드 행은 시드 상태로 돌아온다.
 //   "시드 범위 먼저 삭제" 방식을 고르지 않은 이유: 삭제 기준(이메일·제목)이 개발 중 사용자가 만든 다른 행과 겹칠 수 있고,
@@ -42,9 +42,23 @@ function fail(message: string): never {
   process.exit(1)
 }
 
-/** 오류 메시지에서 접속 문자열·host:port 처럼 보이는 토큰을 가린다 — 가드를 통과한 로컬 값이라도 출력하지 않는다 */
-function maskConnectionDetails(message: string): string {
-  return message.replace(/postgres(ql)?:\/\/\S+/gi, '***').replace(/\S+:\d{2,5}\b/g, '***')
+/**
+ * 실패는 **분류만** 남긴다 — error.name 과 드라이버(pg: ECONNREFUSED·28P01·3D000 …)·Prisma(P1001 …) 코드.
+ * message 는 출력하지 않는다: 연결·인증 실패 메시지에는 호스트명·사용자명·DB 명이 그대로 들어간다(security-reviewer 2026-11-15 L-1).
+ * 코드는 error 자신 → cause 순으로 찾는다(어댑터가 pg 오류를 감쌀 수 있다).
+ */
+function describeFailure(error: unknown): string {
+  if (!(error instanceof Error)) return `non-error thrown (${typeof error})`
+  const code =
+    failureCode(error) ?? (error.cause instanceof Error ? failureCode(error.cause) : undefined)
+  return code === undefined ? error.name : `${error.name} (${code})`
+}
+
+function failureCode(error: Error): string | undefined {
+  const { code, errorCode } = error as Error & { code?: unknown; errorCode?: unknown }
+  if (typeof code === 'string' && code !== '') return code
+  if (typeof errorCode === 'string' && errorCode !== '') return errorCode
+  return undefined
 }
 
 /** 로컬 DB 가 아니면 즉시 종료하고, 로컬이면 접속 문자열을 돌려준다. 값은 출력하지 않는다 */
@@ -282,7 +296,7 @@ async function main(): Promise<void> {
 }
 
 main().catch((error: unknown) => {
-  const name = error instanceof Error ? error.name : 'Error'
-  const message = error instanceof Error ? maskConnectionDetails(error.message) : String(error)
-  fail(`${name}: ${message}`)
+  fail(
+    `${describeFailure(error)} — message withheld (may contain connection details). Check that the local Docker DB is up (pnpm db:up) and .env.local matches .env.example.`,
+  )
 })
