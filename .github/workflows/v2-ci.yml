@@ -41,3 +41,9 @@ jobs:
       - run: pnpm build
         env:
           NEXT_TELEMETRY_DISABLED: "1"
+          # 빌드용 더미 env — 시크릿 아님. `next build` 는 route 모듈을 평가하며 shared/config/env 의 부팅 검증(F01)을 돌리는데
+          # CI 에는 env 가 없어 첫 route(/api/health, 2026-11-15)부터 실패했다. 빌드는 DB 에 붙지 않는다(닫힌 포트 5999 로 로컬 확인).
+          # build 는 NODE_ENV=production 이라 server/db.ts 의 TLS 가드가 sslmode=verify-full 을 요구한다(db-config.assertTlsInProduction)
+          NEXT_PUBLIC_APP_URL: http://localhost:3002
+          DATABASE_URL: postgresql://build:build@127.0.0.1:5999/linklet_build?sslmode=verify-full
+          DATABASE_URL_UNPOOLED: postgresql://build:build@127.0.0.1:5999/linklet_build?sslmode=verify-full

@@ -145,11 +145,11 @@ v2/
 ## 4-1. 에러 처리 (`decisions/error-handling.md`)
 
 - API 에러 응답은 하나: `{ error: { code, message, details? } }` + HTTP 상태
-  - `code`: `VALIDATION_FAILED` 400 · `UNAUTHENTICATED` 401 · `FORBIDDEN` 403 · `NOT_FOUND` 404 · `CONFLICT` 409 · `LIMIT_REACHED` 422 · `RATE_LIMITED` 429 · `UPSTREAM_FAILED` 502 · `INTERNAL` 500
+  - `code`: `VALIDATION_FAILED` 400 · `UNAUTHENTICATED` 401 · `FORBIDDEN` 403 · `NOT_FOUND` 404 · `CONFLICT` 409 · `LIMIT_REACHED` 422 · `RATE_LIMITED` 429 · `UPSTREAM_FAILED` 502 · `INTERNAL` 500 · `UNAVAILABLE` 503(헬스 체크 전용)
   - `message`: 개발자용 영어, 화면에 표시하지 않는다. `details`: 검증 실패 필드 `{ path, code }[]`
 - 예상된 실패: 서비스가 `AppError(code, status)` throw. 그 외 모든 예외는 예상 못한 실패 → `500 INTERNAL` + 일반 메시지 + 로그
 - 응답은 공용 헬퍼로만 만든다. Route Handler에서 에러 JSON을 직접 만들지 않는다
-- 재시도 여부는 `code` 로 판단 (`RATE_LIMITED`·`UPSTREAM_FAILED`·`INTERNAL` 만)
+- 재시도 여부는 `code` 로 판단 (`RATE_LIMITED`·`UPSTREAM_FAILED`·`INTERNAL`·`UNAVAILABLE` 만)
 - 사용자 문구: 프론트가 `code` → `errors.{CODE}` i18n 키로 변환. **다음에 할 수 있는 행동**을 알려준다. 내부 코드·스택·영어 원문 노출 금지
 - 에러 경계: `app/global-error.tsx`, 구간별 `error.tsx`·`not-found.tsx` — `(app)`, `admin`, `w/[id]`. 앱 테마·i18n 적용
 - 로그: 예상 못한 실패에서만. 서버 구조화 로그(JSON) + Sentry. 지점: 응답 헬퍼, Server Component 데이터 로드, 에러 경계, 외부 fetch 실패

@@ -10,7 +10,7 @@ import {
   statusOf,
 } from './api-error'
 
-// decisions/error-handling.md E1 표 — 코드 9종 ↔ HTTP 상태 ↔ 재시도 가능
+// decisions/error-handling.md E1 표 — 코드 10종 ↔ HTTP 상태 ↔ 재시도 가능
 const EXPECTED: Record<ErrorCode, { status: number; retryable: boolean }> = {
   VALIDATION_FAILED: { status: 400, retryable: false },
   UNAUTHENTICATED: { status: 401, retryable: false },
@@ -21,12 +21,13 @@ const EXPECTED: Record<ErrorCode, { status: number; retryable: boolean }> = {
   RATE_LIMITED: { status: 429, retryable: true },
   UPSTREAM_FAILED: { status: 502, retryable: true },
   INTERNAL: { status: 500, retryable: true },
+  UNAVAILABLE: { status: 503, retryable: true },
 }
 
 describe('에러 코드 표', () => {
-  it('코드는 정확히 9종이다', () => {
+  it('코드는 정확히 10종이다', () => {
     expect([...ERROR_CODES].sort()).toEqual(Object.keys(EXPECTED).sort())
-    expect(Object.keys(ERROR_CODE_TABLE)).toHaveLength(9)
+    expect(Object.keys(ERROR_CODE_TABLE)).toHaveLength(10)
   })
 
   it.each(Object.entries(EXPECTED))('%s → HTTP %o', (code, { status, retryable }) => {
@@ -34,9 +35,9 @@ describe('에러 코드 표', () => {
     expect(isRetryable(code as ErrorCode)).toBe(retryable)
   })
 
-  it('재시도 가능한 코드는 RATE_LIMITED·UPSTREAM_FAILED·INTERNAL 뿐이다', () => {
+  it('재시도 가능한 코드는 RATE_LIMITED·UPSTREAM_FAILED·INTERNAL·UNAVAILABLE 뿐이다', () => {
     const retryable = ERROR_CODES.filter(isRetryable).sort()
-    expect(retryable).toEqual(['INTERNAL', 'RATE_LIMITED', 'UPSTREAM_FAILED'])
+    expect(retryable).toEqual(['INTERNAL', 'RATE_LIMITED', 'UNAVAILABLE', 'UPSTREAM_FAILED'])
   })
 })
 
