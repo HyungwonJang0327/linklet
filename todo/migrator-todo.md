@@ -49,12 +49,13 @@
   - 완료 조건: 로컬 시드 후 앱 기동, 가드 단위 테스트 / 커밋: `feat(db): 개발·테스트 시드와 환경 가드` / FEATURES: F02
   - **남은 수동 확인**: "시드 후 앱 기동" — `v2/.env.local` 이 아직 없어 `pnpm dev` 를 못 띄움. 사용자가 `.env.example` 을 복사해 로컬 값으로 `.env.local` 을 만든 뒤 `pnpm db:seed` → `pnpm dev` 확인(F02 동등성 확인 방법). 시드 데이터는 dev DB(5433)에 적재된 상태
 - [x] `scripts/db-migrate.mts` 뒤 generate 보장 (2026-11-15, 8427dc2 — 실측: Prisma 7.10 `migrate dev` 는 generate 를 아예 돌리지 않는다(`--skip-generate` 플래그·CLI 번들 호출 흔적 없음, 생성물 mtime 불변). 래퍼 4단계로 명시 실행, `--create-only` 포함) — 원문: `migrate dev` 가 돌리는 `prisma generate` 출력이 래퍼 로그에 안 보임. 끝에 `pnpm db:generate` 를 명시 실행할지 확인(2026-11-14 migrator 메모). 참고: `vitest.global-setup.mts` 는 의도적으로 `migrate deploy` 만 하고 generate 는 안 한다(테스트마다 수 초 비용, 구버전 클라이언트는 typecheck 가 잡음) — 래퍼 끝에 generate 를 명시하면 충분(2026-11-15) / 커밋: `chore(db): db:migrate 뒤 generate 보장`
-- [ ] 헬스 체크 `GET /api/health` (실패 시 일반 문구) — `db.$queryRaw` 로 DB 확인. `src/server/db.integration.test.ts` 가 TCP 프로브 실패 시 skip 하는 방식을 그대로 쓴다
-  - 확인: `export const GET = createHandler(...)` 가 Next typegen route 검사(`RouteHandler<P>` vs ParamMap)와 호환되는지 — 첫 실제 route 파일
+- [x] 헬스 체크 `GET /api/health` (2026-11-15, 8229bd3 `UNAVAILABLE` 503 코드 + 79b7f21 route + b37dcd2 통합 — 성공 `200 {data:{status:'ok'}}`, 실패 `503 UNAVAILABLE` 고정 문구(사용자 결정, E1 10종), `force-dynamic` 명시, 단위 5건·통합 1건, 실기동 curl 200) — `db.$queryRaw` 로 DB 확인. `src/server/db.integration.test.ts` 가 TCP 프로브 실패 시 skip 하는 방식을 그대로 쓴다
+  - 확인 완료: `export const GET = createHandler(...)` 가 Next typegen(`.next/types/validator.ts` `RouteHandlerConfig<"/api/health">`)에 그대로 통과 — `api-handler.ts` 변경 없음
+  - 후속: F04 i18n 사전에 `errors.UNAVAILABLE` 추가(코드 10종 → 사전 키 테스트가 잡아야 함)
   - 완료 조건: 단위 테스트 — DB 실패 시 내부 메시지 없음 / 커밋: `feat(api): 헬스 체크 API 추가` / FEATURES: I01
 - [ ] 디자인 토큰 `@theme` 적용 (`decisions/design-tokens.md` 기준, `data-skin`·`data-mode` 구조로 스킨 × 라이트·다크 — `decisions/app-skin.md`)
   - 완료 조건: 원색 클래스 0, 토큰만 사용 / 커밋: `design(ui): 디자인 토큰 적용` / FEATURES: F03
-- [ ] i18n 사전 3개(ko·en·ja) + 타입 안전 `t()` + enum→키 매핑 위치
+- [ ] i18n 사전 3개(ko·en·ja) + 타입 안전 `t()` + enum→키 매핑 위치 — `errors.{CODE}` 는 `ERROR_CODES` 10종(`UNAVAILABLE` 포함) 전부와 1:1 인지 테스트로 고정
   - 완료 조건: 단위 테스트 — 3개 사전 키 집합 동일, **플레이스홀더 문법이 `t()` 치환 규칙과 일치**(기존 앱 버그: 사전 `{title}` vs `t()` `{{key}}` — 2026-11-10 기준선 실측) / 커밋: `feat(i18n): 사전 3개와 타입 안전 t()` / FEATURES: F04
 - [ ] root layout `<html lang>` + `[locale]` 레이아웃 + 언어 코드 `ko/en/ja` 검증
   - 완료 조건: E2E — 주요 경로에 `<html lang>` / 커밋: `feat(i18n): 언어별 레이아웃과 html lang` / FEATURES: F03
