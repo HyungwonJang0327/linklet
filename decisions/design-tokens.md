@@ -32,6 +32,31 @@
 - **`dark:` variant 사용 금지**. 토큰이 모드를 처리하므로 컴포넌트가 `dark:` 를 쓰면 `data-mode` 와 어긋난다. 안전망으로 `@custom-variant dark ([data-mode="dark"] &)` 를 정의해 두되 ESLint로 사용을 막는다
 - 유틸리티 이름은 토큰 이름과 겹치지 않게 Phase 1에서 정한다 (예: `--c-text` → `text-fg`, `--c-border` → `border-line`). `rounded-lg` 등 기본 radius 단계는 의도적으로 재정의한다
 
+#### Phase 1 적용 결정 (2026-11-15)
+
+- **파일**: 토큰 원본은 그대로 `design/mockups/tokens.css`. v2 는 `v2/src/app/tokens.css` **사본**을 import 하고, Vitest 가 두 파일을 바이트 단위로 비교해 다르면 실패한다(드리프트 차단 — 사용자 결정. 기각: 원본을 v2 로 이동 — 시안 링크 9개·문서 재생성 경로 수정). Tailwind 연결(`@theme`·`@custom-variant`·`@utility`)은 `v2/src/app/globals.css` 에만 둔다 — 사본은 원본과 한 글자도 달라선 안 된다
+- **시스템 모드 인라인 스크립트는 F03 root layout 때**(CSP nonce 방침과 함께). Phase 1 토큰 적용은 `<html data-skin="canvas" data-mode="light">` 정적 기본값(사용자 결정)
+- **유틸리티 이름 체계** (`@theme inline`, 토큰 이름과 겹치지 않게 — `bg-bg` 같은 중복 회피):
+
+| 토큰 | Tailwind 테마 변수 | 유틸리티 예 |
+|---|---|---|
+| `--c-bg` | `--color-page` | `bg-page` |
+| `--c-surface` / `--c-surface-2` | `--color-surface` / `--color-surface-2` | `bg-surface`, `bg-surface-2` |
+| `--c-text` / `--c-muted` | `--color-fg` / `--color-muted` | `text-fg`, `text-muted` |
+| `--c-accent` / `--c-on-accent` / `--c-accent-text` / `--c-accent-soft` | `--color-accent` / `--color-on-accent` / `--color-accent-fg` / `--color-accent-soft` | `bg-accent text-on-accent`, `text-accent-fg`, `bg-accent-soft` |
+| `--c-border` / `--c-border-strong` / `--c-card-border` | `--color-line` / `--color-line-strong` / `--color-card-line` | `border-line`, `border-line-strong`, `border-card-line` |
+| `--c-focus` / `--c-chip` / `--c-chip-text` | `--color-focus` / `--color-chip` / `--color-chip-fg` | `outline-focus`, `bg-chip text-chip-fg` |
+| `--c-danger` / `--c-success` | `--color-danger` / `--color-success` | `text-danger`, `text-success` |
+| `--c-skeleton` / `--c-skeleton-hi` / `--c-overlay` | `--color-skeleton` / `--color-skeleton-hi` / `--color-overlay` | `bg-skeleton`, `bg-overlay` |
+| `--r-sm` / `--r-md` / `--r-lg` / `--r-btn` | `--radius-sm` / `--radius-md` / `--radius-lg` / `--radius-btn` | `rounded-sm·md·lg·btn` (기본 radius 단계는 전부 `initial`) |
+| `--shadow` / `--shadow-sheet` / `--shadow-float` | `--shadow-card` / `--shadow-sheet` / `--shadow-float` | `shadow-card`, `shadow-sheet`, `shadow-float` (기본 shadow 단계 `initial`) |
+| `--pad-x` / `--touch` / `--control-h` | `--spacing-page-x` / `--spacing-touch` / `--spacing-control` | `px-page-x`, `min-h-touch`, `h-control` (4px 배수 간격은 Tailwind 기본 `--spacing` 과 동일하므로 `--sp-*` 를 따로 매핑하지 않는다) |
+| `--t-*` (font 축약형) | 매핑 불가 → `@utility` | `text-display`(+ `--t-display-ls` 자간) · `text-heading` · `text-title` · `text-body` · `text-body-lg` · `text-title-lg` · `text-price` · `text-caption` · `text-label` · `text-button` · `text-badge` · `text-wordmark` · `text-hero`. 기본 `--text-*`·`--font-weight-*`·`--leading-*` 는 `initial` — 컴포넌트는 크기·굵기를 따로 조합하지 않는다 |
+
+- 기본 팔레트·radius·shadow·텍스트 단계를 `initial` 로 비우는 것이 "원색 클래스 0" 의 강제 수단이다. `@custom-variant dark ([data-mode="dark"] &)` 는 `globals.css` 에 두고, `src/**/*.tsx` 의 문자열에 `dark:` 가 나오면 ESLint 에러
+- `[data-mode="dark"] { color-scheme: dark }` 는 Tailwind 쪽 규칙이라 `globals.css` 에 둔다(폼 컨트롤·스크롤바 기본색)
+- 검증: Tailwind 4 의 `compile()`(패키지 공개 API)로 `globals.css` 를 컴파일해 `bg-slate-800`·`text-sm`·`dark:bg-accent` 가 CSS 를 만들지 않고 `bg-accent`·`rounded-btn`·`text-display` 는 만드는지 단위 테스트로 고정
+
 ### 공통 — 타이포 (크기 단계 12·14·15·17·24·30 여섯 개)
 
 | 토큰 | 값 | 용도 |
@@ -208,3 +233,4 @@
 
 - 2026-11-08 최초 결정 — `design/mockups/tokens.css`(방향 B + designer 2차 검토 반영)에서 추출. 출시 스킨 3종(메인 추천, 사용자 "다음 진행")
 - 2026-11-08 designer 토큰 검증 반영 — 시스템 모드 처리 방식(인라인 스크립트), 프리셋 열 확장(`--p-scheme`·`on-accent`·`surface-2`·`danger`·`success`·`skeleton`·`overlay`)과 `.share` 전체 덮어쓰기, paper 다크 `--c-border-strong` `#817669`(세그먼트 링 2.9 → 3.2), 별칭 토큰, `--shadow-float` 스킨 층 + 다크 공통 링, 타이포 `--t-button`·`--t-badge` 추가·`--t-label` 14px, Tailwind 연결 규칙
+- 2026-11-15 Phase 1 적용 결정 — v2 사본 + 동일성 테스트, 모드 스크립트는 F03, 유틸리티 이름 체계 (사용자: 앞 두 개 추천안 / 이름 체계는 메인)
