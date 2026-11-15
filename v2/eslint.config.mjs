@@ -108,7 +108,9 @@ const eslintConfig = defineConfig([
       'playwright.config.*',
       'vitest.config.*',
       'vitest.setup.*',
+      'vitest.global-setup.*', // 테스트 DB 마이그레이션 적용(메인 프로세스) — setup 과 같은 키를 읽는다
       'prisma.config.*',
+      'prisma/seed.mts', // 개발 시드 — CLI 와 같은 방식으로 .env 를 읽고 로컬 가드를 거친다
       'scripts/**', // DB 스크립트(pnpm db:migrate) — CLI 와 같은 방식으로 env 를 읽는다
       'e2e/**',
     ],
