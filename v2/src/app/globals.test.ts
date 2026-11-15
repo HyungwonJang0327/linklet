@@ -41,6 +41,8 @@ const REQUIRED_CANDIDATES = [
   'h-control',
   'text-display',
   'text-body',
+  // 컴파일 검증용 후보 — @custom-variant dark 가 [data-mode="dark"] 로 생성되는지 본다. 컴포넌트에서의 사용은 ESLint 가 막는다
+  // eslint-disable-next-line no-restricted-syntax
   'dark:bg-accent',
 ]
 
