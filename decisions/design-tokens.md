@@ -27,7 +27,7 @@
 
 ### Tailwind 4 연결 (Phase 1 토큰 적용 때 따른다)
 
-- `@theme inline { --color-bg: var(--c-bg); … --radius-lg: var(--r-lg); … }` — 값이 `:root` 가 아니라 `[data-*]` 에서 바뀌므로 `inline` 이 필수
+- `@theme inline reference { --color-page: var(--c-bg); … --radius-lg: var(--r-lg); … }` — 값이 `:root` 가 아니라 `[data-*]` 에서 바뀌므로 `inline` 이 필수. `reference` 도 붙인다(구현 실측 2026-11-15): 토큰 이름과 테마 변수 이름이 같은 `--shadow-float`·`--shadow-sheet` 는 `reference` 가 없으면 Tailwind 가 `:root { --shadow-float: var(--shadow-float) }` 자기 참조를 `@layer theme` 에 방출한다. 테마 변수 방출은 어디서도 필요 없다
 - **기본 팔레트 비우기**: `@theme { --color-*: initial; }` 로 `bg-slate-800` 같은 원색 유틸리티가 빌드에서 사라지게 한다 (리뷰보다 강한 강제)
 - **`dark:` variant 사용 금지**. 토큰이 모드를 처리하므로 컴포넌트가 `dark:` 를 쓰면 `data-mode` 와 어긋난다. 안전망으로 `@custom-variant dark ([data-mode="dark"] &)` 를 정의해 두되 ESLint로 사용을 막는다
 - 유틸리티 이름은 토큰 이름과 겹치지 않게 Phase 1에서 정한다 (예: `--c-text` → `text-fg`, `--c-border` → `border-line`). `rounded-lg` 등 기본 radius 단계는 의도적으로 재정의한다
@@ -53,7 +53,7 @@
 | `--pad-x` / `--touch` / `--control-h` | `--spacing-page-x` / `--spacing-touch` / `--spacing-control` | `px-page-x`, `min-h-touch`, `h-control` (4px 배수 간격은 Tailwind 기본 `--spacing` 과 동일하므로 `--sp-*` 를 따로 매핑하지 않는다) |
 | `--t-*` (font 축약형) | 매핑 불가 → `@utility` | `text-display`(+ `--t-display-ls` 자간) · `text-heading` · `text-title` · `text-body` · `text-body-lg` · `text-title-lg` · `text-price` · `text-caption` · `text-label` · `text-button` · `text-badge` · `text-wordmark` · `text-hero`. 기본 `--text-*`·`--font-weight-*`·`--leading-*` 는 `initial` — 컴포넌트는 크기·굵기를 따로 조합하지 않는다 |
 
-- 기본 팔레트·radius·shadow·텍스트 단계를 `initial` 로 비우는 것이 "원색 클래스 0" 의 강제 수단이다. `@custom-variant dark ([data-mode="dark"] &)` 는 `globals.css` 에 두고, `src/**/*.tsx` 의 문자열에 `dark:` 가 나오면 ESLint 에러
+- 기본 팔레트·radius·shadow·텍스트 단계를 `initial` 로 비우는 것이 "원색 클래스 0" 의 강제 수단이다. `--font-*` 도 비운다 — tokens.css 의 `:root --font-sans` 와 Tailwind 테마 `--font-sans` 가 겹쳐 같은 변수 정의가 둘 생기기 때문. preflight 의 `html { font-family }` 는 `@theme inline reference { --default-font-family: var(--font-sans); --default-mono-font-family: var(--font-mono) }` 로 tokens.css 스택을 가리킨다(테마 키 `--font-sans` 는 비어 있어 순환 아님 — 컴파일 테스트로 고정). `--text-shadow-*`·`--drop-shadow-*`·`--inset-shadow-*` 는 별도 네임스페이스라 비워지지 않는다(토큰 체계 밖 장식 — 비울지 미결, migrator todo). `@custom-variant dark ([data-mode="dark"] &)` 는 `globals.css` 에 두고, `src/**/*.tsx` 의 문자열에 `dark:` 가 나오면 ESLint 에러
 - `[data-mode="dark"] { color-scheme: dark }` 는 Tailwind 쪽 규칙이라 `globals.css` 에 둔다(폼 컨트롤·스크롤바 기본색)
 - 검증: Tailwind 4 의 `compile()`(패키지 공개 API)로 `globals.css` 를 컴파일해 `bg-slate-800`·`text-sm`·`dark:bg-accent` 가 CSS 를 만들지 않고 `bg-accent`·`rounded-btn`·`text-display` 는 만드는지 단위 테스트로 고정
 
@@ -234,3 +234,4 @@
 - 2026-11-08 최초 결정 — `design/mockups/tokens.css`(방향 B + designer 2차 검토 반영)에서 추출. 출시 스킨 3종(메인 추천, 사용자 "다음 진행")
 - 2026-11-08 designer 토큰 검증 반영 — 시스템 모드 처리 방식(인라인 스크립트), 프리셋 열 확장(`--p-scheme`·`on-accent`·`surface-2`·`danger`·`success`·`skeleton`·`overlay`)과 `.share` 전체 덮어쓰기, paper 다크 `--c-border-strong` `#817669`(세그먼트 링 2.9 → 3.2), 별칭 토큰, `--shadow-float` 스킨 층 + 다크 공통 링, 타이포 `--t-button`·`--t-badge` 추가·`--t-label` 14px, Tailwind 연결 규칙
 - 2026-11-15 Phase 1 적용 결정 — v2 사본 + 동일성 테스트, 모드 스크립트는 F03, 유틸리티 이름 체계 (사용자: 앞 두 개 추천안 / 이름 체계는 메인)
+- 2026-11-15 구현 실측 반영 — `@theme inline reference`(자기 참조 방출 방지), `--font-*: initial` + `--default-font-family` 로 글꼴 충돌 해결, `dark:` 는 variant 로 생성되므로 차단은 ESLint(`Literal`·`TemplateElement` 정규식, 변형 중첩 `hover:dark:` 포함)
