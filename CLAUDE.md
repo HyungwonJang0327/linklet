@@ -57,7 +57,7 @@ v2/
 │  ├─ shared/config/env.ts      # Zod 환경변수 스키마 (부팅 검증)
 │  ├─ server/                   # 서버 전용: db.ts · auth.ts · storage.ts · logger.ts
 │  └─ proxy.ts                  # Next 16 (middleware 아님)
-├─ prisma/  schema.prisma · migrations/(migration.sql + down.sql) · seed.ts
+├─ prisma/  schema.prisma · migrations/(migration.sql + down.sql) · seed.mts · lib/(로컬 DB 가드 등 순수 모듈)
 └─ e2e/                         # Playwright
 ```
 
@@ -201,7 +201,7 @@ v2/
 | 3 | 공개 응답에서 `include: { user: true }` 등 관계 전체 select | 공개용 select 명시, 테스트로 이메일 부재 확인 | H3 이메일 노출 |
 | 4 | 인증 없는 쓰기 API, route마다 따로 하는 권한 체크 | 서비스 계층에서 권한 판정 | H4, M1 IDOR |
 | 5 | `prisma db push` | `prisma migrate dev` + `down.sql` (예외: 기존 앱 기준선 E2E 전용 로컬 컨테이너, `decisions/testing.md` T8) | H5 드리프트 |
-| 6 | `new PrismaClient()` 를 두 곳 이상 | `server/db.ts` 하나 | H6 |
+| 6 | 앱 코드에서 `new PrismaClient()` 를 두 곳 이상 | 런타임은 `server/db.ts` 하나. 예외: CLI 시드 `prisma/seed.mts`(1회 실행 프로세스, 자체 로컬 가드·`$disconnect`, 앱 코드 import 는 ESLint 로 금지 — 사용자 결정 2026-11-15) | H6 |
 | 7 | Route Handler에서 에러 JSON 직접 작성, `details: error.message` | 응답 헬퍼 + `AppError` | H8, 내부 메시지 노출 |
 | 8 | 클릭 가능한 `<div>`, 직접 만든 모달 | `<button>`, `shared/ui` Dialog | H9 |
 | 9 | 운영 DB에 붙을 수 있는 스크립트를 가드 없이 작성 | 환경 가드(운영이면 즉시 종료) | H12 |
@@ -291,6 +291,7 @@ pnpm test:coverage         # 커버리지 — T4 대상 80% 미만이면 실패
 pnpm test:e2e              # Playwright (e2e/, 포트 3002에 빌드·실행)
 pnpm build
 pnpm db:up / db:down / db:down:clean   # 로컬 Docker Postgres (dev 5433 · test 5434, v2/README.md). prisma migrate dev 는 로컬 DB만, 운영 적용은 사용자가 직접
+pnpm db:migrate {snake_case} / db:seed   # 마이그레이션 + down.sql 생성 / 개발 시드 (둘 다 로컬 DB 가드, 우회 없음)
 ```
 
 CI(`.github/workflows/v2-ci.yml`)는 PR마다 lint → format:check → typecheck → test:coverage → build 를 돈다. 시크릿 스캔(`secret-scan.yml`)은 모든 PR·main push.
