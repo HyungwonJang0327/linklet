@@ -21,6 +21,24 @@ const FEATURE_BOUNDARY_PATTERN = {
     "다른 기능은 '@/features/{이름}' (index.ts)로만 import한다. 같은 기능 안에서는 상대 경로를 쓴다.",
 }
 
+// CLAUDE.md 함정 6 예외의 울타리 — 시드(prisma/seed.mts, top-level 에서 실행·자체 PrismaClient)와 테스트 전용 TRUNCATE 헬퍼(server/test-db)는
+// 앱 코드가 import 하지 않는다. 시드는 어디서도, test-db 는 *.test.ts 에서만 (security-reviewer 2026-11-15 L-3).
+const SEED_IMPORT_PATTERN = {
+  group: ['**/prisma/seed', '**/prisma/seed.*'],
+  message:
+    'prisma/seed.mts 는 pnpm db:seed 가 실행하는 1회 스크립트다. 앱 코드에서 import 하지 않는다.',
+}
+const TEST_DB_IMPORT_PATTERN = {
+  group: [
+    '@/server/test-db',
+    '**/server/test-db',
+    '**/server/test-db.*',
+    './test-db',
+    './test-db.*',
+  ],
+  message: 'server/test-db 는 테스트 전용(TRUNCATE)이다. *.test.ts 에서만 import 한다.',
+}
+
 // CLAUDE.md §4-2 입력 검증 — 환경변수는 shared/config/env.ts(.client.ts) 가 부팅 시 검증한 객체로만 읽는다.
 // `process.env.X`·`process.env['X']`·`const e = process.env`·`globalThis.process.env`·`const { env } = process`·`const p = process` 금지.
 // 예외는 스키마 파일·부팅 진입점·설정·테스트 스크립트.
@@ -74,7 +92,7 @@ const eslintConfig = defineConfig([
         'error',
         {
           paths: RESTRICTED_PATHS,
-          patterns: [FEATURE_BOUNDARY_PATTERN],
+          patterns: [FEATURE_BOUNDARY_PATTERN, SEED_IMPORT_PATTERN, TEST_DB_IMPORT_PATTERN],
         },
       ],
     },
@@ -89,11 +107,26 @@ const eslintConfig = defineConfig([
           paths: RESTRICTED_PATHS,
           patterns: [
             FEATURE_BOUNDARY_PATTERN,
+            SEED_IMPORT_PATTERN,
+            TEST_DB_IMPORT_PATTERN,
             {
               group: ['@/server', '@/server/*', '**/server/*', '../server', '../../server'],
               message: '클라이언트 코드에서 서버 전용 모듈(server/)을 import하지 않는다.',
             },
           ],
+        },
+      ],
+    },
+  },
+  {
+    // 테스트 파일만 server/test-db 를 쓸 수 있다. 시드 import 금지는 유지 (no-restricted-imports 는 블록마다 통째로 덮어쓰인다)
+    files: ['src/**/*.test.ts', 'src/**/*.test.tsx'],
+    rules: {
+      'no-restricted-imports': [
+        'error',
+        {
+          paths: RESTRICTED_PATHS,
+          patterns: [FEATURE_BOUNDARY_PATTERN, SEED_IMPORT_PATTERN],
         },
       ],
     },
