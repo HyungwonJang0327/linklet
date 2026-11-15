@@ -41,6 +41,7 @@ pnpm db:migrate add_view --create-only  # 적용하지 않고 폴더만 만든�
 ```
 
 - 이름은 snake_case(`a-z0-9_`). 결과는 `prisma/migrations/{타임스탬프}_{이름}/migration.sql` + `down.sql`, 둘 다 커밋한다
+- 래퍼 끝에 `prisma generate` 를 명시 실행한다 — Prisma 7.10 의 `migrate dev` 는 generate 를 돌리지 않는다(`--skip-generate` 플래그 없음, 실측 2026-11-15). `--create-only` 도 스키마는 이미 바뀐 상태라 같이 돌린다. 테스트의 globalSetup 은 `migrate deploy` 만 하므로 스키마를 고친 뒤에는 항상 `pnpm db:migrate`(또는 `pnpm db:generate`)를 거친다
 - `down.sql` 은 `prisma migrate diff --from-schema prisma/schema.prisma --to-migrations prisma/migrations --script` 의 출력 — "새 스키마 → 직전 마이그레이션까지의 상태" 로 되돌리는 SQL. **`migrate dev` 전에** 떠야 하므로 순서를 스크립트가 고정한다
   - 첫 마이그레이션(`migration_lock.toml` 이 아직 없음)은 `--to-migrations` 가 실패해 `--to-empty` 로 비교한다(7.10 실측 2026-11-14)
   - 스키마 변화가 없으면 멈춘다. 빈 마이그레이션이 필요하면 `--create-only` — `down.sql` 은 `-- This is an empty migration.` 자리표시자

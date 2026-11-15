@@ -15,6 +15,9 @@ import { isLocalDatabaseUrl, nonLocalDatabaseMessage } from '../prisma/lib/local
 //        → 같은 로컬 서버에 임시 DB 를 CREATE 하고 LINKLET_SHADOW_DATABASE_URL 로 prisma.config.ts 에 넘긴 뒤 끝나면 DROP 한다
 //   2. `prisma migrate dev --name {이름} [--create-only]` (섀도 DB 는 superuser 라 자동 생성·삭제)
 //   3. 새로 생긴 폴더에 down.sql 저장
+//   4. `prisma generate` — Prisma 7.10 의 `migrate dev` 는 generate 를 **돌리지 않는다**(`--skip-generate` 플래그도 없음, CLI 번들에
+//      generate 호출 흔적 없음, "Already in sync" 뒤 생성물 mtime 불변 — 실측 2026-11-15). 스키마가 바뀐 뒤 생성 클라이언트가 구버전으로
+//      남으면 typecheck 에서야 드러나므로 래퍼가 끝에 명시 실행한다(`--create-only` 도 스키마는 이미 바뀌었으므로 같이 돌린다)
 // `--create-only` 는 수동 SQL(뷰·트리거)용 — migration.sql 과 down.sql 양쪽을 손으로 고친 뒤 `pnpm exec prisma migrate dev` 로 적용한다.
 //
 // 가드: DATABASE_URL_UNPOOLED 가 없거나 로컬(127.0.0.1·localhost·[::1])이 아니면 **항상** 거부. 우회 없음 — 운영·dev 에 migrate dev 를 돌릴 일은 없다(M3).
@@ -119,7 +122,7 @@ function generateDownScript(databaseUrl: string): string | null {
   const hasHistory = existsSync(join(ROOT, MIGRATIONS_DIR, 'migration_lock.toml'))
   const target = hasHistory ? ['--to-migrations', MIGRATIONS_DIR] : ['--to-empty']
   log(
-    `1/3 generating down.sql (--from-schema ${SCHEMA_PATH} ${target.join(' ')})${hasHistory ? ' using a temporary shadow database' : ' — no migrations yet, diffing against an empty database'}`,
+    `1/4 generating down.sql (--from-schema ${SCHEMA_PATH} ${target.join(' ')})${hasHistory ? ' using a temporary shadow database' : ' — no migrations yet, diffing against an empty database'}`,
   )
   const shadow = hasHistory ? createShadowDatabase(databaseUrl) : null
   try {
@@ -158,7 +161,7 @@ function main(): void {
     log('    schema unchanged — down.sql will be a placeholder for your hand-written reverse SQL')
   }
 
-  log(`2/3 prisma migrate dev --name ${name}${createOnly ? ' --create-only' : ''}`)
+  log(`2/4 prisma migrate dev --name ${name}${createOnly ? ' --create-only' : ''}`)
   const dev = prisma(['migrate', 'dev', '--name', name, ...(createOnly ? ['--create-only'] : [])], {
     stdio: 'inherit',
   })
@@ -176,8 +179,20 @@ function main(): void {
 
   const downPath = join(MIGRATIONS_DIR, target, 'down.sql')
   writeFileSync(join(ROOT, downPath), downScript)
-  log(`3/3 wrote ${downPath}`)
-  log(`done: ${join(MIGRATIONS_DIR, target)}/{migration.sql, down.sql}`)
+  log(`3/4 wrote ${downPath}`)
+
+  // migrate dev 는 generate 를 돌리지 않는다(헤더 4번) — 생성 클라이언트를 새 스키마에 맞춘다. DB 에 붙지 않는 명령이라 가드 대상 아님
+  log('4/4 prisma generate')
+  const generate = prisma(['generate'], { stdio: 'inherit' })
+  if (generate.error) fail(`failed to run prisma: ${generate.error.message}`)
+  if (generate.status !== 0) {
+    fail(
+      `prisma generate failed — migration ${target} was created; run \`pnpm db:generate\` after fixing the schema`,
+      generate.status ?? 1,
+    )
+  }
+
+  log(`done: ${join(MIGRATIONS_DIR, target)}/{migration.sql, down.sql} + generated client`)
   if (createOnly) {
     log(
       '--create-only: edit migration.sql and down.sql together, then apply with `pnpm exec prisma migrate dev`',
