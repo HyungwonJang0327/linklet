@@ -21,5 +21,6 @@
 | [db-migration.md](db-migration.md) | 마이그레이션 생성·되돌리기·적용 순서·CLI 접속 가드 |
 | [data-model.md](data-model.md) | 첫 마이그레이션 범위·공통 규칙·모델별 필드 |
 | [url-design.md](url-design.md) | 페이지·API 경로, 언어 코드, 하위 호환 |
+| [i18n.md](i18n.md) | 언어 3개, TS 사전·타입 안전 `t()`, 플레이스홀더·복수형·enum 키 매핑 |
 | [dependencies.md](dependencies.md) | 의존성 추가 기준과 기록 |
 | [roadmap.md](roadmap.md) | Phase 구성·투입 시간·첫 배포 시점 |
