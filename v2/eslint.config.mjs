@@ -72,6 +72,16 @@ const PROCESS_ENV_SELECTORS = [
   },
 ]
 
+// decisions/design-tokens.md "Tailwind 4 연결" — `dark:` 변형 금지. 모드는 토큰(data-mode)이 처리하므로 컴포넌트가 dark: 를 쓰면 어긋난다.
+// globals.css 의 @custom-variant dark 는 안전망으로만 둔다. 문자열·템플릿 리터럴에서 클래스 토큰 시작 위치(또는 `hover:dark:` 처럼
+// 다른 변형 뒤)의 `dark:` 를 잡는다. `darkroom:` 같은 다른 단어는 잡지 않는다.
+const DARK_VARIANT_MESSAGE =
+  '`dark:` 변형 금지 — 모드는 토큰(data-mode)이 처리한다 (decisions/design-tokens.md)'
+const DARK_VARIANT_SELECTORS = [
+  { selector: 'Literal[value=/(^|[\\s\'"`:])dark:/]', message: DARK_VARIANT_MESSAGE },
+  { selector: 'TemplateElement[value.raw=/(^|[\\s\'"`:])dark:/]', message: DARK_VARIANT_MESSAGE },
+]
+
 const eslintConfig = defineConfig([
   ...nextVitals,
   ...nextTs,
@@ -132,12 +142,21 @@ const eslintConfig = defineConfig([
     },
   },
   {
+    // dark: 변형 금지 — src 전부(테스트 포함). no-restricted-syntax 는 블록마다 통째로 덮어쓰이므로
+    // 아래 process.env 블록이 적용되는 파일은 그 블록이 두 목록을 합쳐 다시 설정한다. 이 블록은 그 블록의 예외 파일(config·테스트 등)을 덮는다
+    files: ['src/**/*.ts', 'src/**/*.tsx'],
+    rules: {
+      'no-restricted-syntax': ['error', ...DARK_VARIANT_SELECTORS],
+    },
+  },
+  {
     // process.env 직접 참조 금지 — ignores 만 있는 블록은 "이 파일들을 뺀 나머지 전부"에 적용된다
     ignores: [
       'src/shared/config/**',
       'src/instrumentation.ts',
       '**/*.test.ts',
       'next.config.*',
+      'eslint.config.*', // 이 파일 — dark: 금지 메시지 문자열이 자기 규칙에 걸린다
       'playwright.config.*',
       'vitest.config.*',
       'vitest.setup.*',
@@ -148,7 +167,7 @@ const eslintConfig = defineConfig([
       'e2e/**',
     ],
     rules: {
-      'no-restricted-syntax': ['error', ...PROCESS_ENV_SELECTORS],
+      'no-restricted-syntax': ['error', ...PROCESS_ENV_SELECTORS, ...DARK_VARIANT_SELECTORS],
     },
   },
   // Prettier와 충돌하는 스타일 규칙 끄기 (마지막에 둔다)

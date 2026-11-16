@@ -1,1 +1,116 @@
+/* Tailwind 연결만 둔다 — 토큰 값은 tokens.css(design/mockups 사본)에만 있다 (decisions/design-tokens.md "Phase 1 적용 결정") */
 @import 'tailwindcss';
+@import './tokens.css';
+
+/* "Tailwind 4 연결 — 기본 팔레트 비우기": 원색·기본 단계 유틸리티가 빌드에서 사라지게 한다(원색 클래스 0 의 강제 수단).
+   --font-* 도 비운다 — tokens.css 의 :root --font-sans 와 Tailwind 테마 --font-sans 가 겹치기 때문(아래 글꼴 주석).
+   간격(--spacing)·breakpoint·그 외는 기본 유지 */
+@theme {
+  --color-*: initial;
+  --radius-*: initial;
+  --shadow-*: initial;
+  --text-*: initial;
+  --font-*: initial;
+  --font-weight-*: initial;
+  --leading-*: initial;
+}
+
+/* "Phase 1 적용 결정 — 유틸리티 이름 체계": 토큰 → Tailwind 테마 변수. 값이 :root 가 아니라 [data-skin][data-mode] 에서 바뀌므로 inline 필수.
+   reference 도 붙인다 — --shadow-float·--shadow-sheet 는 토큰 이름과 테마 변수 이름이 같아, reference 가 없으면 Tailwind 가
+   `:root { --shadow-float: var(--shadow-float) }` 자기 참조를 @layer theme 에 방출한다(컴파일 실측). 변수 방출은 어디서도 필요 없다 */
+@theme inline reference {
+  --color-page: var(--c-bg);
+  --color-surface: var(--c-surface);
+  --color-surface-2: var(--c-surface-2);
+  --color-fg: var(--c-text);
+  --color-muted: var(--c-muted);
+  --color-accent: var(--c-accent);
+  --color-on-accent: var(--c-on-accent);
+  --color-accent-fg: var(--c-accent-text);
+  --color-accent-soft: var(--c-accent-soft);
+  --color-line: var(--c-border);
+  --color-line-strong: var(--c-border-strong);
+  --color-card-line: var(--c-card-border);
+  --color-focus: var(--c-focus);
+  --color-chip: var(--c-chip);
+  --color-chip-fg: var(--c-chip-text);
+  --color-danger: var(--c-danger);
+  --color-success: var(--c-success);
+  --color-skeleton: var(--c-skeleton);
+  --color-skeleton-hi: var(--c-skeleton-hi);
+  --color-overlay: var(--c-overlay);
+
+  --radius-sm: var(--r-sm);
+  --radius-md: var(--r-md);
+  --radius-lg: var(--r-lg);
+  --radius-btn: var(--r-btn);
+
+  --shadow-card: var(--shadow);
+  --shadow-sheet: var(--shadow-sheet);
+  --shadow-float: var(--shadow-float);
+
+  --spacing-page-x: var(--pad-x);
+  --spacing-touch: var(--touch);
+  --spacing-control: var(--control-h);
+
+  /* 글꼴: preflight 의 html { font-family } 는 --default-font-family 를 읽는다. Tailwind 쪽 --font-* 를 비웠으므로
+     여기서 tokens.css 의 커스텀 속성(--font-sans·--font-mono)을 inline 으로 가리키게 한다 → html { font-family: var(--font-sans, …) }.
+     Tailwind 테마 키 --font-sans 는 비워져 있어 순환 참조가 아니다 */
+  --default-font-family: var(--font-sans);
+  --default-mono-font-family: var(--font-mono);
+}
+
+/* "유틸리티 이름 체계 — --t-* (font 축약형) 매핑 불가 → @utility": 크기·굵기·행간을 따로 조합하지 않는다 */
+@utility text-display {
+  font: var(--t-display);
+  letter-spacing: var(--t-display-ls);
+}
+@utility text-heading {
+  font: var(--t-heading);
+}
+@utility text-title {
+  font: var(--t-title);
+}
+@utility text-body {
+  font: var(--t-body);
+}
+@utility text-body-lg {
+  font: var(--t-body-lg);
+}
+@utility text-title-lg {
+  font: var(--t-title-lg);
+}
+@utility text-price {
+  font: var(--t-price);
+}
+@utility text-caption {
+  font: var(--t-caption);
+}
+@utility text-label {
+  font: var(--t-label);
+}
+@utility text-button {
+  font: var(--t-button);
+}
+@utility text-badge {
+  font: var(--t-badge);
+}
+@utility text-wordmark {
+  font: var(--t-wordmark);
+}
+@utility text-hero {
+  font: var(--t-hero);
+}
+
+/* "Tailwind 4 연결 — dark: variant 사용 금지": 안전망으로 정의만 둔다. 사용은 ESLint 가 막는다(eslint.config.mjs) */
+@custom-variant dark ([data-mode='dark'] &);
+
+/* "Phase 1 적용 결정": color-scheme 은 Tailwind 쪽 규칙이라 여기 둔다(폼 컨트롤·스크롤바 기본색) */
+@layer base {
+  [data-mode='dark'] {
+    color-scheme: dark;
+  }
+  [data-mode='light'] {
+    color-scheme: light;
+  }
+}

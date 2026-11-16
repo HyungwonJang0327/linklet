@@ -10,3 +10,5 @@ e2e/baseline/.run
 src/generated
 # 기존 파서 정답 fixture HTML 저장본 — 공백을 바꾸면 정답이 달라진다 (README 참조)
 src/features/link-preview/server/__fixtures__/*.html
+# 디자인 토큰 사본 — 원본 design/mockups/tokens.css 와 바이트 동일해야 한다(src/app/tokens.test.ts). 재포맷하면 테스트가 깨진다
+src/app/tokens.css
