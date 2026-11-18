@@ -9,6 +9,7 @@
 | A3 | 권한 판정 | 서비스 계층 한 곳. Route Handler·Server Component는 "요청자(세션)"만 넘기고 판정하지 않는다 |
 | A4 | import 경계 | ESLint `no-restricted-imports` 로 강제 — 다른 기능은 `features/{x}/index.ts` 로만, `server/`·`features/*/server/` 는 클라이언트 코드에서 import 금지 |
 | A5 | `src/` | 사용 |
+| A6 | root layout | **`app/layout.tsx` 없음.** `app/[locale]/layout.tsx` 가 root(`<html lang={locale} data-skin data-mode>`), 공유 페이지는 F23 때 `app/w/layout.tsx` 가 별도 root(`lang` 은 Accept-Language). Next 16 공식 i18n 패턴(`app/[lang]/layout`, 다중 root layout — 문서 확인 2026-11-18). 지원하지 않는 locale 은 `notFound()`, `generateStaticParams` 로 3개. `/` 는 `proxy.ts`(F05)가 언어 경로로 보낸다. 전역 404(어느 root 에도 안 걸리는 경로)는 Next 기본 화면 — F06 에서 `global-not-found`(16.3 실험 플래그) 채택 여부 결정. 사용자 결정 2026-11-18(기각: 단일 `app/layout.tsx` + proxy 헤더로 lang — root 가 proxy 에 의존, 정적 생성 어려움, Next 비권장) |
 
 ## 구조
 
@@ -75,3 +76,4 @@ v2/
 ## 갱신 이력
 
 - 2026-09-27 최초 결정 (사용자: 전부 추천대로)
+- 2026-11-18 A6 root layout = `[locale]` (사용자: 추천안)
