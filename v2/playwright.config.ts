@@ -27,6 +27,8 @@ const E2E_SERVER_ENV: Record<string, string> = {
   DATABASE_URL: 'postgresql://build:build@127.0.0.1:5999/linklet_build?sslmode=verify-full',
   DATABASE_URL_UNPOOLED:
     'postgresql://build:build@127.0.0.1:5999/linklet_build?sslmode=verify-full',
+  // F06 에러 경계 E2E — /{locale}/__e2e/throw 가 렌더 에러를 던지게 한다. 여기서만 켠다(CI 빌드·Vercel 에는 없다 → 운영은 404)
+  LINKLET_E2E: '1',
 }
 
 export default defineConfig({

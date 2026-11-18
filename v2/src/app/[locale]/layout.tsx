@@ -10,11 +10,19 @@ import '../globals.css'
 // 언어별 root layout — FEATURES F03, decisions/architecture.md A6, i18n.md L1·L6.
 // app/layout.tsx 는 없다: 이 파일이 root 라 <html>·<body> 를 여기서 그린다(Next 16 다중 root layout — layout.md "Root Layout").
 // 공유 페이지 /w/{shareId} 는 F23 때 app/w/layout.tsx 가 별도 root 가 된다. `/` 는 F05 proxy 가 언어 경로로 보낸다.
-// 지원하지 않는 locale 은 notFound() — 전역 404 화면은 F06(global-not-found 채택 여부)에서.
+// 지원하지 않는 locale: dynamicParams=false 가 generateStaticParams 밖의 값(/xx)을 layout 실행 없이 404 로 보낸다(아래).
+// 그 404 화면은 app/global-not-found.tsx(F06). 아래 notFound() 가드는 안전망으로 유지한다.
 
 type LocaleParams = Pick<LayoutProps<'/[locale]'>, 'params'>
 
-/** 세 언어를 빌드 때 정적 생성한다 (generate-static-params.md). 그 밖의 값은 요청 때 layout 이 404 로 보낸다 */
+/**
+ * generateStaticParams 에 없는 locale 값은 404 — F06(error-handling E4 "F06 구현 결정"). true(기본)면 /xx 도 요청 때 이 layout 을
+ * 실행해 notFound() 로 가는데, 그러면 [locale]/not-found 가 locale 없이 그려진다. false 로 두면 라우팅 단계에서 끝나
+ * global-not-found 가 응답한다 (dynamicParams.md)
+ */
+export const dynamicParams = false
+
+/** 세 언어를 빌드 때 정적 생성한다 (generate-static-params.md). 그 밖의 값은 dynamicParams=false 로 404 */
 export function generateStaticParams(): { locale: string }[] {
   return LOCALES.map((locale) => ({ locale }))
 }
