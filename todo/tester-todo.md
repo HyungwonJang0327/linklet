@@ -35,5 +35,6 @@
 - [ ] CI에 E2E 단계 추가 (Playwright chromium 설치, 시드 DB)
   - 완료 조건: PR에서 v2 E2E 실행·통과, 기준선 project는 제외 / 커밋: `ci(ci): v2 CI에 E2E 단계 추가`
 - [ ] 에이전트 실기동 절차 규칙 — 2026-11-15 migrator 가 헬스 체크 실측 중 포트 3000 을 `lsof | xargs kill` 로 정리하다 **사용자의 dev 서버를 종료**시켰다. `.claude/agents/*.md` 공통 규칙에 "앱 기동 실측은 자기가 띄운 PID 만 종료, 포트가 이미 점유돼 있으면 그 서버를 그대로 쓰거나 다른 포트(`-p`)로 띄운다. 남의 프로세스 kill 금지" 추가 제안(사용자 승인 후 메인이 수정) / 커밋: `docs(agents): 실기동 절차 — 자기 프로세스만 종료`
+- [ ] 로컬 `pnpm build` 안내 — `.env.local`(dev DB, sslmode 없음) 그대로는 `next build` 가 production TLS 가드에 걸려 실패한다(2026-11-15 발견, 11-17 재확인). README 에 "로컬 빌드는 CI 더미 env 3개를 명령행으로" 안내 또는 `build:local` 스크립트 중 하나 — 사용자 결정 / 커밋: `docs(readme): 로컬 빌드 env 안내` 또는 `chore(config): build:local 스크립트`
 - [ ] Phase 1 커버리지 점검 — T4 대상 80%
   - 완료 조건: 보고서 수치, 미달 파일 목록 (커밋 없음)

@@ -94,6 +94,7 @@
 | 마이그레이션 | `migrate dev` + `down.sql`(`migrate diff --to-migrations` 를 `pnpm db:migrate` 래퍼로), `db push` 금지, 운영 적용은 사용자 | db-migration.md |
 | ID 생성 | PK UUID v7(`uuid(7) @db.Uuid`), Better Auth `generateId: false` 로 통일, 공유 ID 는 `nanoid(12)` | db-migration.md M5 |
 | 데이터 모델 | 첫 마이그레이션 = User(최소, Better Auth 핵심 필드 + locale·skin·mode) · Wishlist · WishlistItem(price Decimal + currency) · Notice · Inquiry(priority·category 제거). 소문자 enum, Timestamptz, snake_case 복수 테이블 | data-model.md |
+| i18n | 언어 `ko/en/ja`, 라이브러리 없음, **TS 사전**(ko 원본 → en·ja `satisfies`)으로 키·플레이스홀더 인자 타입 강제, `{name}` 한 문법, 초기 키는 errors·common·metadata 만, enum→키 매핑은 기능 폴더 | i18n.md |
 | URL | 복수형·케밥·동사 금지, `/{locale}/wishlists`, `ko/en/ja`, 필터는 URL 쿼리, 하위 호환 없음 | url-design.md |
 | 의존성 | 5가지 기준 확인 + 기록 후 추가 | dependencies.md |
 | 시간·값·로그 | UTC 저장·ISO 직렬화·표시는 프론트 / 코드 값 영어 / 로그에 시크릿·개인정보 금지 | CLAUDE.md 4-2 (고정 규약) |
