@@ -56,6 +56,13 @@ describe('redact', () => {
     expect(out).toBe('session *** rejected')
   })
 
+  it('JWT 조각이 -·_ 로 시작하거나 끝나도 통째로 → *** (회귀: \\b 경계가 base64url 기호를 놓쳤다)', () => {
+    // 무작위가 아니라 고정 모양 — 기호가 경계에 오는 경우를 항상 검사한다
+    const jwt = `-${base64url(24)}_.${base64url(48)}.-${base64url(32)}_`
+    const out = redact(`session ${jwt} rejected`)
+    expect(out).toBe('session *** rejected')
+  })
+
   it('Bearer 토큰 → Bearer ***', () => {
     const token = base64url(40)
     const out = redact(`request with Bearer ${token} header`)
