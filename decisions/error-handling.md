@@ -46,6 +46,11 @@ type FieldError = { path: string; code: string }   // 검증 실패 시 필드�
 - 라우트 구간 단위: `app/global-error.tsx`, `app/[locale]/(app)/error.tsx`, `app/[locale]/admin/error.tsx`, `app/w/[id]/error.tsx`, 각 구간 `not-found.tsx`
 - 데이터를 불러오는 목록·카드는 경계가 아니라 **화면 4상태의 에러 상태**(문구 + 다시 시도 버튼)로 처리
 - 에러 경계 화면도 앱 테마·i18n 적용 (완료 기준 7)
+- **F06 구현 결정 (2026-11-19)**:
+  - 1차 경계는 `app/[locale]/not-found.tsx`·`app/[locale]/error.tsx`(root layout 안 — `I18nProvider`·토큰 적용, `retry()` 버튼). `(app)`·`admin`·`w/[id]` 구간 경계는 그 구간이 생길 때 같은 컴포넌트(`shared/ui/error-state`·`not-found-state`)를 재사용
+  - `app/global-error.tsx`: root layout 자체가 깨졌을 때. 자체 `<html data-skin data-mode>`·`globals.css` 를 그리고 Provider 가 없으므로 사전 대신 **ko·en·ja 세 줄 고정 문구**(각 언어 사전의 같은 키 값을 import 해 쓴다 — 문구 이중화 금지)
+  - **root 밖 경로(`/xx`·`/foo`)의 404 는 `experimental.globalNotFound: true` + `app/global-not-found.tsx`** (사용자 결정 2026-11-19. 기각: Next 기본 흰 404 유지 — 메인 추천이었으나 사용자가 모든 404 의 앱 테마 적용을 택함). 16.3 실험 플래그 — Next 업그레이드 때 플래그 이름·안정화 여부를 확인하는 항목을 `dependencies.md` 갱신 절차에 둔다. 헤더를 못 읽으므로 global-error 와 같은 세 줄 고정 문구. `[locale]/layout.tsx` 에 `dynamicParams = false` 를 둬 `/xx` 는 layout 실행 없이 이 화면으로
+  - 렌더 에러 E2E: `app/[locale]/__e2e/throw/page.tsx` 가 서버 env `LINKLET_E2E=1` 일 때만 throw, 아니면 `notFound()`(사용자 결정 2026-11-19. 기각: 컴포넌트 단위 테스트만 — 경계 연결을 확인 못 함). env 스키마에 선택 키 `LINKLET_E2E`, Playwright webServer 만 켠다. CI·Vercel 에는 없다 → 운영에서는 404
 
 ### E5. 로그 — 구조화 로그 + Sentry 무료 플랜
 
@@ -96,3 +101,4 @@ type FieldError = { path: string; code: string }   // 검증 실패 시 필드�
 - 2026-11-12 E1 message 고정 문구화, E2 `AppError(code, details?)` 시그니처 (security-reviewer F07 지적 → 사용자: message 인자 제거 추천안. 기각: 린트+런타임 가드 3겹)
 - 2026-11-12 E5 구현 규칙·종류 통제·알려진 한계 추가 (security-reviewer F01 검토)
 - 2026-11-15 E1 에 `UNAVAILABLE` 503 추가 — 헬스 체크 I01 실패 응답 (사용자: 503 신설. 기각: DB 예외를 그대로 throw 해 `500 INTERNAL` — 코드 추가 없이 끝나지만 HTTP 의미론상 503 이 정확)
+- 2026-11-19 E4 F06 구현 결정 — `globalNotFound` 실험 플래그(사용자: 플래그 켜기. 기각: Next 기본 404 유지 — 추천안), 렌더 에러 E2E 는 env 가드 테스트 전용 라우트(사용자: 추천안)
