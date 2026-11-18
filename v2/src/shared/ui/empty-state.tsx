@@ -4,10 +4,11 @@ import type { ReactNode } from 'react'
 // 404(not-found)·에러 경계(error)·(나중에) 목록 비어 있음이 같은 틀을 쓴다 — 같은 역할의 컴포넌트를 두 벌 만들지 않는다(§4).
 // 토큰 클래스만(원색·dark: 금지). 제목 text-display, 설명 text-body text-muted, 위아래 py-10, 좌우 px-page-x, 가운데 정렬.
 // action 은 호출자가 <a>/<button> 으로 넘긴다(§4-3 — 클릭 가능한 div 금지). 서버·클라이언트 양쪽에서 쓸 수 있게 훅·상태 없음.
+// 제목·설명은 보통 t() 문자열이고, Provider 가 없는 global-error·global-not-found 는 <MultilingualLines> 로 세 언어 줄을 넘긴다.
 
 type EmptyStateProps = {
-  title: string
-  description: string
+  title: ReactNode
+  description: ReactNode
   /** 다음에 할 수 있는 행동 — <a href> 또는 <button type="button">. 클래스는 EMPTY_STATE_ACTION_CLASS */
   action?: ReactNode
 }
