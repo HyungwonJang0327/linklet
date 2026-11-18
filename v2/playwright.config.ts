@@ -64,7 +64,9 @@ export default defineConfig({
     : {
         command: `pnpm build && pnpm start -p ${PORT}`,
         env: E2E_SERVER_ENV,
-        url: baseURL,
+        // 준비 확인은 기본 언어 랜딩(/ko = DEFAULT_LOCALE). Playwright 는 2xx·3xx·400~403 만 "준비됨"으로 보는데
+        // `/` 는 F05 proxy 전까지 404 라 baseURL 그대로면 180초 타임아웃이 난다(2026-11-18 실측). F05 뒤에도 /ko 는 유효하다
+        url: `${baseURL}/ko`,
         reuseExistingServer: !process.env.CI,
         timeout: 180_000,
       },
