@@ -2,6 +2,7 @@
 // 서버 컴포넌트: getDictionary(locale) → createT(dictionary). 클라이언트: I18nProvider + useT()/useLocale()
 
 export { DEFAULT_LOCALE, isLocale, LOCALE_NAMES, LOCALES, type Locale } from './config'
+export { negotiateLocale } from './negotiate'
 export { getDictionary } from './dictionaries'
 export { errorMessageKey, UNKNOWN_ERROR_KEY } from './keys'
 export { createT } from './t'
