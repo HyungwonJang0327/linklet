@@ -59,11 +59,11 @@
 - [x] i18n 사전 3개(ko·en·ja) + 타입 안전 `t()` + enum→키 매핑 위치 (2026-11-17, `a5e10c3`~`54ffe03` 5커밋 — `decisions/i18n.md` L1~L9. TS 사전(ko 원본 → en·ja `satisfies`, 누락·초과 키 모두 컴파일 에러 실측), `DictionaryKey`·`Params` 타입으로 없는 키·플레이스홀더 인자 누락이 컴파일 에러, `errors.*` 11키(10코드 + UNKNOWN) + common 7 + metadata 2, 플레이스홀더 집합 3언어 동일 테스트, `errorMessageKey` 표, 로케일별 동적 import, `I18nProvider`/`useT`. 테스트 107건, typecheck +0.1s) — `errors.{CODE}` 는 `ERROR_CODES` 10종(`UNAVAILABLE` 포함) 전부와 1:1 인지 테스트로 고정
   - 메모: 기존 `lib/i18n/utils.ts` 의 경로 유틸(`getLocaleFromPath`·`addLocaleToPath` — 기본 언어를 경로에서 생략하던 방식)은 옮기지 않음 → F05 에서 `[locale]` 세그먼트 항상 포함(url-design) 기준으로 필요 여부 재검토. 복수형은 L5 확장 지점(첫 영어 개수 문구 때 `tn()`)
   - 완료 조건: 단위 테스트 — 3개 사전 키 집합 동일, **플레이스홀더 문법이 `t()` 치환 규칙과 일치**(기존 앱 버그: 사전 `{title}` vs `t()` `{{key}}` — 2026-11-10 기준선 실측) / 커밋: `feat(i18n): 사전 3개와 타입 안전 t()` / FEATURES: F04
-- [ ] root layout `<html lang>` + `[locale]` 레이아웃 + 언어 코드 `ko/en/ja` 검증 — 포함: 시스템 모드 인라인 스크립트(`data-mode` 를 첫 페인트 전에 채움, CSP nonce 방침 함께 결정 — design-tokens.md Phase 1 결정), `metadata` 를 사전 `metadata.title/description` 으로 교체, `[locale]/layout.tsx` 에서 `getDictionary(locale)` → `I18nProvider` 마운트(i18n L6 — F04 의 첫 소비자)
+- [x] root layout `<html lang>` + `[locale]` 레이아웃 + 언어 코드 `ko/en/ja` 검증 (2026-11-18, `a5420c5`~`843a5e2` 6커밋 — A6 `[locale]` 이 root(`app/layout.tsx`·`page.tsx` 삭제), 사전 metadata, `I18nProvider`, MODE_SCRIPT(대기 상태), 최소 Topbar, Playwright webServer 더미 env + 준비 URL `/ko`, E2E 5건 통과, 테스트 421건) — 포함: 시스템 모드 인라인 스크립트(`data-mode` 를 첫 페인트 전에 채움, CSP nonce 방침 함께 결정 — design-tokens.md Phase 1 결정), `metadata` 를 사전 `metadata.title/description` 으로 교체, `[locale]/layout.tsx` 에서 `getDictionary(locale)` → `I18nProvider` 마운트(i18n L6 — F04 의 첫 소비자)
   - 완료 조건: E2E — 주요 경로에 `<html lang>` / 커밋: `feat(i18n): 언어별 레이아웃과 html lang` / FEATURES: F03
-- [ ] `proxy.ts` — `/` 요청을 Accept-Language 기준 언어 경로로, 미지원 언어는 `ko`
+- [ ] `proxy.ts` — `/` 요청을 Accept-Language 기준 언어 경로로, 미지원 언어는 `ko` — 지금 `/` 는 404(F03 뒤). 기존 `lib/i18n/utils.ts` 경로 유틸 필요 여부 여기서 판단(F04 메모). Playwright 준비 URL 은 `/ko` 로 고정돼 있어 변경 불필요
   - 완료 조건: E2E / 커밋: `feat(i18n): 언어 경로 리다이렉트 proxy` / FEATURES: F05
-- [ ] `not-found`·`error`·`global-error` — 앱 테마·i18n, 다시 시도 버튼
+- [ ] `not-found`·`error`·`global-error` — 앱 테마·i18n, 다시 시도 버튼. 결정 포함(F03 메모 2026-11-18): 전역 404 가 Next 기본 화면(`/xx`·root 밖 경로) → `global-not-found`(16.3 실험 플래그 `experimental.globalNotFound`) 채택 여부, `[locale]/layout.tsx` 에 `dynamicParams = false` 를 둬 `/xx` 를 layout 실행 없이 404 로 보낼지
   - 완료 조건: E2E — 없는 경로 → 앱 404, 렌더 에러 → 에러 경계 / 커밋: `feat(ui): 404·에러 경계 화면` / FEATURES: F06
 - [ ] Sentry 연결 (`@sentry/nextjs`, 개인정보 제거 `beforeSend`) — 사용자: DSN 발급 선행
   - 완료 조건: 로컬에서 테스트 에러 전송 확인(수동), 이벤트에 이메일·쿠키 없음 / 커밋: `feat(config): Sentry 에러 모니터링 연결` / FEATURES: F06
