@@ -36,6 +36,7 @@
 
 - **파일**: 토큰 원본은 그대로 `design/mockups/tokens.css`. v2 는 `v2/src/app/tokens.css` **사본**을 import 하고, Vitest 가 두 파일을 바이트 단위로 비교해 다르면 실패한다(드리프트 차단 — 사용자 결정. 기각: 원본을 v2 로 이동 — 시안 링크 9개·문서 재생성 경로 수정). Tailwind 연결(`@theme`·`@custom-variant`·`@utility`)은 `v2/src/app/globals.css` 에만 둔다 — 사본은 원본과 한 글자도 달라선 안 된다
 - **시스템 모드 인라인 스크립트는 F03 root layout 때**(CSP nonce 방침과 함께). Phase 1 토큰 적용은 `<html data-skin="canvas" data-mode="light">` 정적 기본값(사용자 결정)
+- **모드 스크립트·CSP (F03, 2026-11-18 메인 판단)**: `[locale]/layout.tsx` 의 `<head>` 에 인라인 `<script>` 한 줄 — 서버가 `data-mode` 를 `light|dark` 로 렌더했으면 아무것도 안 하고(F29 저장값), 없거나 `system` 이면 `matchMedia('(prefers-color-scheme: dark)')` 로 채운다. 스크립트 본문은 `shared/ui/mode-script.ts` 상수 하나(테스트로 문자열 고정)로 두고 React 의 `dangerouslySetInnerHTML` 로 삽입. **CSP 는 아직 없다** — 도입할 때(보안 항목) proxy 가 nonce 를 만들어 `headers()` 로 읽어 `<script nonce>` 에 붙이는 방식으로 간다(Next 공식 nonce 패턴). 그때까지 `unsafe-inline` 논의 없음
 - **유틸리티 이름 체계** (`@theme inline`, 토큰 이름과 겹치지 않게 — `bg-bg` 같은 중복 회피):
 
 | 토큰 | Tailwind 테마 변수 | 유틸리티 예 |
