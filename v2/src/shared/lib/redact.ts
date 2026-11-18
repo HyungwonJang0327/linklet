@@ -22,8 +22,12 @@ const REDACTION_RULES: ReadonlyArray<readonly [RegExp, string]> = [
   [/\b[a-z0-9-]+(?:\.[a-z0-9-]+)*\.neon\.tech(?::\d{1,5})?\b/gi, '***.neon.tech'],
   // 그 외 스킴의 userinfo (`mysql://u:p@h`, `redis://:p@h`, `https://u:p@h`)
   [/\b([a-z][a-z0-9+.-]*:\/\/)[^\s/@'"`<>]+@/gi, '$1***@'],
-  // JWT — base64url 세 조각
-  [/\b[A-Za-z0-9_-]{8,}\.[A-Za-z0-9_-]{8,}\.[A-Za-z0-9_-]{8,}\b/g, REDACTED],
+  // JWT — base64url 세 조각. 경계는 `\b` 가 아니라 lookaround: base64url 에는 `-`·`_` 가 들어가는데 `\b` 는 그 앞뒤를
+  // 단어 경계로 보지 않아 `-` 로 시작·끝나는 조각이 한 글자 남았다(CI 간헐 실패 2026-11-18, 아래 32자+ 규칙과 같은 방식)
+  [
+    /(?<![A-Za-z0-9_-])[A-Za-z0-9_-]{8,}\.[A-Za-z0-9_-]{8,}\.[A-Za-z0-9_-]{8,}(?![A-Za-z0-9_-])/g,
+    REDACTED,
+  ],
   // Cookie / Set-Cookie 헤더 — 값 전체(줄 끝까지). 키 규칙보다 앞: `a=1; csrf=2` 조각이 아니라 통째로 지운다
   [/(\b(?:set-)?cookie\s*:)[^\r\n]*/gi, '$1 ***'],
   // Bearer · Basic 토큰 (RFC 7235 — 스킴 이름은 대소문자 무관)
