@@ -19,5 +19,5 @@
 ## Phase 1
 
 - [ ] i18n 기반 문구 검토 (2026-11-17 F04 추가) — `v2/src/shared/i18n/dictionaries/{ko,en,ja}.ts` 의 `errors.*` 11문장·`common`·`metadata`: 톤("~해요" 체), 문장 끝 구두점 규칙(지금 ko·ja 마침표 없음 / en 마침표 — 한 규칙으로), `common.confirm` 의 en·ja "OK", 3개 언어 길이. 수정은 세 파일 동시에(타입이 강제)
-- [ ] 404·에러 경계 화면 문구 검토 — "다음 행동" 안내, 3개 언어 길이
+- [ ] 404·에러 경계 화면 검토 (2026-11-19 F06 구현 뒤) — 문구(`notFound.*`·`errorPage.*` 세 언어, "다음 행동" 안내, 길이) + **UX 판단 2건**: (a) 매치 안 되는 URL(`/ko/없는-경로` 포함)은 세 언어를 한 화면에 쌓은 `global-not-found`(`lang="ko"` 고정, Topbar 없음, 버튼 라벨 "홈으로 · Go home · ホームへ") — 받아들일 만한지, 아니면 A6/F05 를 바꿔 언어별 404 로 갈지(error-handling E4 실측 참고) (b) `global-error` 도 같은 세 줄 형식
   - 완료 조건: 검토 목록 반환 (커밋 없음) / FEATURES: F06
