@@ -55,3 +55,8 @@ next-env.d.ts
 
 # 리뉴얼 감사 스크린샷: 테스트 데이터(토큰·이메일 노출 가능) 포함, 전후 비교 후 삭제
 /audit/screenshots/
+
+# docs/spec 생성 스크립트 산출물·가상환경
+docs/spec/build/data.json
+docs/spec/build/.venv/
+docs/spec/build/package-lock.json
