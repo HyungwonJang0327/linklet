@@ -56,6 +56,9 @@ jobs:
       - run: pnpm format:check
       - run: pnpm typecheck
       - run: pnpm test:coverage
+        env:
+          # 테스트 DB(service container)에 닿지 않으면 skip 이 아니라 실패 — vitest.global-setup.mts
+          LINKLET_REQUIRE_TEST_DB: "1"
       - run: pnpm build
         env:
           NEXT_TELEMETRY_DISABLED: "1"
