@@ -17,13 +17,13 @@
 
 | ID | 기능 | 현재 위치 | 처분 | 이유 | 순서 | 동등성 확인 방법 | 상태 |
 |---|---|---|---|---|---|---|---|
-| F01 | 환경변수 스키마 검증 | scripts/check-env.js (predeploy만) | 재설계 | 부팅 시 검증 없음, 비밀값 앞 10자 출력(규약 위반) | 1 | 단위: 필수 키 누락 시 부팅 실패, 출력에 값 없음 | 미착수 |
+| F01 | 환경변수 스키마 검증 | scripts/check-env.js (predeploy만) | 재설계 | 부팅 시 검증 없음, 비밀값 앞 10자 출력(규약 위반) | 1 | 단위: 필수 키 누락 시 부팅 실패, 출력에 값 없음 | 동등성 확인 (2026-11-22 — `shared/config/env.ts`·`env.client.ts`·`env-failure.ts`·`instrumentation.ts`(9bb7615, 2026-11-12). `env.test.ts`·`env.client.test.ts`: 필수 키 누락 시 부팅 실패, 모든 값에 UUID 토큰을 넣고 출력에 없음을 고정, production 교차 검증(https·sslmode). security-reviewer 검토 반영 11-12) |
 | F02 | DB 스키마·마이그레이션·시드 | prisma/ | 재설계 | 마이그레이션 드리프트(H5), 두 PrismaClient(H6), FK 인덱스 없음, `price` String, 상태값 표기 불일치. 데이터 폐기 가능 | 1 | 수동: 빈 DB에 마이그레이션 up → down → up 성공, 시드 실행 후 앱 기동 | 동등성 확인 (2026-11-15 — up→down→up: worklog 11-14 `init` 2사이클 / 시드 후 `pnpm dev` 기동: worklog 11-15 사용자 확인. 인증 테이블은 F08 에서 추가) |
 | F03 | 공통 레이아웃·root layout | app/layout.tsx, [locale]/layout.tsx, app/w/layout.tsx | 재설계 | root layout에 `<html>` 없음, root layout 이중 구조, 공유 페이지 `lang` 없음 | 2 | E2E: 모든 주요 경로에 `<html lang>` 존재, 헤더·본문 렌더 | 이식 완료 (2026-11-18 — `app/[locale]/layout.tsx` 가 root(A6), `e2e/layout.spec.ts` 5건: `/ko`·`/en`·`/ja` lang·헤더·본문·title, `/xx` 404. 공유 페이지 root(`app/w/layout.tsx`)는 F23 때 — 그 뒤 동등성 확인) |
 | F04 | i18n (3개 언어, 사전, `t()`) | lib/i18n/ | 개선 | 키 타입 안전성 없음, 키 누락 시 키 문자열 노출(`wishlist.categories.GENERAL`), `t() \|\| '한국어'` fallback 40곳이 죽은 코드 | 2 | 단위: 3개 사전 키 집합 동일, 코드에서 쓰는 키가 전부 사전에 존재 | 동등성 확인 (2026-11-17 — 키 집합: `satisfies` 타입 + 런타임 평탄화 비교 / 코드의 키: `t()` 인자가 `DictionaryKey` 라 없는 키는 컴파일 에러(`@ts-expect-error` 고정, 옛 키 `wishlist.categories.GENERAL` 거부). 플레이스홀더 집합 3언어 동일 테스트 추가. 초기 키는 기반(errors·common·metadata)만 — `decisions/i18n.md` L7, 화면 키는 기능별 추가. 첫 소비자는 F03) |
 | F05 | 언어 경로·루트 리다이렉트 | app/page.tsx, `[locale]` | 개선 | `/` 가 무조건 `/kr`. Accept-Language 반영. 코드 `kr/jp`→**`ko/ja`** 전환(`decisions/url-design.md` U3) | 2 | E2E: `/` 요청 시 브라우저 언어 경로로 이동, 미지원 언어는 기본 언어 | 동등성 확인 (2026-11-18 — `e2e/locale-redirect.spec.ts` 9건: ja→`/ja`, en-US→`/en`, fr→`/ko`, 헤더 없음→`/ko`, 쿼리 보존, `Vary`, `/ko` 200, `/login` 404(H1), 브라우저 `ja-JP` → `/ja`. 코드 `kr/jp` 는 `ko` 로 떨어짐을 단위 테스트로 고정) |
 | F06 | 404·500·에러 경계 | 없음 | 신규 | H7. 현재 프레임워크 기본 흰 화면 | 3 | E2E: 없는 경로 → 앱 테마 404, 렌더 에러 → 에러 경계 화면 | 동등성 확인 (2026-11-19 — `e2e/error-boundaries.spec.ts` 11건: 매치 안 되는 URL 5경로 → 404 + 앱 테마 세 언어 `global-not-found`, `notFound()` → 언어별 `[locale]/not-found`, 렌더 에러 → 500 + `[locale]/error` 문구·다시 시도, 본문에 내부 메시지 없음. `/{locale}/없는-경로` 의 세 언어 화면은 designer UX 검토 대기) |
-| F07 | API 응답·에러 스키마 + 헬퍼 | app/api/** (6종 이상) | 재설계 | H8, 내부 에러 메시지 노출(`details: error.message`) | 3 | 단위: 헬퍼가 스키마대로만 응답, 예상 못한 에러는 일반 문구 | 미착수 |
+| F07 | API 응답·에러 스키마 + 헬퍼 | app/api/** (6종 이상) | 재설계 | H8, 내부 에러 메시지 노출(`details: error.message`) | 3 | 단위: 헬퍼가 스키마대로만 응답, 예상 못한 에러는 일반 문구 | 동등성 확인 (2026-11-22 — `shared/lib/api-error.ts`·`api-response.ts`(0e93f66)·`server/api-handler.ts`(3cf3799, 2026-11-12). 단위 90건(env 포함 5 파일): 헬퍼가 `{data}`·`{data,nextCursor}`·`{error}` 만, `AppError(code, details?)` 고정 message, 예상 못한 예외는 `500 INTERNAL` 일반 문구 + 로그. E1 message 인자 제거 사용자 결정 11-12) |
 | F08 | Google 로그인·로그아웃 | lib/auth-config.ts, [locale]/login, api/auth/[...nextauth] | 개선 | NextAuth v4 유지보수 모드·audit critical, `pages.signIn: '/login'` 404(실측). 라이브러리 교체(5단계) | 4 | 수동: 실제 Google 로그인·로그아웃. E2E: 테스트용 세션 주입 후 로그인 상태 화면 | 미착수 |
 | F09 | 라우트 보호 | middleware.ts, components/auth/auth-guard.tsx | 개선 | 미들웨어는 쿠키 존재만 확인, 관리자 권한은 클라이언트에서만 확인 | 4 | E2E: 비로그인으로 설정 접근 → 로그인으로 이동, 일반 사용자로 관리자 접근 → 차단 | 미착수 |
 | F10 | 인증·권한 계층 | lib/auth-helpers.ts + admin 라우트 인라인 체크 | 개선 | 체크 방식 이원화(M5), IDOR(M1) | 4 | 단위: 본인·타인·관리자·비로그인별 판정 결과 표 | 미착수 |
@@ -102,8 +102,8 @@
 | ID | 기능 | 현재 위치 | 처분 | 이유 | 순서 | 동등성 확인 방법 | 상태 |
 |---|---|---|---|---|---|---|---|
 | I01 | 헬스 체크 | GET /api/health | 개선 | 실패 시 DB 에러 메시지 노출 | 3 | 단위: 실패 시 일반 문구만 | 동등성 확인 (2026-11-15 — `v2/src/app/api/health/route.test.ts` 5건: 503 본문에 DB 메시지 없음 / 통합 1건 200 / 실기동 curl 200. 실패는 `503 UNAVAILABLE`, 성공 `{data:{status:'ok'}}` 로 형태 변경 — E1·R3) |
-| I02 | 시크릿 스캔 | 없음 | 신규 | 사용자 원칙, PUBLIC 리포 | 0 | 수동: pre-commit에서 테스트 시크릿 커밋 차단, CI 실패 확인 | 미착수 |
-| I03 | CI (lint·typecheck·test·E2E) | 없음 | 신규 | 완료 기준 5 | 0 | 수동: PR에서 모든 체크 실행 | 미착수 |
+| I02 | 시크릿 스캔 | 없음 | 신규 | 사용자 원칙, PUBLIC 리포 | 0 | 수동: pre-commit에서 테스트 시크릿 커밋 차단, CI 실패 확인 | 동등성 확인 (2026-11-22 — `.githooks/pre-commit`(9be6e72) + `secret-scan.yml`(860d773). 수동: 무작위 `ghp_` 토큰 형태를 staged 하고 훅 실행 → `leaks found: 1`, exit 1 로 차단(11-22). AWS 문서 예시 키 `AKIA…EXAMPLE` 은 gitleaks 기본 allowlist 라 통과 — 실제 값은 아니므로 문제 없음. CI 스캔은 PR #10~#20 전부 실행·통과(실제 시크릿을 push 해 실패를 재현하지는 않음) |
+| I03 | CI (lint·typecheck·test·E2E) | 없음 | 신규 | 완료 기준 5 | 0 | 수동: PR에서 모든 체크 실행 | 이식 완료 (2026-11-22 — `v2-ci.yml`(230c415): lint·format·typecheck·test:coverage(service container Postgres, PR #19)·build 가 PR #10~#20 에서 전부 실행·통과. **E2E 단계 미추가**(tester todo) → 추가 후 동등성 확인) |
 
 ---
 
