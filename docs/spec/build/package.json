@@ -1,0 +1,8 @@
+{
+  "name": "linklet-spec-build",
+  "private": true,
+  "description": "docs/spec 문서 생성 스크립트 (docx)",
+  "dependencies": {
+    "docx": "^9.16.0"
+  }
+}

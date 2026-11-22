@@ -56,6 +56,7 @@ Co-Authored-By: ... (에이전트가 작성한 커밋)
 | `legacy` | 기존 앱(루트) — 교체 시 제거 등 |
 | `audit` · `intent` · `planning` · `decisions` · `worklog` · `todo` · `readme` · `retro` | 리뉴얼·회고 문서 |
 | `claude` | `CLAUDE.md`, `COMMIT_CONVENTION.md`, `.claude/` 에이전트·커맨드 |
+| `spec` | 설계 산출물 `docs/spec/` (요건정의·기본설계·상세설계 문서와 생성 스크립트) |
 
 새 scope가 필요하면 이 표에 먼저 추가한다.
 
