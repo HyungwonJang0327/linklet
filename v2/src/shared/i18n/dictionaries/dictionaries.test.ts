@@ -31,8 +31,14 @@ const FLAT = Object.fromEntries(
 const KO_KEYS = Object.keys(FLAT.ko).sort()
 
 describe('사전 키 집합 (a)', () => {
-  it('ko 는 기반 키만 가진다 (errors·common·metadata)', () => {
-    expect(Object.keys(ko).sort()).toEqual(['common', 'errors', 'metadata'])
+  it('ko 의 최상위 그룹은 기반 키(errors·common·metadata) + F06 화면 키(notFound·errorPage) 다', () => {
+    expect(Object.keys(ko).sort()).toEqual([
+      'common',
+      'errorPage',
+      'errors',
+      'metadata',
+      'notFound',
+    ])
     expect(KO_KEYS.length).toBeGreaterThan(0)
   })
 

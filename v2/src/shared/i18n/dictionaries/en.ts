@@ -26,6 +26,16 @@ export const en = {
     back: 'Back',
     loading: 'Loading…',
   },
+  notFound: {
+    title: "We couldn't find that page",
+    description:
+      'The address may have changed, or the page was removed. Head back home and try finding it again.',
+    home: 'Go home',
+  },
+  errorPage: {
+    title: 'Something went wrong',
+    description: 'Please try again in a moment. If it keeps happening, let us know.',
+  },
   metadata: {
     title: 'Linklet — Paste a link, build your wishlist',
     description:

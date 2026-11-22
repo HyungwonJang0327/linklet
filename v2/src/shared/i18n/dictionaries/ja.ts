@@ -27,6 +27,15 @@ export const ja = {
     back: '戻る',
     loading: '読み込み中…',
   },
+  notFound: {
+    title: 'ページが見つかりません',
+    description: 'アドレスが変わったか、削除されたページです。ホームに戻ってもう一度探してください',
+    home: 'ホームへ',
+  },
+  errorPage: {
+    title: '問題が発生しました',
+    description: 'しばらくしてからもう一度お試しください。続く場合はお知らせください',
+  },
   metadata: {
     title: 'Linklet — リンクを貼るだけでできる、わたしのウィッシュリスト',
     description:

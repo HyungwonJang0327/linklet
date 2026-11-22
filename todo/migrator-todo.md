@@ -64,7 +64,8 @@
 - [x] `proxy.ts` — `/` 요청을 Accept-Language 기준 언어 경로로, 미지원 언어는 `ko` (2026-11-18, `889d0e1`·`ce93ba6`·`89733af` — `shared/i18n/negotiate.ts` 순수 협상 함수(단위 30건), `src/proxy.ts` matcher `/` 만·307·쿼리 보존·`Vary`, Node 런타임 확인, E2E 9건. 기존 경로 유틸은 불필요 판단: v2 는 `[locale]` 세그먼트를 항상 두고 proxy 가 `/` 하나만 다룬다. 기존 middleware 의 세션 체크 → F09, `/w/` 지역 감지 → F23)
 - [ ] (낮음) `shared/i18n` 비-React 진입점용 공개 API 분리 — proxy 번들에 `client.tsx` 가 클라이언트 참조 스텁으로 들어감(동작·크기 영향 미미, 2026-11-18 migrator 발견). 비-React 소비자가 늘면 `shared/i18n/server` 분리 / 커밋: `refactor(i18n): 비-React 진입점용 공개 API 분리`
   - 완료 조건: E2E / 커밋: `feat(i18n): 언어 경로 리다이렉트 proxy` / FEATURES: F05
-- [ ] `not-found`·`error`·`global-error` — 앱 테마·i18n, 다시 시도 버튼. 결정 포함(F03 메모 2026-11-18): 전역 404 가 Next 기본 화면(`/xx`·root 밖 경로) → `global-not-found`(16.3 실험 플래그 `experimental.globalNotFound`) 채택 여부, `[locale]/layout.tsx` 에 `dynamicParams = false` 를 둬 `/xx` 를 layout 실행 없이 404 로 보낼지
+- [x] `not-found`·`error`·`global-error` (2026-11-19, `331b229`~`20c6a86` 8커밋 — 사용자 결정: `globalNotFound` 플래그 + env 가드 E2E 라우트. 사전 키 5개, `EmptyState`·`MultilingualLines`, `[locale]/not-found`(root-params)·`[locale]/error`(`retry()`), `global-error`·`global-not-found`(세 언어 고정), `dynamicParams=false`, `LINKLET_E2E`, E2E 11건·전체 25/25. 실측: 매치 안 되는 URL 은 `/{locale}/…` 포함 전부 global-not-found — E4 기록) — 앱 테마·i18n, 다시 시도 버튼. 결정 포함(F03 메모 2026-11-18): 전역 404 가 Next 기본 화면(`/xx`·root 밖 경로) → `global-not-found`(16.3 실험 플래그 `experimental.globalNotFound`) 채택 여부, `[locale]/layout.tsx` 에 `dynamicParams = false` 를 둬 `/xx` 를 layout 실행 없이 404 로 보낼지
   - 완료 조건: E2E — 없는 경로 → 앱 404, 렌더 에러 → 에러 경계 / 커밋: `feat(ui): 404·에러 경계 화면` / FEATURES: F06
-- [ ] Sentry 연결 (`@sentry/nextjs`, 개인정보 제거 `beforeSend`) — 사용자: DSN 발급 선행
+- [ ] (낮음) `EmptyState` heading 레벨 prop — 지금 `<h1>` 고정이라 목록 안 "비어 있음" 상태(F13)에서 쓰려면 `as`/`headingLevel` 필요(2026-11-19 migrator 발견) / 커밋: `refactor(ui): EmptyState heading 레벨 prop`
+- [ ] Sentry 연결 (`@sentry/nextjs`, 개인정보 제거 `beforeSend`) — 사용자: DSN 발급 선행. 포함: `[locale]/error.tsx`·`global-error.tsx` 의 클라이언트 전송 지점(지금은 로그 없음, 의도 — 2026-11-19)
   - 완료 조건: 로컬에서 테스트 에러 전송 확인(수동), 이벤트에 이메일·쿠키 없음 / 커밋: `feat(config): Sentry 에러 모니터링 연결` / FEATURES: F06

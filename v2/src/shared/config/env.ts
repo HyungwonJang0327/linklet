@@ -32,6 +32,7 @@ export const SERVER_ENV_KEYS = [
   'NEXT_PUBLIC_SENTRY_DSN',
   'SENTRY_AUTH_TOKEN',
   'NEXT_PUBLIC_GA_MEASUREMENT_ID',
+  'LINKLET_E2E',
 ] as const
 
 type ServerEnvKey = (typeof SERVER_ENV_KEYS)[number]
@@ -69,6 +70,10 @@ const serverEnvSchema = z.object({
 
   // F26 공유 페이지 GA — 운영에서만 설정하므로 계속 optional 일 수 있다
   NEXT_PUBLIC_GA_MEASUREMENT_ID: z.optional(nonEmpty),
+
+  // E2E 전용 (F06, error-handling E4) — '1' 이면 app/[locale]/__e2e/throw 가 일부러 렌더 에러를 던진다.
+  // playwright.config.ts 의 webServer 만 켠다. CI 빌드·Vercel 에는 없다 → 운영에서는 그 라우트가 404. 값은 '1' 만 허용
+  LINKLET_E2E: z.optional(z.literal('1')),
 } satisfies Record<ServerEnvKey, z.ZodMiniType>)
 
 export type ServerEnv = Readonly<z.output<typeof serverEnvSchema>>

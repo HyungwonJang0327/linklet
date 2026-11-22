@@ -26,6 +26,17 @@ export const ko = {
     back: '뒤로',
     loading: '불러오는 중…',
   },
+  // F06 404 화면 — [locale]/not-found.tsx·global-not-found.tsx (error-handling E4). 다음 행동은 "홈으로"
+  notFound: {
+    title: '페이지를 찾을 수 없어요',
+    description: '주소가 바뀌었거나 삭제된 페이지예요. 홈으로 돌아가 다시 찾아 주세요',
+    home: '홈으로',
+  },
+  // F06 에러 경계 — [locale]/error.tsx·global-error.tsx. 버튼 문구는 common.retry 를 재사용한다(키 중복 금지)
+  errorPage: {
+    title: '문제가 생겼어요',
+    description: '잠시 뒤 다시 시도해 주세요. 계속되면 알려 주세요',
+  },
   // 랜딩 OG 메타 — INTENT.md 한 줄 설명 기반
   metadata: {
     title: 'Linklet — 링크만 붙여 넣으면 모아지는 내 위시리스트',

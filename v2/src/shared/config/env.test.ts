@@ -20,6 +20,7 @@ const OPTIONAL_KEYS = [
   'NEXT_PUBLIC_SENTRY_DSN',
   'SENTRY_AUTH_TOKEN',
   'NEXT_PUBLIC_GA_MEASUREMENT_ID',
+  'LINKLET_E2E',
 ] as const
 
 /** 테스트용 더미 — 실제 접속 정보가 아니다. 토큰을 섞어 출력 누출을 추적한다 */
@@ -87,6 +88,19 @@ describe('서버 환경변수 스키마 (env.ts)', () => {
     expect(env.BETTER_AUTH_SECRET).toBeUndefined()
     expect(env.R2_BUCKET).toBe('linklet-images')
     expect(env.NEXT_PUBLIC_SENTRY_DSN).toBe('https://public@o0.ingest.sentry.example/1')
+  })
+
+  it('LINKLET_E2E 는 선택 키 — 없으면 undefined, "1" 이면 "1", 다른 값은 부팅 실패 (F06 E2E 전용 가드)', async () => {
+    stubAll(validValues(randomUUID()))
+    expect((await loadEnv()).env.LINKLET_E2E).toBeUndefined()
+
+    vi.resetModules()
+    stubAll({ ...validValues(randomUUID()), LINKLET_E2E: '1' })
+    expect((await loadEnv()).env.LINKLET_E2E).toBe('1')
+
+    vi.resetModules()
+    stubAll({ ...validValues(randomUUID()), LINKLET_E2E: 'true' })
+    await expect(loadEnv()).rejects.toThrow('LINKLET_E2E')
   })
 
   it.each(REQUIRED_KEYS)('필수 키 %s 누락 → throw, 메시지에 키 이름', async (missing) => {
