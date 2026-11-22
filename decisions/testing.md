@@ -10,6 +10,7 @@
 | T4 | 커버리지 80% 대상 | `src/shared/lib/**`, `src/features/*/schema.ts`, `src/features/*/server/service.ts`. Vitest v8 커버리지, CI에서 80% 미만이면 실패 |
 | T5 | 통합 테스트 DB | Docker Postgres — 로컬(Docker 설치·실행 확인 2026-09-27)과 CI(GitHub Actions service container). 테스트마다 깨끗한 DB. 구현(2026-11-15): Vitest `globalSetup`(`vitest.global-setup.mts`)이 테스트 DB 에 TCP 로 닿으면 `prisma migrate deploy` 를 자동 적용하고 못 닿으면 안내 후 통합 파일만 skip. 통합 테스트는 `beforeEach` 에서 `server/test-db.resetTestDatabase`(public 스키마 전체 TRUNCATE, `_prisma_migrations` 제외, 로컬 호스트 + DB 이름 `linklet_test` + NODE_ENV=test 3중 가드, 테스트 파일 밖 import 는 ESLint 금지)로 비운다. 시드 데이터에 의존하지 않고 fixture 는 테스트가 만든다. CI(2026-11-22): `v2-ci.yml` quality 잡의 `postgres:17-alpine` service container 를 호스트 5434 로 매핑해 같은 setup 이 그대로 맞고, test 단계는 `LINKLET_REQUIRE_TEST_DB=1` 로 테스트 DB 에 닿지 않으면 skip 대신 실패한다(컨테이너 깨짐이 조용히 통과하는 일 방지) |
 | T10 | 테스트 DB 접속 키 | 별도 `TEST_DATABASE_URL` 없음. Vitest `setupFiles` 가 `DATABASE_URL`·`DATABASE_URL_UNPOOLED` 를 테스트 DB(로컬 5434 `linklet_test`, CI service container) 값으로 덮는다. 덮기 전 들어 있던 값의 호스트가 localhost 가 아니면 즉시 실패(값 출력 금지) — dev·원격 DB 에 테스트가 붙는 사고 방지. env 스키마·`server/db.ts` 에 테스트 분기 없음 |
+| T11 | 통합 테스트 직렬 실행 | Vitest `test.projects` 두 개 — `unit`(통합 제외, 파일 병렬) / `integration`(`*.integration.test.ts` 만, `fileParallelism: false`). 통합 파일은 `beforeEach` 에서 테스트 DB 전체를 TRUNCATE 하므로 병렬이면 서로 지운 데이터를 본다. `globalSetup`(migrate deploy)은 integration 에만, `setupFiles`(T10)·alias 는 root 상속, 커버리지는 root 에서 합산. 통합 파일은 자기 데이터만 다루려 애쓰지 않아도 된다(직렬이 격리를 보장). `pnpm vitest run --project integration` 으로 따로 돌릴 수 있다 |
 | T6 | 파일 위치 | 단위·통합은 소스 옆 `*.test.ts`, E2E는 `e2e/*.spec.ts` |
 | T7 | 기존 앱 기준선 E2E | `v2/e2e/baseline/` — v2의 Playwright를 쓰고, 기존 앱(`next start -p 3001`)을 대상으로 하는 별도 project. 기본 `pnpm test:e2e` 에서는 제외. 실행 DB는 T8. 교체 시 함께 정리 |
 | T9 | 기준선 E2E 시드 | 기준선 컨테이너의 psql 에 **고정 SQL 파일**(`v2/e2e/baseline/seed.sql`)을 흘린다 — 사용자·위시리스트·아이템·세션(`sessions` 행, 만료 먼 미래). 의존성 없음, 기존 스키마는 동결이라 SQL 고정이 안전. 실행은 `baseline:up` 끝 또는 테스트 `globalSetup` 에서 `docker compose exec psql`. 매 `down` 마다 DB가 사라지므로 시드는 멱등(`ON CONFLICT DO NOTHING` 또는 TRUNCATE 후 INSERT) |
@@ -52,5 +53,6 @@ E2E 인증: Google OAuth는 자동화하지 않는다. 테스트 DB에 시드한
 - 2026-10-04 T8 기준선 E2E 실행 DB 추가 (사용자: A 로컬 Docker + db push)
 - 2026-11-10 T9 기준선 E2E 시드 방법 — psql 고정 SQL (사용자: 추천안. 기각: 루트 Prisma 클라이언트 래퍼 — 루트 코드 의존·모듈 해석 복잡 / 세션 주입 후 API 생성 — 기존 API 버그에 테스트가 의존)
 - 2026-11-14 T10 테스트 DB 접속 키 — `DATABASE_URL` 덮기 (사용자: 추천안. 기각: `TEST_DATABASE_URL`)
-- 2026-11-15 T5 구현 메모(globalSetup 자동 `migrate deploy` + beforeEach TRUNCATE 헬퍼). 통합 파일이 2개 이상이 되면 파일 간 병렬 실행 격리 결정 필요(tester todo)
+- 2026-11-15 T5 구현 메모(globalSetup 자동 `migrate deploy` + beforeEach TRUNCATE 헬퍼). 통합 파일이 2개 이상이 되면 파일 간 병렬 실행 격리 결정 필요(tester todo) → 2026-11-23 T11 로 해결
 - 2026-11-22 T5 CI 적용 메모 — service container(호스트 5434) + `LINKLET_REQUIRE_TEST_DB=1`(CI 만). 로컬은 기존대로 미기동이면 skip
+- 2026-11-23 T11 통합 테스트 직렬 실행 — projects 분리 (사용자: 추천안. 기각: 전체 `fileParallelism: false` — 단위까지 느려짐 / 통합 파일 간 격리 규약(TRUNCATE 대신 자기 데이터만) — 리뷰로만 지켜지고 FK·유니크 충돌 위험 / `poolMatchGlobs` — Vitest 5 에서 제거됨)
