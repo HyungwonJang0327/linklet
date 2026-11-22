@@ -27,6 +27,7 @@ pnpm db:test:down     # 테스트 DB 만 정리 (tmpfs 라 데이터도 사라�
 - **운영·dev(Neon) 접속 문자열을 이 compose 나 로컬 스크립트에 절대 넣지 않는다.** 마이그레이션은 로컬 Docker → CI → dev → 운영 순서이며 운영 적용은 사용자가 직접(M3)
 - CI 는 GitHub Actions service container(T5) 를 쓰므로 compose 를 읽지 않는다
 - **테스트는 `vitest.setup.ts` 가 `DATABASE_URL`·`DATABASE_URL_UNPOOLED` 를 `5434/linklet_test` 로 덮는다**(T10, 별도 `TEST_DATABASE_URL` 없음). 덮기 전 값이 로컬 호스트가 아니면 즉시 실패(값 미출력). `src/server/db.integration.test.ts` 는 5434 에 TCP 접속이 안 되면 skip — 돌리려면 `pnpm db:test:up`
+- **테스트는 두 project 로 돈다**(testing T11): `unit`(통합 제외, 파일 병렬) / `integration`(`*.integration.test.ts` 만, 파일 직렬 — beforeEach TRUNCATE 가 서로 간섭하지 않게). 하나만 돌리려면 `pnpm vitest run --project integration`
 - **테스트 DB 마이그레이션은 `vitest.global-setup.mts` 가 자동 적용한다** — `pnpm test` 시작 때 5434 에 TCP 로 닿으면 `prisma migrate deploy` 를 테스트 DB 로 실행(메인 프로세스 1회). 닿지 않으면 한 줄 안내만 남기고 통합 테스트는 skip(CI 는 `LINKLET_REQUIRE_TEST_DB=1` 이라 skip 대신 실패 — service container 가 깨진 채 통과하지 않게). 접속 문자열 조립은 `prisma/lib/test-db-url.mts` 하나를 setup·globalSetup 이 공유한다(두 컨텍스트가 env 를 공유하지 않기 때문)
 - Prisma CLI(`prisma.config.ts`)는 `.env` 를 자동 로드하지 않아 `.env.local` → `.env` 순서로 직접 읽는다(셸 값 우선). 생성 클라이언트 `src/generated/prisma` 는 커밋하지 않고 `pnpm db:generate`(install 뒤 `postinstall` 포함)로 만든다
 - "테스트마다 깨끗한 DB"(T5)는 컨테이너가 아니라 테스트 setup 의 책임이다 (마이그레이션 적용 후 테이블 비우기 — F02 통합 테스트에서 확정)
