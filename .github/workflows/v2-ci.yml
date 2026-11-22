@@ -23,6 +23,24 @@ jobs:
   quality:
     runs-on: ubuntu-latest
     timeout-minutes: 15
+    services:
+      # 통합 테스트용 Postgres (decisions/testing.md T5·T10). 값은 v2/docker-compose.yml db-test 와 같은 더미 고정값 — 시크릿 아님.
+      # 호스트 포트 5434 로 노출하면 vitest.setup.ts 가 덮는 테스트 DB 주소(127.0.0.1:5434/linklet_test)와 그대로 맞고,
+      # vitest.global-setup.mts 가 TCP 로 닿는 것을 확인한 뒤 `prisma migrate deploy` 를 적용한다. 추가 단계 없음.
+      # 잡은 러너 호스트에서 돌고(container 아님) service 포트가 localhost 에 매핑된다. GitHub 은 health 통과 후 steps 를 시작한다
+      postgres:
+        image: postgres:17-alpine
+        env:
+          POSTGRES_USER: linklet
+          POSTGRES_PASSWORD: linklet
+          POSTGRES_DB: linklet_test
+        ports:
+          - 5434:5432
+        options: >-
+          --health-cmd "pg_isready -h localhost -U linklet -d linklet_test"
+          --health-interval 2s
+          --health-timeout 3s
+          --health-retries 30
     steps:
       - uses: actions/checkout@v7
       - uses: pnpm/action-setup@v6
@@ -38,6 +56,9 @@ jobs:
       - run: pnpm format:check
       - run: pnpm typecheck
       - run: pnpm test:coverage
+        env:
+          # 테스트 DB(service container)에 닿지 않으면 skip 이 아니라 실패 — vitest.global-setup.mts
+          LINKLET_REQUIRE_TEST_DB: "1"
       - run: pnpm build
         env:
           NEXT_TELEMETRY_DISABLED: "1"

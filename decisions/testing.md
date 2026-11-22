@@ -8,7 +8,7 @@
 | T2 | 테스트하지 않음 | 단순 렌더·스냅샷, 스타일, 라이브러리 자체 동작. 상호작용 UI는 E2E로 확인 |
 | T3 | "테스트 없는 기능 금지"의 정의 | 새 서비스 함수·API·순수 로직은 같은 PR에 테스트 동반. 화면은 `audit/FEATURES.md` 동등성 확인 방법(E2E) 필수 |
 | T4 | 커버리지 80% 대상 | `src/shared/lib/**`, `src/features/*/schema.ts`, `src/features/*/server/service.ts`. Vitest v8 커버리지, CI에서 80% 미만이면 실패 |
-| T5 | 통합 테스트 DB | Docker Postgres — 로컬(Docker 설치·실행 확인 2026-09-27)과 CI(GitHub Actions service container). 테스트마다 깨끗한 DB. 구현(2026-11-15): Vitest `globalSetup`(`vitest.global-setup.mts`)이 테스트 DB 에 TCP 로 닿으면 `prisma migrate deploy` 를 자동 적용하고 못 닿으면 안내 후 통합 파일만 skip. 통합 테스트는 `beforeEach` 에서 `server/test-db.resetTestDatabase`(public 스키마 전체 TRUNCATE, `_prisma_migrations` 제외, 로컬 호스트 + DB 이름 `linklet_test` + NODE_ENV=test 3중 가드, 테스트 파일 밖 import 는 ESLint 금지)로 비운다. 시드 데이터에 의존하지 않고 fixture 는 테스트가 만든다 |
+| T5 | 통합 테스트 DB | Docker Postgres — 로컬(Docker 설치·실행 확인 2026-09-27)과 CI(GitHub Actions service container). 테스트마다 깨끗한 DB. 구현(2026-11-15): Vitest `globalSetup`(`vitest.global-setup.mts`)이 테스트 DB 에 TCP 로 닿으면 `prisma migrate deploy` 를 자동 적용하고 못 닿으면 안내 후 통합 파일만 skip. 통합 테스트는 `beforeEach` 에서 `server/test-db.resetTestDatabase`(public 스키마 전체 TRUNCATE, `_prisma_migrations` 제외, 로컬 호스트 + DB 이름 `linklet_test` + NODE_ENV=test 3중 가드, 테스트 파일 밖 import 는 ESLint 금지)로 비운다. 시드 데이터에 의존하지 않고 fixture 는 테스트가 만든다. CI(2026-11-22): `v2-ci.yml` quality 잡의 `postgres:17-alpine` service container 를 호스트 5434 로 매핑해 같은 setup 이 그대로 맞고, test 단계는 `LINKLET_REQUIRE_TEST_DB=1` 로 테스트 DB 에 닿지 않으면 skip 대신 실패한다(컨테이너 깨짐이 조용히 통과하는 일 방지) |
 | T10 | 테스트 DB 접속 키 | 별도 `TEST_DATABASE_URL` 없음. Vitest `setupFiles` 가 `DATABASE_URL`·`DATABASE_URL_UNPOOLED` 를 테스트 DB(로컬 5434 `linklet_test`, CI service container) 값으로 덮는다. 덮기 전 들어 있던 값의 호스트가 localhost 가 아니면 즉시 실패(값 출력 금지) — dev·원격 DB 에 테스트가 붙는 사고 방지. env 스키마·`server/db.ts` 에 테스트 분기 없음 |
 | T6 | 파일 위치 | 단위·통합은 소스 옆 `*.test.ts`, E2E는 `e2e/*.spec.ts` |
 | T7 | 기존 앱 기준선 E2E | `v2/e2e/baseline/` — v2의 Playwright를 쓰고, 기존 앱(`next start -p 3001`)을 대상으로 하는 별도 project. 기본 `pnpm test:e2e` 에서는 제외. 실행 DB는 T8. 교체 시 함께 정리 |
@@ -53,3 +53,4 @@ E2E 인증: Google OAuth는 자동화하지 않는다. 테스트 DB에 시드한
 - 2026-11-10 T9 기준선 E2E 시드 방법 — psql 고정 SQL (사용자: 추천안. 기각: 루트 Prisma 클라이언트 래퍼 — 루트 코드 의존·모듈 해석 복잡 / 세션 주입 후 API 생성 — 기존 API 버그에 테스트가 의존)
 - 2026-11-14 T10 테스트 DB 접속 키 — `DATABASE_URL` 덮기 (사용자: 추천안. 기각: `TEST_DATABASE_URL`)
 - 2026-11-15 T5 구현 메모(globalSetup 자동 `migrate deploy` + beforeEach TRUNCATE 헬퍼). 통합 파일이 2개 이상이 되면 파일 간 병렬 실행 격리 결정 필요(tester todo)
+- 2026-11-22 T5 CI 적용 메모 — service container(호스트 5434) + `LINKLET_REQUIRE_TEST_DB=1`(CI 만). 로컬은 기존대로 미기동이면 skip
