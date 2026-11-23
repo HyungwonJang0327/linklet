@@ -1,3 +1,5 @@
+import * as Sentry from '@sentry/nextjs'
+
 import { formatLogLine, summarizeError } from '@/shared/lib/log-format'
 
 // Next 16 instrumentation — register() 는 서버 인스턴스가 시작될 때 1회 호출되고, 요청을 받기 전에 끝나야 한다.
@@ -6,6 +8,10 @@ import { formatLogLine, summarizeError } from '@/shared/lib/log-format'
 // 여기서 서버 환경변수 모듈을 로드해 스키마 검증에 실패하면 부팅이 실패한다 (FEATURES F01 — 기존 앱은 predeploy 스크립트만).
 // env 모듈이 상단 import 가 아니라 register 안의 동적 import 인 이유: 문서 권장 + 빌드·edge 번들에서 평가되지 않게.
 // log-format 은 부수 효과 없는 순수 모듈이라 상단 import 해도 된다 (server/logger 는 env 를 import 하므로 여기서 못 쓴다).
+//
+// Sentry(F06, error-handling E5): env 검증을 통과한 뒤 런타임별 설정 파일을 동적 import 한다(Sentry Next.js manual setup 규약, 2026-11-23 확인).
+// 순서가 중요하다 — sentry.server.config 는 검증된 env 에서 DSN 을 읽는다. onRequestError 는 Next 가 잡은 서버 에러(RSC 렌더·Route Handler·
+// Server Action·proxy)를 Sentry 로 넘긴다. Route Handler 는 server/api-handler 가 먼저 잡아 logger.unexpected 로 보내므로 여기까지 오지 않는다.
 
 // 실패 시 process.exit(1): `next start` 는 register 가 throw 해도 프로세스가 살아 모든 요청에 500 을 내는 좀비가 된다
 // (2026-11-12 실측). register 는 `next build`·Vitest 에서 호출되지 않으므로 빌드·테스트 프로세스를 죽일 일은 없다.
@@ -15,9 +21,14 @@ import { formatLogLine, summarizeError } from '@/shared/lib/log-format'
 const EXIT_DELAY_MS = 50
 
 export async function register(): Promise<void> {
+  if (process.env.NEXT_RUNTIME === 'edge') {
+    await import('./sentry.edge.config')
+    return
+  }
   if (process.env.NEXT_RUNTIME !== 'nodejs') return
   try {
     await import('@/shared/config/env')
+    await import('./sentry.server.config')
   } catch (error) {
     const summary = summarizeError(error)
     console.error(
@@ -32,3 +43,5 @@ export async function register(): Promise<void> {
     setTimeout(() => process.exit(1), EXIT_DELAY_MS)
   }
 }
+
+export const onRequestError = Sentry.captureRequestError
