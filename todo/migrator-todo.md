@@ -79,7 +79,7 @@
 - [x] F08 Better Auth 인스턴스·라우트·env (2026-11-23, `1f9538f`·`2c7a78c`·`4ada053`·`1cdf930`·`fc4d163`·`ab59e73` — `server/auth.ts`(Prisma 어댑터·Google select_account·세션 3d/1d·cookieCache 끔·admin·nextCookies·텔레메트리 끔·logger 연결), `/api/auth/[...all]`, env 필수화(BETTER_AUTH_SECRET ≥32·GOOGLE_*, BETTER_AUTH_URL 제거, 운영 https 강제), 테스트·E2E·CI 더미 키)
   - 완료 조건: typecheck·lint, env 테스트(29건) / 커밋: `feat(auth): Better Auth 인스턴스 …` / FEATURES: F08
 - [x] F08 로그인·로그아웃 화면 (2026-11-23, `0459160`·`198973b`·`fa700e1`·`6489a12` + E2E — `features/auth`(authClient·getSession(headers)·GoogleSignInButton·AuthMenu), `/{locale}/(public)/login`(시안 landing.html, ?error=1 안내), Topbar actions 슬롯에 AuthMenu(클라이언트 useSession — 로그인 링크/로그아웃 버튼), 사전 키 login.*·auth.* 세 언어, 클라이언트 번들 +14.5 KB gzip)
-  - 완료 조건: E2E 로그인 페이지 세 언어·?error·Topbar 링크·/api/auth/ok·get-session null(7건) / **수동(사용자): 실제 Google 로그인·로그아웃** → FEATURES F08 동등성 확인 / FEATURES: F08
+  - 완료 조건: E2E 로그인 페이지 세 언어·?error·Topbar 링크·/api/auth/ok·get-session null(7건) / 수동(사용자): 실제 Google 로그인·로그아웃 — 2026-11-23 확인 → FEATURES F08 동등성 확인 / FEATURES: F08
 - [ ] F08 후속 — 로그인 뒤 이동 `/{locale}` → `/{locale}/wishlists` (F13 목록 화면이 생길 때. `features/auth/components/google-sign-in-button.tsx` callbackURL 한 줄) / 커밋: `feat(auth): 로그인 뒤 위시리스트 목록으로`
 - [ ] F08 후속 — 로그인 페이지 이용약관·개인정보 처리방침 줄(시안) — 그 페이지가 생길 때 / 커밋: `feat(auth): 로그인 페이지 약관 안내`
 - [ ] F10 권한 판정 계층 — `features/auth/server` 에 본인·타인·관리자·비로그인 판정(세션 user.role·banned 포함), 판정표 단위 테스트 / 커밋: `feat(auth): 권한 판정 계층` / FEATURES: F10
