@@ -14,7 +14,8 @@
 ## 기능 이식 시점
 
 - [ ] Cloudflare 계정·R2 버킷 생성, 키 발급 (F20 이미지 업로드 이식 전)
-- [ ] Sentry 프로젝트 생성, DSN 발급 (F06 에러 경계 이식 전)
+- [x] Sentry 프로젝트 생성, DSN 발급 (2026-11-23 — 수동 생성, Error Monitoring 만, 리포 연결 안 함, DSN 은 `v2/.env.local`)
+- [ ] Sentry 소스맵 업로드 — org·project 슬러그 확인 + Auth Token 발급(scope: project:releases, org:read) → Vercel 운영 env `SENTRY_AUTH_TOKEN` (첫 배포 때. 로컬 `.env.local` 에는 넣지 않는다 — 빌드마다 업로드된다). 그때 GitHub 리포 연결도 함께(의심 커밋)
 - [ ] Google OAuth 클라이언트에 v2 로컬·운영 리디렉션 URI 추가 (F08 로그인 이식 전, Better Auth 콜백 경로 확인 후)
 
 ## 첫 배포 시점
