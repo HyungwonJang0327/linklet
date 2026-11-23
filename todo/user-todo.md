@@ -17,7 +17,7 @@
 - [x] Sentry 프로젝트 생성, DSN 발급 (2026-11-23 — 수동 생성, Error Monitoring 만, 리포 연결 안 함, DSN 은 `v2/.env.local`)
 - [ ] Sentry 소스맵 업로드 — org·project 슬러그 확인 + Auth Token 발급(scope: project:releases, org:read) → Vercel 운영 env `SENTRY_AUTH_TOKEN` (첫 배포 때. 로컬 `.env.local` 에는 넣지 않는다 — 빌드마다 업로드된다). 그때 GitHub 리포 연결도 함께(의심 커밋)
 - [x] Google OAuth 클라이언트에 v2 로컬·운영 리디렉션 URI 추가 (2026-11-23 — 기존 클라이언트 재사용. Better Auth 콜백 `/api/auth/callback/google` 이 기존 NextAuth 와 같은 경로라 추가 등록 없음. `v2/.env.local` 에 GOOGLE_CLIENT_ID·GOOGLE_CLIENT_SECRET 복사, BETTER_AUTH_SECRET 새로 생성)
-- [ ] v2 로컬에서 실제 Google 로그인·로그아웃 확인 (F08 동등성 확인 — `pnpm dev` → /ko/login → Google → 랜딩에 로그아웃 버튼 → 로그아웃). Vercel 프리뷰 도메인은 첫 배포 때 리디렉션 URI 추가
+- [x] v2 로컬에서 실제 Google 로그인·로그아웃 확인 (2026-11-23 완료 — `pnpm dev` → /ko/login → Google → 랜딩 로그아웃 버튼 → 로그아웃 → get-session null. F08 동등성 확인). Vercel 프리뷰 도메인은 첫 배포 때 리디렉션 URI 추가
 
 ## 첫 배포 시점
 
