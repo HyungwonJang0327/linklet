@@ -10,7 +10,8 @@ import { emptyToUndefined, failInvalidEnv } from './env-failure'
 //
 // 필수 시점:
 //   - 지금(Phase 1): NODE_ENV · NEXT_PUBLIC_APP_URL · DATABASE_URL · DATABASE_URL_UNPOOLED
-//   - 해당 기능 이식 때 `z.optional(...)` 을 벗겨 필수로 바꾼다: F08(Better Auth·Google) · F20(R2) · F06(Sentry) · F26(GA)
+//   - 해당 기능 이식 때 `z.optional(...)` 을 벗겨 필수로 바꾼다: F08(Better Auth·Google) · F20(R2) · F26(GA)
+//   - Sentry 는 계속 optional(error-handling E5, 2026-11-23): DSN 없으면 SDK 가 조용히 꺼져 CI·E2E·로컬이 더미 DSN 없이 같은 코드
 // 형식: URL 은 z.url(프로토콜 제한), 시크릿류는 "비어 있지 않음"까지만 (길이·엔트로피 검사 없음).
 // 값은 검증만 하고 어디에도 출력하지 않는다 — 실패 출력은 키 이름·issue code 만 (env-failure.ts).
 
