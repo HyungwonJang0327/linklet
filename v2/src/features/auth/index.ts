@@ -4,3 +4,18 @@
 export { AuthMenu } from './components/auth-menu'
 export { GoogleSignInButton } from './components/google-sign-in-button'
 export { getSession } from './server/session'
+export {
+  ANONYMOUS,
+  canView,
+  isAdmin,
+  isOwner,
+  requireAdmin,
+  requireOwner,
+  requireOwnerOrAdmin,
+  requireUser,
+  toRequester,
+  type AuthenticatedRequester,
+  type Owned,
+  type Requester,
+  type Role,
+} from './server/authorization'
