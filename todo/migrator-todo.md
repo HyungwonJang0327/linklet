@@ -85,5 +85,8 @@
 - [x] F10 권한 판정 계층 (2026-11-23, `443bb85`·`302cfe8` — `features/auth/server/authorization.ts`: Requester(anonymous/user+role)·toRequester(차단·기한 판정)·requireUser/requireAdmin/requireOwner/requireOwnerOrAdmin·canView, index 로 export. 판정표 단위 24건. 결정 `decisions/authorization.md` P1~P6)
   - 완료 조건: 판정표 단위 테스트 통과 / FEATURES: F10 동등성 확인
 - [ ] F40 후보 — 관리자 콘텐츠 제재(위법 상품·링크 내리기: 위시리스트·아이템 삭제, 사용자 차단 = admin 플러그인 `banUser`). FEATURES 에 새 행 추가 필요(사용자 결정 2026-11-23 — 관리자는 수정 못 하고 제재만). Phase 7 관리자 때 /audit 또는 /decide 로 행 확정 / 서비스: `requireOwnerOrAdmin`
-- [ ] F09 라우트 보호 — `proxy.ts` 쿠키 존재 확인(`getSessionCookie`) + 서버 세션 확인(`getSession`), 비로그인 → `/{locale}/login`, 로그인 상태로 /login → 랜딩 / 커밋: `feat(auth): 라우트 보호` / FEATURES: F09
+- [x] F09 라우트 보호 (2026-11-23, `38f337f`~`af2a409` 8커밋 — 계획(proxy 쿠키 확인 + /login 리다이렉트)에서 **제자리 401·403 으로 변경**(사용자 결정, authorization.md P7): `experimental.authInterrupts`, `features/auth/server/requester.ts` getRequester(React cache), `[locale]/(app)/layout.tsx`(비로그인 unauthorized())·`[locale]/admin/layout.tsx`(+비관리자 forbidden()), `[locale]/unauthorized.tsx`(Google 버튼 returnTo='current')·`forbidden.tsx`, 사전 unauthorized.*·forbidden.*, 로그인 페이지 로그인 상태 → 랜딩. E2E 전용 보호 페이지 `(app)/e2e/protected`·`admin/e2e/probe` + `e2e/route-protection.spec.ts` 9건)
+  - 완료 조건: E2E 비로그인 401(세 언어·위조 쿠키) 통과 / 남은 E2E(세션 주입 뒤): 일반 사용자 `/admin` → 403, 관리자 → 본문, 로그인 상태 `/login` → 랜딩 / FEATURES: F09 이식 완료 → 세션 주입 뒤 동등성 확인
+- [ ] F09 후속 — E2E 세션 주입 헬퍼(tester, mvp-todo) 뒤 `route-protection.spec.ts` 에 403·관리자 통과·`/login` 리다이렉트 추가 → FEATURES F09 동등성 확인, F33 일부
+- [ ] Phase 3 fetch 클라이언트 — 응답 없음(`TypeError: Failed to fetch`·`navigator.onLine === false`)을 클라이언트 전용 코드 `NETWORK` 로 매핑 + 사전 `errors.NETWORK`("인터넷 연결을 확인해 주세요") + 재시도 가능. 서버가 내는 코드가 아니라 E1 표에는 넣지 않고 클라이언트 결정으로 기록(사용자 질문 2026-11-23 — 네트워크 불안정 vs 서버 불안정 구분) / 커밋: `feat(lib): fetch 클라이언트 NETWORK 코드`
 
