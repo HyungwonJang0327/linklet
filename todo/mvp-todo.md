@@ -65,7 +65,7 @@
 
 - [x] F08 Better Auth + Prisma 어댑터, Google 로그인·로그아웃, 인증 테이블 마이그레이션 (2026-11-23 동등성 확인 — `migrator-todo.md` Phase 2, 사용자 로컬 Google 로그인·로그아웃 확인)
   - env·로그 요구(security-reviewer 2026-11-12): `BETTER_AUTH_SECRET` minLength 32, `BETTER_AUTH_URL` origin == `NEXT_PUBLIC_APP_URL` origin 교차 검증, **production 이면 `NEXT_PUBLIC_APP_URL`·`BETTER_AUTH_URL`·`R2_PUBLIC_BASE_URL` https 강제**(Better Auth 는 https 일 때만 Secure 쿠키), Better Auth `logger` 옵션을 우리 `logger` 로 연결(기본 로거가 에러 객체·요청 정보를 찍는지 확인), `generateId: false`(db-migration M5)
-- [ ] F10 권한 판정 계층 (본인·타인·관리자·비로그인 판정표 테스트)
+- [x] F10 권한 판정 계층 (2026-11-23 동등성 확인 — 판정표 단위 24건, `decisions/authorization.md`. 관리자 콘텐츠 제재 화면·API 는 F40 후보로 migrator-todo)
 - [ ] F09 라우트 보호 (`proxy.ts` + 서버 세션 확인)
 - [ ] E2E 세션 주입 헬퍼 (시드 사용자·세션)
 - [ ] security-reviewer 검토
