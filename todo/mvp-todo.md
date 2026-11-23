@@ -66,8 +66,8 @@
 - [x] F08 Better Auth + Prisma 어댑터, Google 로그인·로그아웃, 인증 테이블 마이그레이션 (2026-11-23 동등성 확인 — `migrator-todo.md` Phase 2, 사용자 로컬 Google 로그인·로그아웃 확인)
   - env·로그 요구(security-reviewer 2026-11-12): `BETTER_AUTH_SECRET` minLength 32, `BETTER_AUTH_URL` origin == `NEXT_PUBLIC_APP_URL` origin 교차 검증, **production 이면 `NEXT_PUBLIC_APP_URL`·`BETTER_AUTH_URL`·`R2_PUBLIC_BASE_URL` https 강제**(Better Auth 는 https 일 때만 Secure 쿠키), Better Auth `logger` 옵션을 우리 `logger` 로 연결(기본 로거가 에러 객체·요청 정보를 찍는지 확인), `generateId: false`(db-migration M5)
 - [x] F10 권한 판정 계층 (2026-11-23 동등성 확인 — 판정표 단위 24건, `decisions/authorization.md`. 관리자 콘텐츠 제재 화면·API 는 F40 후보로 migrator-todo)
-- [ ] F09 라우트 보호 (`proxy.ts` + 서버 세션 확인)
-- [ ] E2E 세션 주입 헬퍼 (시드 사용자·세션)
+- [x] F09 라우트 보호 (2026-11-23 이식 완료 — 구간 layout 서버 판정, 제자리 401·403, `authInterrupts`. 세션 주입 뒤 403·`/login` 리다이렉트 E2E → 동등성 확인)
+- [ ] E2E 세션 주입 헬퍼 (시드 사용자·세션 — 일반 사용자·관리자 2종. F09 403·`/login` 리다이렉트 E2E 가 기다린다)
 - [ ] security-reviewer 검토
 
 ## Phase 3 — 링크 미리보기 (F11, F12, F18)
@@ -94,6 +94,7 @@
 - [ ] F23 `shareId` 공유 URL
 - [ ] F24 공유 페이지 서버 렌더 + OG 메타 + 공개용 select
 - [ ] F25 공유 링크 복사
+- [ ] 결정: 503 점검 화면(페이지) 필요 여부 — 지금은 DB 실패 등 렌더 실패가 전부 500 경계(E1: 일반 요청의 DB 실패는 INTERNAL). 점검 화면을 두려면 E1·E4 변경(사용자 질문 2026-11-23). 첫 배포 전 /decide
 - [ ] F26 GA
 - [ ] 핵심 흐름 E2E(로그인 → 생성 → 아이템 추가 → 공유 열람) CI 통과 — 완료 기준 5
 - [ ] 첫 배포: Vercel 프리뷰(`v2/` 루트) + Neon v2 DB + WAF (사용자 작업 선행)
