@@ -1,5 +1,6 @@
 'use client'
 
+import { usePathname } from 'next/navigation'
 import { useState } from 'react'
 
 import { useLocale, useT } from '@/shared/i18n'
@@ -9,19 +10,26 @@ import { authClient } from '../hooks/auth-client'
 
 // Google 로그인 버튼 — FEATURES F08. 시안 landing.html "로그인": 강조색 블록 버튼 하나.
 // 클릭 → Better Auth 가 /api/auth/sign-in/social 로 Google 인가 URL 을 받아 전체 이동한다(리다이렉트는 SDK 가 한다).
-// - callbackURL: 로그인 뒤 랜딩(/{locale}). F13 에서 /{locale}/wishlists 로 바꾼다(todo/migrator-todo.md) — 지금은 그 경로가 404 다
+// - callbackURL: 기본은 랜딩(/{locale}) — F13 에서 /{locale}/wishlists 로 바꾼다(todo/migrator-todo.md), 지금은 그 경로가 404 다.
+//   returnTo='current' 면 현재 경로(401 화면 — [locale]/unauthorized.tsx 가 쓴다: 로그인 뒤 가려던 보호 화면으로 돌아온다, F09)
 // - errorCallbackURL: 실패(사용자 취소·Google 오류)는 로그인 페이지로 돌아와 ?error=1 로 안내 문구를 띄운다(login.failed). 내부 메시지 노출 없음
 // - 진행 중 중복 클릭 방지(§4-4). 이동이 시작되면 페이지가 떠나므로 성공 경로에서 되돌릴 필요가 없다; 요청 자체가 실패하면 버튼을 다시 연다
-export function GoogleSignInButton() {
+type GoogleSignInButtonProps = {
+  /** 로그인 뒤 돌아갈 곳 — 'landing'(기본) 은 /{locale}, 'current' 는 지금 보고 있는 경로 */
+  returnTo?: 'landing' | 'current'
+}
+
+export function GoogleSignInButton({ returnTo = 'landing' }: GoogleSignInButtonProps) {
   const t = useT()
   const locale = useLocale()
+  const pathname = usePathname()
   const [pending, setPending] = useState(false)
 
   async function signIn(): Promise<void> {
     setPending(true)
     const { error } = await authClient.signIn.social({
       provider: 'google',
-      callbackURL: `/${locale}`,
+      callbackURL: returnTo === 'current' ? pathname : `/${locale}`,
       errorCallbackURL: `/${locale}/login?error=1`,
     })
     if (error) setPending(false)
