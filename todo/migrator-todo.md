@@ -1,6 +1,6 @@
 # migrator todo
 
-> 규칙은 `todo/README.md`. Phase 전체는 `mvp-todo.md`. Phase 2 이후는 Phase 1 완료 시 세분화한다.
+> 규칙은 `todo/README.md`. Phase 전체는 `mvp-todo.md`. Phase 3 이후는 Phase 2 완료 시 세분화한다.
 > 에이전트 정의: `.claude/agents/migrator.md`
 
 ## Phase 0
@@ -69,3 +69,19 @@
 - [ ] (낮음) `EmptyState` heading 레벨 prop — 지금 `<h1>` 고정이라 목록 안 "비어 있음" 상태(F13)에서 쓰려면 `as`/`headingLevel` 필요(2026-11-19 migrator 발견) / 커밋: `refactor(ui): EmptyState heading 레벨 prop`
 - [x] Sentry 연결 (`@sentry/nextjs`, 개인정보 제거 `beforeSend`) (2026-11-23, `e16364a`~`0a54cf6` 7커밋 — deps·`shared/lib/sentry-scrub`(dataCollection 끔·Console/RequestData/BrowserTracing 제거·beforeSend/beforeBreadcrumb redact, 단위 13건)·초기화 3파일+`onRequestError`+`withSentryConfig`·`logger.unexpected()` 전송·에러 경계 `captureException`·E2E 서버 DSN 비움. 수동 확인: 3003 운영 빌드 `/ko/e2e/throw` → Sentry Issues 수신(사용자 알림 확인). 결정 변경 확정: 트레이싱 끔, DSN optional 유지 — error-handling E5) — 사용자: DSN 발급 선행. 포함: `[locale]/error.tsx`·`global-error.tsx` 의 클라이언트 전송 지점(지금은 로그 없음, 의도 — 2026-11-19)
   - 완료 조건: 로컬에서 테스트 에러 전송 확인(수동), 이벤트에 이메일·쿠키 없음 / 커밋: `feat(config): Sentry 에러 모니터링 연결` / FEATURES: F06
+
+## Phase 2 — 인증
+
+위에서부터 순서대로. 결정은 `decisions/tech-stack.md` "Better Auth 구현 결정"(2026-11-23).
+
+- [x] F08 인증 테이블 마이그레이션 — `Session`·`Account`·`Verification` + User admin 필드(role·banned·banReason·banExpires), Session.impersonatedBy (2026-11-23, `4e7da7d`·`ded878f` — `add_auth_tables` + down.sql, dev DB 적용. 실측: `generateId:false` + `@default(uuid(7))` 조합은 어댑터 경로에서 DB 가 UUID v7 생성 — 통합 테스트 `8be9512`)
+  - 완료 조건: 통합 — 어댑터로 만든 user·session id 가 UUID v7, Cascade / 커밋: `feat(db): 인증 모델 …` / FEATURES: F08
+- [x] F08 Better Auth 인스턴스·라우트·env (2026-11-23, `1f9538f`·`2c7a78c`·`4ada053`·`1cdf930`·`fc4d163`·`ab59e73` — `server/auth.ts`(Prisma 어댑터·Google select_account·세션 3d/1d·cookieCache 끔·admin·nextCookies·텔레메트리 끔·logger 연결), `/api/auth/[...all]`, env 필수화(BETTER_AUTH_SECRET ≥32·GOOGLE_*, BETTER_AUTH_URL 제거, 운영 https 강제), 테스트·E2E·CI 더미 키)
+  - 완료 조건: typecheck·lint, env 테스트(29건) / 커밋: `feat(auth): Better Auth 인스턴스 …` / FEATURES: F08
+- [x] F08 로그인·로그아웃 화면 (2026-11-23, `0459160`·`198973b`·`fa700e1`·`6489a12` + E2E — `features/auth`(authClient·getSession(headers)·GoogleSignInButton·AuthMenu), `/{locale}/(public)/login`(시안 landing.html, ?error=1 안내), Topbar actions 슬롯에 AuthMenu(클라이언트 useSession — 로그인 링크/로그아웃 버튼), 사전 키 login.*·auth.* 세 언어, 클라이언트 번들 +14.5 KB gzip)
+  - 완료 조건: E2E 로그인 페이지 세 언어·?error·Topbar 링크·/api/auth/ok·get-session null(7건) / **수동(사용자): 실제 Google 로그인·로그아웃** → FEATURES F08 동등성 확인 / FEATURES: F08
+- [ ] F08 후속 — 로그인 뒤 이동 `/{locale}` → `/{locale}/wishlists` (F13 목록 화면이 생길 때. `features/auth/components/google-sign-in-button.tsx` callbackURL 한 줄) / 커밋: `feat(auth): 로그인 뒤 위시리스트 목록으로`
+- [ ] F08 후속 — 로그인 페이지 이용약관·개인정보 처리방침 줄(시안) — 그 페이지가 생길 때 / 커밋: `feat(auth): 로그인 페이지 약관 안내`
+- [ ] F10 권한 판정 계층 — `features/auth/server` 에 본인·타인·관리자·비로그인 판정(세션 user.role·banned 포함), 판정표 단위 테스트 / 커밋: `feat(auth): 권한 판정 계층` / FEATURES: F10
+- [ ] F09 라우트 보호 — `proxy.ts` 쿠키 존재 확인(`getSessionCookie`) + 서버 세션 확인(`getSession`), 비로그인 → `/{locale}/login`, 로그인 상태로 /login → 랜딩 / 커밋: `feat(auth): 라우트 보호` / FEATURES: F09
+
