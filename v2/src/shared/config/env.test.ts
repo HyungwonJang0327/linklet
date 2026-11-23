@@ -6,12 +6,15 @@ import { afterEach, beforeEach, describe, expect, it, type MockInstance, vi } fr
 // FEATURES F01 — 필수 키 누락 시 부팅(모듈 로드) 실패, 출력에 값 없음.
 // 모듈이 로드 시 1회 파싱하므로 케이스마다 vi.resetModules() 후 동적 import 로 새로 로드한다.
 
-const REQUIRED_KEYS = ['NEXT_PUBLIC_APP_URL', 'DATABASE_URL', 'DATABASE_URL_UNPOOLED'] as const
-const OPTIONAL_KEYS = [
+const REQUIRED_KEYS = [
+  'NEXT_PUBLIC_APP_URL',
+  'DATABASE_URL',
+  'DATABASE_URL_UNPOOLED',
   'BETTER_AUTH_SECRET',
-  'BETTER_AUTH_URL',
   'GOOGLE_CLIENT_ID',
   'GOOGLE_CLIENT_SECRET',
+] as const
+const OPTIONAL_KEYS = [
   'R2_ACCOUNT_ID',
   'R2_ACCESS_KEY_ID',
   'R2_SECRET_ACCESS_KEY',
@@ -30,6 +33,9 @@ function validValues(token: string) {
     NEXT_PUBLIC_APP_URL: `https://${token}.example`,
     DATABASE_URL: `postgresql://user:${token}@127.0.0.1:5433/db`,
     DATABASE_URL_UNPOOLED: `postgres://user:${token}@127.0.0.1:5433/db`,
+    BETTER_AUTH_SECRET: `secret-${token}`,
+    GOOGLE_CLIENT_ID: `${token}.apps.googleusercontent.example`,
+    GOOGLE_CLIENT_SECRET: `gsecret-${token}`,
   }
 }
 
@@ -78,14 +84,14 @@ describe('서버 환경변수 스키마 (env.ts)', () => {
   it('optional 키가 빈 문자열(`KEY=`)이면 undefined 로, 값이 있으면 그대로', async () => {
     stubAll({
       ...validValues(randomUUID()),
-      BETTER_AUTH_SECRET: '',
+      SENTRY_AUTH_TOKEN: '',
       R2_BUCKET: 'linklet-images',
       NEXT_PUBLIC_SENTRY_DSN: 'https://public@o0.ingest.sentry.example/1',
     })
 
     const { env } = await loadEnv()
 
-    expect(env.BETTER_AUTH_SECRET).toBeUndefined()
+    expect(env.SENTRY_AUTH_TOKEN).toBeUndefined()
     expect(env.R2_BUCKET).toBe('linklet-images')
     expect(env.NEXT_PUBLIC_SENTRY_DSN).toBe('https://public@o0.ingest.sentry.example/1')
   })
