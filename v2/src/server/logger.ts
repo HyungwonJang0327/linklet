@@ -1,5 +1,7 @@
 import 'server-only'
 
+import * as Sentry from '@sentry/nextjs'
+
 import { env } from '@/shared/config/env'
 import { isAppError } from '@/shared/lib/api-error'
 import {
@@ -17,6 +19,9 @@ import {
 //   - development: 프레임 ≤10 개의 `file:line:col` 만
 // 로거는 **절대 throw 하지 않는다**. 출력 수단이 깨져도 삼킨다 — 로그 때문에 응답이 깨지면 안 된다.
 // 로그 지점: Route Handler 래퍼(server/api-handler) · Server Component 데이터 로드 · 외부 fetch 실패 (E5)
+// Sentry(F06): unexpected() 가 콘솔 한 줄과 함께 **원본 error** 를 captureException 으로 보낸다 — 스택은 여기서만 Sentry 로 간다.
+//   같은 요청 컨텍스트(requestId·route·method·status·durationMs)는 tags 로. 메시지·breadcrumb·request 의 개인정보 제거는
+//   SDK 초기화의 beforeSend(shared/lib/sentry-scrub)가 맡는다. DSN 이 없으면 SDK 가 조용히 버린다. test 환경은 보내지 않는다(옵션으로 주입)
 
 type NodeEnv = 'development' | 'test' | 'production'
 
@@ -35,13 +40,28 @@ export type LogSink = {
   error: (line: string) => void
 }
 
+/** 예상 못한 실패를 모니터링으로 보내는 함수 — 기본값은 Sentry.captureException(test 환경은 보내지 않음) */
+export type ErrorCapture = (error: unknown, tags: UnexpectedFields) => void
+
 export type LoggerOptions = {
   nodeEnv: NodeEnv
   /** 기본값: `nodeEnv === 'test'`. 테스트에서 출력을 확인하려면 false */
   silent?: boolean
   /** 기본값: console */
   sink?: LogSink
+  /** 기본값: test 면 아무것도 안 함, 그 외 Sentry. 테스트에서 호출을 확인하려면 spy 주입 */
+  capture?: ErrorCapture
 }
+
+function captureWithSentry(error: unknown, tags: UnexpectedFields): void {
+  // undefined 값은 빼고 넘긴다 — Sentry 는 tag 값으로 primitive 만 받는다(숫자 status·durationMs 는 그대로)
+  const defined = Object.fromEntries(
+    Object.entries(tags).filter(([, value]) => value !== undefined),
+  )
+  Sentry.captureException(error, { tags: defined })
+}
+
+const captureNothing: ErrorCapture = () => {}
 
 export type Logger = {
   info: (event: string, fields?: EventFields) => void
@@ -58,6 +78,8 @@ export function createLogger(options: LoggerOptions): Logger {
   const silent = options.silent ?? options.nodeEnv === 'test'
   const includeStack = options.nodeEnv !== 'production'
   const sink: LogSink = options.sink ?? console
+  const capture: ErrorCapture =
+    options.capture ?? (options.nodeEnv === 'test' ? captureNothing : captureWithSentry)
 
   /** 포맷 단계(fields 의 getter throw 등)가 실패했을 때의 마지막 시도 — 이것도 실패하면 조용히 끝낸다 */
   function writeFallback(): void {
@@ -94,7 +116,6 @@ export function createLogger(options: LoggerOptions): Logger {
       try {
         if (isAppError(error)) return
         const summary = summarizeError(error)
-        // F06 Sentry 연결 지점 — 여기 한 곳에서 captureException(error) + 같은 fields 를 tags 로. 원본 error 는 이 함수 밖으로 나가지 않는다.
         write('error', 'unexpected_error', {
           ...fields,
           errorName: summary.name,
@@ -103,6 +124,13 @@ export function createLogger(options: LoggerOptions): Logger {
           meta: summary.meta,
           stack: includeStack ? summary.stack : undefined,
         })
+        // Sentry 연결 지점(F06) — 원본 error 는 SDK 로만 가고(beforeSend 가 마스킹), 콘솔 줄과 같은 요청 컨텍스트를 tags 로.
+        // 콘솔 출력 뒤에 둔다 — capture 가 실패해도 로그 줄은 이미 남았다
+        try {
+          capture(error, { ...fields })
+        } catch {
+          // 모니터링 전송 실패는 삼킨다 — 로거는 throw 하지 않는다
+        }
       } catch {
         // summarizeError·write 는 throw 하지 않게 만들었지만(fields 전개의 getter 는 예외), 어떤 경우에도 호출자에게 전파하지 않는다
         writeFallback()

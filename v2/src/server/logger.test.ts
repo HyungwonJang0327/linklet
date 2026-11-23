@@ -4,12 +4,14 @@ import { afterEach, beforeEach, describe, expect, it, type Mock, vi } from 'vite
 import { AppError } from '@/shared/lib/api-error'
 import { LOG_ALLOWED_KEYS } from '@/shared/lib/log-format'
 
-import { createLogger, type LogSink } from './logger'
+import { createLogger, type ErrorCapture, type LogSink } from './logger'
 
 // decisions/error-handling.md E5 — AppError 미기록, 예상 못한 실패 1줄, test 억제, production 에 stack 없음, 절대 throw 안 함.
 // 기본 `logger` 는 검증된 env 를 로드하므로 env 모듈을 mock 한다 (NODE_ENV 만 쓴다).
+// Sentry(F06) 는 SDK 를 mock 한다 — 기본 capture 가 captureException 을 부르는지만 본다. 마스킹은 shared/lib/sentry-scrub 테스트.
 
 vi.mock('@/shared/config/env', () => ({ env: { NODE_ENV: 'test' } }))
+vi.mock('@sentry/nextjs', () => ({ captureException: vi.fn() }))
 
 const hex = (bytes: number) => randomBytes(bytes).toString('hex')
 
@@ -186,6 +188,67 @@ describe('createLogger — unexpected (E5)', () => {
     createLogger({ nodeEnv: 'development', sink }).unexpected(new Hostile())
     expect(sink.lines()).toHaveLength(1)
     expect(JSON.parse(sink.lines()[0] ?? '')).toMatchObject({ message: '(unreadable)' })
+  })
+})
+
+describe('createLogger — Sentry 전송 (F06)', () => {
+  it('unexpected 는 원본 error 와 요청 컨텍스트를 capture 에 정확히 1회 넘긴다', () => {
+    const capture = vi.fn<ErrorCapture>()
+    const error = thrownError('boom')
+    createLogger({ nodeEnv: 'production', sink: spySink(), capture }).unexpected(error, {
+      requestId: 'r1',
+      route: '/api/wishlists',
+      method: 'POST',
+      status: 500,
+    })
+    expect(capture).toHaveBeenCalledTimes(1)
+    expect(capture.mock.calls[0]?.[0]).toBe(error)
+    expect(capture.mock.calls[0]?.[1]).toEqual({
+      requestId: 'r1',
+      route: '/api/wishlists',
+      method: 'POST',
+      status: 500,
+    })
+  })
+
+  it('AppError 는 capture 하지 않는다', () => {
+    const capture = vi.fn<ErrorCapture>()
+    createLogger({ nodeEnv: 'production', sink: spySink(), capture }).unexpected(
+      new AppError('NOT_FOUND'),
+    )
+    expect(capture).not.toHaveBeenCalled()
+  })
+
+  it('capture 가 throw 해도 콘솔 줄은 남고 호출자에게 전파되지 않는다', () => {
+    const sink = spySink()
+    const capture: ErrorCapture = () => {
+      throw new Error('sentry down')
+    }
+    const logger = createLogger({ nodeEnv: 'production', sink, capture })
+    expect(() => logger.unexpected(new Error('x'))).not.toThrow()
+    expect(sink.error).toHaveBeenCalledTimes(1)
+  })
+
+  it('test 환경의 기본 capture 는 Sentry 를 부르지 않는다', async () => {
+    const Sentry = await import('@sentry/nextjs')
+    vi.mocked(Sentry.captureException).mockClear()
+    createLogger({ nodeEnv: 'test' }).unexpected(new Error('x'))
+    expect(Sentry.captureException).not.toHaveBeenCalled()
+  })
+
+  it('production 의 기본 capture 는 Sentry.captureException(error, { tags }) — undefined 필드는 뺀다', async () => {
+    const Sentry = await import('@sentry/nextjs')
+    vi.mocked(Sentry.captureException).mockClear()
+    const error = new Error('x')
+    createLogger({ nodeEnv: 'production', sink: spySink() }).unexpected(error, {
+      route: '/api/health',
+      method: 'GET',
+      requestId: undefined,
+    })
+    expect(Sentry.captureException).toHaveBeenCalledTimes(1)
+    expect(Sentry.captureException).toHaveBeenCalledWith(error, {
+      tags: { route: '/api/health', method: 'GET' },
+    })
   })
 })
 
