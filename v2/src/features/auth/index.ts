@@ -4,6 +4,7 @@
 export { AuthMenu } from './components/auth-menu'
 export { GoogleSignInButton } from './components/google-sign-in-button'
 export { getSession } from './server/session'
+export { getRequester } from './server/requester'
 export {
   ANONYMOUS,
   canView,
