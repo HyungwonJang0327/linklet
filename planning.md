@@ -79,6 +79,7 @@
 | 예산 | 무료 티어 안에서만 | INTENT.md, tech-stack.md |
 | 아키텍처 | 기능별 폴더, REST + TanStack Query, 권한은 서비스 한 곳, ESLint import 경계 | architecture.md |
 | 에러 응답 | `{ error: { code, message, details? } }`, `AppError`, code 기반 재시도·문구 | error-handling.md |
+| 권한 판정 | 서비스는 요청자(Requester)를 받고 판정 함수 5종만 사용. 관리자는 소유자가 아니다(제재=삭제·차단만), 차단 중 세션은 비로그인, 타인 리소스는 비공개 404·공개 403 | authorization.md |
 | 로그 | 예상 못한 실패만, 구조화 로그 + Sentry, 개인정보 금지 | error-handling.md |
 | 정상 응답 | `{ data }` / `{ data, nextCursor }`, 커서, 빈 배열, 204, null 명시, 문자열 id | api-response.md |
 | 공유 URL | `/w/{shareId}` — PK와 별도 공유 전용 ID, 재발급 가능 | api-response.md |
