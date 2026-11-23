@@ -157,6 +157,63 @@ describe('서버 환경변수 스키마 (env.ts)', () => {
     await expect(loadEnv()).rejects.toThrow('DATABASE_URL')
   })
 
+  it('BETTER_AUTH_SECRET 은 32자 미만이면 부팅 실패 — 키 이름만 (security-reviewer 2026-11-12)', async () => {
+    stubAll({ ...validValues(randomUUID()), BETTER_AUTH_SECRET: 'short-secret-under-32' })
+
+    await expect(loadEnv()).rejects.toThrow(
+      'Invalid environment variables (server): BETTER_AUTH_SECRET',
+    )
+    expect(logLines(errorSpy).join('\n')).not.toContain('short-secret-under-32')
+  })
+
+  describe('운영이면 외부 URL 은 https (F08 — Better Auth Secure 쿠키)', () => {
+    it('production + http 외부 호스트 NEXT_PUBLIC_APP_URL → 실패, 키 이름만', async () => {
+      const token = randomUUID()
+      stubAll({
+        ...validValues(token),
+        NODE_ENV: 'production',
+        NEXT_PUBLIC_APP_URL: `http://${token}.example`,
+      })
+
+      await expect(loadEnv()).rejects.toThrow(
+        'Invalid environment variables (server): NEXT_PUBLIC_APP_URL',
+      )
+      expect(logLines(errorSpy).join('\n')).not.toContain(token)
+    })
+
+    it('production + http://localhost 는 통과 (로컬 운영 빌드 E2E·CI 빌드)', async () => {
+      stubAll({
+        ...validValues(randomUUID()),
+        NODE_ENV: 'production',
+        NEXT_PUBLIC_APP_URL: 'http://localhost:3002',
+      })
+      expect((await loadEnv()).env.NEXT_PUBLIC_APP_URL).toBe('http://localhost:3002')
+    })
+
+    it('production + https 는 통과, R2_PUBLIC_BASE_URL 이 http 면 실패', async () => {
+      stubAll({ ...validValues(randomUUID()), NODE_ENV: 'production' })
+      expect((await loadEnv()).env.NODE_ENV).toBe('production')
+
+      vi.resetModules()
+      stubAll({
+        ...validValues(randomUUID()),
+        NODE_ENV: 'production',
+        R2_PUBLIC_BASE_URL: 'http://cdn.example',
+      })
+      await expect(loadEnv()).rejects.toThrow('R2_PUBLIC_BASE_URL')
+    })
+
+    it('development 에서는 http 외부 호스트도 통과', async () => {
+      const token = randomUUID()
+      stubAll({
+        ...validValues(token),
+        NODE_ENV: 'development',
+        NEXT_PUBLIC_APP_URL: `http://${token}.example`,
+      })
+      expect((await loadEnv()).env.NEXT_PUBLIC_APP_URL).toBe(`http://${token}.example`)
+    })
+  })
+
   it('NODE_ENV 는 development·test·production 만', async () => {
     stubAll({ ...validValues(randomUUID()), NODE_ENV: 'prod' })
 

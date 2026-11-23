@@ -53,7 +53,8 @@ const serverEnvSchema = z.object({
 
   // 인증(F08, server/auth.ts) — 필수. Better Auth 의 baseURL 은 NEXT_PUBLIC_APP_URL 하나에서 가져온다(BETTER_AUTH_URL 키 없음 — 두 URL 이
   // 어긋나 redirect_uri_mismatch 가 나는 사고를 막는다 — 사용자 결정 2026-11-23, decisions/tech-stack.md Better Auth)
-  BETTER_AUTH_SECRET: nonEmpty,
+  // 32자 미만이면 거부(security-reviewer 2026-11-12) — `openssl rand -base64 32` 는 44자
+  BETTER_AUTH_SECRET: z.string().check(z.minLength(32)),
   GOOGLE_CLIENT_ID: nonEmpty,
   GOOGLE_CLIENT_SECRET: nonEmpty,
 
@@ -76,6 +77,30 @@ const serverEnvSchema = z.object({
   LINKLET_E2E: z.optional(z.literal('1')),
 } satisfies Record<ServerEnvKey, z.ZodMiniType>)
 
+/** 로컬 호스트 — 운영 빌드를 로컬에서 띄우는 E2E(playwright.config.ts, http://localhost:3002)·CI 빌드는 https 강제에서 뺀다 */
+const LOCAL_HOSTS = new Set(['localhost', '127.0.0.1', '[::1]'])
+
+function isLocalOrHttps(value: string | undefined): boolean {
+  if (value === undefined) return true
+  const url = new URL(value)
+  return url.protocol === 'https:' || LOCAL_HOSTS.has(url.hostname)
+}
+
+/**
+ * 운영(NODE_ENV=production)이면 외부에 알리는 URL 은 https 여야 한다(security-reviewer 2026-11-12, F08) —
+ * Better Auth 는 baseURL 이 https 일 때만 Secure 쿠키를 쓰고, 공유 링크·이미지 URL 이 http 면 혼합 콘텐츠다. 로컬 호스트는 예외
+ */
+const serverEnvSchemaWithRules = serverEnvSchema.check(
+  z.refine((data) => data.NODE_ENV !== 'production' || isLocalOrHttps(data.NEXT_PUBLIC_APP_URL), {
+    path: ['NEXT_PUBLIC_APP_URL'],
+    error: 'https required in production',
+  }),
+  z.refine((data) => data.NODE_ENV !== 'production' || isLocalOrHttps(data.R2_PUBLIC_BASE_URL), {
+    path: ['R2_PUBLIC_BASE_URL'],
+    error: 'https required in production',
+  }),
+)
+
 export type ServerEnv = Readonly<z.output<typeof serverEnvSchema>>
 
 function loadServerEnv(): ServerEnv {
@@ -83,7 +108,7 @@ function loadServerEnv(): ServerEnv {
   const source: Partial<Record<ServerEnvKey, string>> = {}
   for (const key of SERVER_ENV_KEYS) source[key] = emptyToUndefined(process.env[key])
 
-  const result = z.safeParse(serverEnvSchema, source)
+  const result = z.safeParse(serverEnvSchemaWithRules, source)
   if (!result.success) failInvalidEnv('server', result.error.issues)
   return Object.freeze(result.data)
 }
