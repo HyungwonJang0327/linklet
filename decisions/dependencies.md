@@ -29,8 +29,9 @@
 | @prisma/client 7.10.0 | ORM 런타임 (`prisma-client` 생성기, Rust 엔진 없음) | tech-stack, db-migration | ✗ (`server/db.ts` 만 import, server-only) | Apache-2.0 | 2026-11-14 |
 | @prisma/adapter-pg 7.10.0 | driver adapter — 로컬·CI·Neon 모두 TCP 하나 (`adapter-neon` 기각: 로컬 Docker 에 wsproxy 없이 못 붙음 — tech-stack 2026-11-14). 전이 의존 `pg 8.23.1`(MIT)·`@types/pg`·`postgres-array`(MIT)·`@prisma/driver-adapter-utils`(Apache-2.0) | tech-stack | ✗ | Apache-2.0 | 2026-11-14 |
 | @sentry/nextjs 11.16.0 | 에러 모니터링(F06, error-handling E5). Error Monitoring 만 — 트레이싱·리플레이·피드백 통합 없음, `bundleSizeOptimizations` 로 트레이싱·리플레이·debug 문 트리 셰이킹(Turbopack 에서 적용 확인: 클라이언트 청크에 pageload·idleTimeout 문자열 없음). 빌드 플러그인은 `next.config.ts` 의 `withSentryConfig`(telemetry 끔, 소스맵 업로드는 `SENTRY_AUTH_TOKEN` 있을 때만). 전이 의존: @sentry/core·browser·node·react·opentelemetry·vercel-edge + OpenTelemetry 계측 패키지들 | tech-stack, error-handling E5 | **+64 KB gzip** (정적 청크 합 185→249 KB, 2026-11-23 더미 env 빌드 측정) — 공유 페이지 포함 모든 페이지에 실린다. 에러 전용 SDK 로는 이 크기가 바닥(Sentry 공식 errors-only ~25 KB + Next 래퍼·React 통합). 더 줄이려면 지연 로드(초기 에러 유실)뿐 — 기각 | MIT | 2026-11-23 |
+| better-auth 1.7.27 | 인증(F08~F10·F32·F33, tech-stack) — Google 로그인·DB 세션·admin 플러그인. Prisma 어댑터는 `better-auth/adapters/prisma` 로 import(`@better-auth/prisma-adapter` 1.7.27 은 better-auth 의 **직접 의존**이라 별도 설치 없음 — `pnpm view better-auth dependencies` 2026-11-23). 텔레메트리는 설정으로 끈다. 전이 의존: @better-auth/core·utils·telemetry·{prisma,kysely,drizzle,mongo,memory}-adapter, better-call, kysely, jose, @noble/hashes·ciphers, @better-fetch/fetch, nanostores, defu, zod ^4(classic — 서버 번들에만. 클라이언트는 `better-auth/react` 만 import, zod/mini 규칙은 앱 코드에만 적용) | tech-stack, F08 | 클라이언트 `better-auth/react`(createAuthClient) 만 — 로그인 페이지 빌드 때 gzip 측정해 기록 | MIT | 2026-11-23 |
 
-설치 예정(해당 기능 이식 때 이 표에 추가): better-auth·@better-auth/prisma-adapter(F08), @tanstack/react-query(F13), @aws-sdk/client-s3(F20, R2), cheerio(F18), @dnd-kit/*(F22)
+설치 예정(해당 기능 이식 때 이 표에 추가): @tanstack/react-query(F13), @aws-sdk/client-s3(F20, R2), cheerio(F18), @dnd-kit/*(F22)
 
 로컬 도구(패키지 아님): gitleaks 8.30.1 (brew) — pre-commit 훅. CI는 gitleaks/gitleaks-action@v3 (개인 계정 리포는 라이선스 불필요).
 
