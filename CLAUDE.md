@@ -294,7 +294,7 @@ pnpm db:up / db:down / db:down:clean   # 로컬 Docker Postgres (dev 5433 · tes
 pnpm db:migrate {snake_case} / db:seed   # 마이그레이션 + down.sql 생성 / 개발 시드 (둘 다 로컬 DB 가드, 우회 없음)
 ```
 
-CI(`.github/workflows/v2-ci.yml`)는 PR마다 lint → format:check → typecheck → test:coverage → build 를 돈다. 시크릿 스캔(`secret-scan.yml`)은 모든 PR·main push.
+CI(`.github/workflows/v2-ci.yml`)는 PR마다 `quality`(lint → format:check → typecheck → test:coverage → build)와 `e2e`(Playwright chromium, 기준선 제외)를 병렬로 돈다. 시크릿 스캔(`secret-scan.yml`)은 모든 PR·main push.
 
 ### 기존 앱 (루트, 동결 — 비교·측정용)
 
