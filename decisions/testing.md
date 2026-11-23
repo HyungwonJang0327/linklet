@@ -15,6 +15,7 @@
 | T7 | 기존 앱 기준선 E2E | `v2/e2e/baseline/` — v2의 Playwright를 쓰고, 기존 앱(`next start -p 3001`)을 대상으로 하는 별도 project. 기본 `pnpm test:e2e` 에서는 제외. 실행 DB는 T8. 교체 시 함께 정리 |
 | T9 | 기준선 E2E 시드 | 기준선 컨테이너의 psql 에 **고정 SQL 파일**(`v2/e2e/baseline/seed.sql`)을 흘린다 — 사용자·위시리스트·아이템·세션(`sessions` 행, 만료 먼 미래). 의존성 없음, 기존 스키마는 동결이라 SQL 고정이 안전. 실행은 `baseline:up` 끝 또는 테스트 `globalSetup` 에서 `docker compose exec psql`. 매 `down` 마다 DB가 사라지므로 시드는 멱등(`ON CONFLICT DO NOTHING` 또는 TRUNCATE 후 INSERT) |
 | T8 | 기준선 E2E 실행 DB | 로컬 Docker Postgres의 **기준선 전용 컨테이너**에 기존 앱 `prisma/schema.prisma` 를 `prisma db push` 로 적용(기존 마이그레이션은 드리프트 H5로 재현 불가). 데이터는 테스트가 직접 시드하고, 로그인은 `sessions` 행 + `next-auth.session-token` 쿠키 주입(기존 앱은 DB 세션). 기존 앱은 래퍼로 실행 — 기존 앱이 쓰는 env 키 전부를 로컬·더미 값으로 지정하고 하나라도 빠지면 중단(`next build/start` 가 `.env.production` 을 자동 로드하므로). **로컬 실행만, CI 제외**. `db push` 는 이 컨테이너에서만 허용하는 예외 |
+| T12 | v2 E2E CI 실행 | `.github/workflows/v2-ci.yml` 의 **별도 잡 `e2e`** — `quality` 와 병렬(`needs` 없음). `playwright install --with-deps chromium` 뒤 `pnpm test:e2e`. 서버·env(더미 DB·`LINKLET_E2E=1`)는 `playwright.config.ts` webServer 가 맡고 워크플로는 env 를 주지 않는다. 기준선 project 는 `CI` 분기로 제외(T7). 실패 시에만 `playwright-report` artifact(7일). 지금은 DB 없이 돈다 — DB 가 필요한 E2E 의 시드 DB 연결은 F13 때 결정(tester todo) |
 
 E2E 인증: Google OAuth는 자동화하지 않는다. 테스트 DB에 시드한 사용자·세션을 주입해 로그인 상태를 만든다. 실제 Google 로그인은 수동 확인(FEATURES F08).
 
@@ -56,3 +57,4 @@ E2E 인증: Google OAuth는 자동화하지 않는다. 테스트 DB에 시드한
 - 2026-11-15 T5 구현 메모(globalSetup 자동 `migrate deploy` + beforeEach TRUNCATE 헬퍼). 통합 파일이 2개 이상이 되면 파일 간 병렬 실행 격리 결정 필요(tester todo) → 2026-11-23 T11 로 해결
 - 2026-11-22 T5 CI 적용 메모 — service container(호스트 5434) + `LINKLET_REQUIRE_TEST_DB=1`(CI 만). 로컬은 기존대로 미기동이면 skip
 - 2026-11-23 T11 통합 테스트 직렬 실행 — projects 분리 (사용자: 추천안. 기각: 전체 `fileParallelism: false` — 단위까지 느려짐 / 통합 파일 간 격리 규약(TRUNCATE 대신 자기 데이터만) — 리뷰로만 지켜지고 FK·유니크 충돌 위험 / `poolMatchGlobs` — Vitest 5 에서 제거됨)
+- 2026-11-23 T12 v2 E2E CI 실행 — 별도 잡·병렬 (사용자: CI E2E 단계 진행 지시. 기각: quality 잡의 마지막 step — 빌드를 한 번만 하지만 E2E 가 lint·테스트 뒤에만 돌아 피드백이 늦고 한 잡의 timeout 을 나눠 쓴다 / `needs: quality` 직렬 — 깨진 PR 에 E2E 비용을 아끼지만 정상 PR 에서 매번 합산 시간. 빌드 중복은 받아들인다: E2E 빌드는 `LINKLET_E2E=1` 이라 quality 빌드와 산출물이 다르다)

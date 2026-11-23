@@ -1,4 +1,4 @@
-# v2 품질 게이트: PR마다 lint · format · typecheck · test(커버리지) · build
+# v2 품질 게이트: PR마다 lint · format · typecheck · test(커버리지) · build, 그리고 별도 잡으로 E2E(Playwright)
 # decisions/testing.md, CLAUDE.md §7
 name: v2 CI
 
@@ -68,3 +68,35 @@ jobs:
           NEXT_PUBLIC_APP_URL: http://localhost:3002
           DATABASE_URL: postgresql://build:build@127.0.0.1:5999/linklet_build?sslmode=verify-full
           DATABASE_URL_UNPOOLED: postgresql://build:build@127.0.0.1:5999/linklet_build?sslmode=verify-full
+
+  e2e:
+    # v2 E2E (decisions/testing.md T1 핵심 흐름, planning 완료 기준 5). quality 와 병렬 — 서로 기다리지 않아 PR 피드백이 빠르고,
+    # 한쪽이 깨져도 다른 쪽 결과를 볼 수 있다. 기준선 project(e2e/baseline, T7·T8)는 CI 에서 돌지 않는다 —
+    # playwright.config.ts 가 CI=1 이면 BASELINE 플래그를 무시하고 chromium project 만 남긴다
+    # (CI=true 는 GitHub Actions 기본 env → retries 2·workers 1·github reporter·reuseExistingServer 꺼짐도 같은 분기)
+    # 서버는 playwright.config.ts 의 webServer 가 `pnpm build && pnpm start -p 3002` 로 띄운다. env(더미 DB·LINKLET_E2E=1)도 거기 고정 —
+    # 여기서 따로 주지 않는다. DB 는 닫힌 포트 더미라 /api/health 는 503 경로로 통과한다. DB 가 필요한 E2E 의 시드 DB 연결은
+    # F13 이후 별도 결정(todo/tester-todo.md)
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v7
+      - uses: pnpm/action-setup@v6
+        with:
+          package_json_file: v2/package.json
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: v2/.nvmrc
+          cache: pnpm
+          cache-dependency-path: v2/pnpm-lock.yaml
+      - run: pnpm install --frozen-lockfile
+      # chromium 만(playwright.config.ts projects 와 일치). --with-deps 로 러너에 시스템 라이브러리까지 설치한다
+      - run: pnpm exec playwright install --with-deps chromium
+      - run: pnpm test:e2e
+      # 실패 분석용 HTML 리포트(trace 는 on-first-retry 라 재시도부터 포함). 성공 시에는 올리지 않는다
+      - uses: actions/upload-artifact@v7
+        if: failure()
+        with:
+          name: playwright-report
+          path: v2/playwright-report/
+          retention-days: 7
