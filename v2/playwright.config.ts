@@ -29,6 +29,10 @@ const E2E_SERVER_ENV: Record<string, string> = {
     'postgresql://build:build@127.0.0.1:5999/linklet_build?sslmode=verify-full',
   // F06 에러 경계 E2E — /{locale}/__e2e/throw 가 렌더 에러를 던지게 한다. 여기서만 켠다(CI 빌드·Vercel 에는 없다 → 운영은 404)
   LINKLET_E2E: '1',
+  // 인증 필수 키(F08) — 더미. E2E 는 Google 로그인을 자동화하지 않는다(testing.md). 시크릿 아님
+  BETTER_AUTH_SECRET: 'e2e-only-better-auth-secret-not-a-real-secret',
+  GOOGLE_CLIENT_ID: 'e2e-client-id.apps.googleusercontent.example',
+  GOOGLE_CLIENT_SECRET: 'e2e-only-google-client-secret',
   // Sentry 끔 — `next build`·`next start` 는 .env.local 을 스스로 읽으므로 로컬에 DSN 이 있으면 E2E 의 의도적 렌더 에러가
   // 진짜 프로젝트로 전송된다(2026-11-23 실측). 빈 값은 env 모듈이 undefined 로 바꾸고 SDK 는 DSN 없이 아무것도 보내지 않는다
   NEXT_PUBLIC_SENTRY_DSN: '',
