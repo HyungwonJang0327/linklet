@@ -68,6 +68,10 @@ jobs:
           NEXT_PUBLIC_APP_URL: http://localhost:3002
           DATABASE_URL: postgresql://build:build@127.0.0.1:5999/linklet_build?sslmode=verify-full
           DATABASE_URL_UNPOOLED: postgresql://build:build@127.0.0.1:5999/linklet_build?sslmode=verify-full
+          # 인증 필수 키(F08) — 빌드용 더미, 시크릿 아님. 빌드는 Google 에 가지 않는다
+          BETTER_AUTH_SECRET: ci-build-only-better-auth-secret-not-a-real-secret
+          GOOGLE_CLIENT_ID: ci-client-id.apps.googleusercontent.example
+          GOOGLE_CLIENT_SECRET: ci-build-only-google-client-secret
 
   e2e:
     # v2 E2E (decisions/testing.md T1 핵심 흐름, planning 완료 기준 5). quality 와 병렬 — 서로 기다리지 않아 PR 피드백이 빠르고,
