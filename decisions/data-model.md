@@ -11,7 +11,7 @@
 | D5 | WishlistItem | `price Decimal? @db.Decimal(14,2)` + `currency String? @db.Char(3)`(ISO 4217, 파서가 못 정하면 둘 다 null — F02 "price 숫자형"), `position Int`(F22 순서, 기존 `priority` 이름 변경), `isReceived`(용어표, 기존 `isCompleted`), `@@index([wishlistId, position])` |
 | D6 | Notice | 기존 필드 유지(title·content·isPublished·isPinned), `@@index([isPublished, isPinned, createdAt])` |
 | D7 | Inquiry | `type`(question·feedback·bug_report·feature_request)·`subject`·`content`·`response?`·`status`(pending·in_progress·answered·closed, 기본 pending)·`respondedAt?`. **기존 `priority`·`category` 제거**(FEATURES F30 비고 갱신) |
-| D8 | 폐기 모델 | QnA(D03)·ErrorLog(Sentry 대체)·VerificationToken/Account/Session(NextAuth 형식 — F08 에서 Better Auth 형식으로 새로 생성) |
+| D8 | 폐기 모델 | QnA(D03)·ErrorLog(Sentry 대체)·VerificationToken/Account/Session(NextAuth 형식 — F08 에서 Better Auth 형식으로 새로 생성: `add_auth_tables` 2026-11-23, `sessions`·`accounts`(providerId+accountId unique)·`verifications` + User `role`·`banned`·`banReason`·`banExpires`, Session `impersonatedBy`. 토큰 컬럼은 응답에 내려가지 않는다) |
 
 ## 이유
 
@@ -40,3 +40,4 @@
 ## 갱신 이력
 
 - 2026-11-14 최초 결정 (사용자: User 최소 포함·Inquiry priority/category 제거 — 둘 다 추천안. 나머지는 메인이 FEATURES F02 범위 안에서 확정)
+- 2026-11-23 F08 인증 테이블 추가(D8 갱신). `role` 은 admin 플러그인이 문자열로 읽고 쓰므로 enum 이 아니다(D3 예외) — 판정은 features/auth 한 곳(F10)
