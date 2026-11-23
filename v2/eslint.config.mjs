@@ -154,6 +154,8 @@ const eslintConfig = defineConfig([
     ignores: [
       'src/shared/config/**',
       'src/instrumentation.ts',
+      'src/instrumentation-client.ts', // 브라우저 부팅 진입점 — NODE_ENV 는 빌드 시 인라인되는 값이라 직접 참조(DSN 은 clientEnv)
+      'src/sentry.edge.config.ts', // edge 부팅 진입점 — 서버 env 모듈(Node 전용)을 못 쓴다
       '**/*.test.ts',
       'next.config.*',
       'eslint.config.*', // 이 파일 — dark: 금지 메시지 문자열이 자기 규칙에 걸린다

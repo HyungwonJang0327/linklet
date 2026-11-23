@@ -69,6 +69,14 @@ type FieldError = { path: string; code: string }   // 검증 실패 시 필드�
 - **알려진 한계**: `/` 가 섞인 표준 base64 는 32자 미만 조각이면 남는다(`key=`·Bearer 규칙 밖에서 맨몸으로 찍힐 때). 32자 미만 토큰(`sk_live_`+22자 등)은 길이 규칙 밖 — 민감어 키 규칙에 의존
 - 무료 한도 (Developer 플랜, 2026-09-27 확인): 사용자 1명, 에러 5천 건/월, 스팬 500만/월, 리플레이 50회/월, 보관 30일 — https://sentry.io/pricing/
 - 버전: `@sentry/nextjs` 11.x (peer: next ^14 · ^15 · ^16)
+- **Sentry 구현** (2026-11-23, F06 Sentry 연결 — @sentry/nextjs 11.16.0):
+  - 초기화 세 파일 `src/instrumentation-client.ts`·`src/sentry.server.config.ts`·`src/sentry.edge.config.ts`(Sentry Next.js manual setup 규약). 서버는 `instrumentation.ts register()` 가 env 검증 뒤 동적 import, `onRequestError = Sentry.captureRequestError`
+  - **`sendDefaultPii` 는 v11 에 없다** → `dataCollection: { userInfo:false, cookies:false, httpHeaders:false, httpBodies:[], urlQueryParams:false }` + 기본 통합 중 `Console`(구조화 로그 이중 전송)·`RequestData`(요청 데이터)·`BrowserTracing` 제거. 그 위에 `beforeSend`/`beforeBreadcrumb`(`shared/lib/sentry-scrub`, 순수·절대 throw 안 함)가 request 를 url(쿼리 제거)·method 만, user 를 id 만, exception value·message·breadcrumb 를 `redact()`, extra 삭제. 스크럽 실패 시 이벤트 폐기
+  - 전송 지점: ① `server/logger.unexpected()` — 원본 error + 요청 컨텍스트 tags(route·requestId·method·status·durationMs), test 환경은 안 보냄 ② `onRequestError` ③ `[locale]/error.tsx`·`global-error.tsx` 의 `useEffect(captureException)`. AppError 는 ①에서 걸러져 안 간다
+  - DSN 없으면 SDK 가 아무것도 보내지 않는다 — CI 빌드·E2E(`playwright.config.ts` 가 DSN 을 빈 값으로 덮는다)·DSN 없는 로컬이 분기 없이 같은 코드. `NEXT_PUBLIC_SENTRY_DSN` 은 **계속 optional — 결정 변경 확정**(원래 계획은 F06 때 필수화. 필수로 하면 CI·E2E 에 더미 DSN 이 필요하고 더미 호스트로 전송 시도가 생긴다 — 사용자 2026-11-23: 추천안(optional 유지) 선택). `shared/config/env.ts` 의 필수화 예정 목록에서 F06 제거
+  - `environment` 는 NODE_ENV — 로컬 development 이벤트도 DSN 이 있으면 전송된다(Sentry 에서 environment 로 구분)
+  - **트레이싱 끔 — 결정 변경** ("트레이스 샘플링은 낮게 시작" → 사용 안 함): 사용자가 Sentry 프로젝트 생성 때 Error Monitoring 만 선택(2026-11-23), 끔 유지는 추천안대로 확정(사용자 2026-11-23). `tracesSampleRate` 미설정 + BrowserTracing 제거 + `bundleSizeOptimizations.excludeTracing`. 나중에 켜려면 세 곳을 되돌린다
+  - 빌드 플러그인 `withSentryConfig`: telemetry 끔, 소스맵 업로드는 `SENTRY_AUTH_TOKEN` 있을 때만(org·project 슬러그는 그때, todo/user-todo.md). 클라이언트 번들 +64 KB gzip(dependencies.md)
 
 ### E6. 에러 로그 기능(F38) — 삭제
 
@@ -103,3 +111,4 @@ type FieldError = { path: string; code: string }   // 검증 실패 시 필드�
 - 2026-11-12 E5 구현 규칙·종류 통제·알려진 한계 추가 (security-reviewer F01 검토)
 - 2026-11-15 E1 에 `UNAVAILABLE` 503 추가 — 헬스 체크 I01 실패 응답 (사용자: 503 신설. 기각: DB 예외를 그대로 throw 해 `500 INTERNAL` — 코드 추가 없이 끝나지만 HTTP 의미론상 503 이 정확)
 - 2026-11-19 E4 F06 구현 결정 — `globalNotFound` 실험 플래그(사용자: 플래그 켜기. 기각: Next 기본 404 유지 — 추천안), 렌더 에러 E2E 는 env 가드 테스트 전용 라우트(사용자: 추천안)
+- 2026-11-23 E5 Sentry 구현 메모 — dataCollection(sendDefaultPii 대체)·통합 제거·스크럽 2겹·전송 지점 3곳. **트레이싱 끔(결정 변경)**·DSN optional 유지 — 사용자: 추천안대로 확정. 수신 확인: 로컬 운영 빌드의 `e2e: intentional render error` 가 Sentry Issues 에 도착(알림 수신)
