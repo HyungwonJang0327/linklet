@@ -36,6 +36,17 @@ export const ja = {
     title: '問題が発生しました',
     description: 'しばらくしてからもう一度お試しください。続く場合はお知らせください',
   },
+  login: {
+    title: 'ようこそ!',
+    description:
+      'Googleアカウントで3秒ではじめられます。最初のウィッシュリストまで3分あれば十分です',
+    google: 'Googleで続ける',
+    failed: 'ログインが完了しませんでした。もう一度お試しください',
+  },
+  auth: {
+    signIn: 'ログイン',
+    signOut: 'ログアウト',
+  },
   metadata: {
     title: 'Linklet — リンクを貼るだけでできる、わたしのウィッシュリスト',
     description:

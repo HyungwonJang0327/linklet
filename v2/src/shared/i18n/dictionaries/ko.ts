@@ -37,6 +37,18 @@ export const ko = {
     title: '문제가 생겼어요',
     description: '잠시 뒤 다시 시도해 주세요. 계속되면 알려 주세요',
   },
+  // F08 로그인 화면 — [locale]/(public)/login. 시안 design/mockups/landing.html "로그인" (문구로 3분 기대치를 미리 말한다)
+  login: {
+    title: '반가워요!',
+    description: 'Google 계정으로 3초 만에 시작해요. 첫 위시리스트까지 3분이면 충분해요',
+    google: 'Google로 계속하기',
+    failed: '로그인이 끝나지 않았어요. 다시 시도해 주세요',
+  },
+  // F08 Topbar 로그인 상태 — features/auth AuthMenu
+  auth: {
+    signIn: '로그인',
+    signOut: '로그아웃',
+  },
   // 랜딩 OG 메타 — INTENT.md 한 줄 설명 기반
   metadata: {
     title: 'Linklet — 링크만 붙여 넣으면 모아지는 내 위시리스트',
