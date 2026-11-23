@@ -16,6 +16,7 @@
 | [tech-stack.md](tech-stack.md) | v2 기술 스택, 무료 한도 |
 | [architecture.md](architecture.md) | 아키텍처·폴더 구조·import 경계 |
 | [error-handling.md](error-handling.md) | 에러 응답 스키마·실패 구분·문구·경계·로그 |
+| [authorization.md](authorization.md) | 권한 판정 — 요청자·판정 함수 5종·관리자는 제재만·차단 세션·타인 리소스 403/404 |
 | [api-response.md](api-response.md) | 정상 응답 형태·페이지네이션·공유 ID·입력 검증 |
 | [testing.md](testing.md) | 테스트 기준선·커버리지 대상·테스트 DB |
 | [db-migration.md](db-migration.md) | 마이그레이션 생성·되돌리기·적용 순서·CLI 접속 가드 |
