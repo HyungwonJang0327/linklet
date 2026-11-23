@@ -50,6 +50,15 @@ export const ko = {
     signOut: '로그아웃',
   },
   // 랜딩 OG 메타 — INTENT.md 한 줄 설명 기반
+  // F09 라우트 보호 — [locale]/unauthorized.tsx(401, Google 버튼은 login.google)·forbidden.tsx(403, 홈 링크는 notFound.home 재사용)
+  unauthorized: {
+    title: '로그인이 필요해요',
+    description: 'Google 계정으로 로그인하면 보던 곳으로 바로 돌아와요',
+  },
+  forbidden: {
+    title: '여기는 들어갈 수 없어요',
+    description: '관리자만 볼 수 있는 페이지예요. 홈으로 돌아가 주세요',
+  },
   metadata: {
     title: 'Linklet — 링크만 붙여 넣으면 모아지는 내 위시리스트',
     description:

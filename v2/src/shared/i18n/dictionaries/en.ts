@@ -47,6 +47,14 @@ export const en = {
     signIn: 'Sign in',
     signOut: 'Sign out',
   },
+  unauthorized: {
+    title: 'Please sign in',
+    description: "Sign in with Google and you'll land right back where you were.",
+  },
+  forbidden: {
+    title: "You can't go in here",
+    description: 'This page is for admins only. Head back home.',
+  },
   metadata: {
     title: 'Linklet — Paste a link, build your wishlist',
     description:

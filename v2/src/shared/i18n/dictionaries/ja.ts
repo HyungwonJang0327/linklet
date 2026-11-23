@@ -47,6 +47,14 @@ export const ja = {
     signIn: 'ログイン',
     signOut: 'ログアウト',
   },
+  unauthorized: {
+    title: 'ログインが必要です',
+    description: 'Googleアカウントでログインすると、見ていたページにそのまま戻れます',
+  },
+  forbidden: {
+    title: 'ここには入れません',
+    description: '管理者だけが見られるページです。ホームに戻ってください',
+  },
   metadata: {
     title: 'Linklet — リンクを貼るだけでできる、わたしのウィッシュリスト',
     description:
