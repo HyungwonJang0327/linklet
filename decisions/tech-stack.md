@@ -40,6 +40,16 @@
 - 이유: Google 로그인, DB 세션, 세션 목록·다른 기기 로그아웃(F32), 관리자 role(F33·admin 플러그인)을 기본 제공. 무료·자체 호스팅, 기존 Prisma·Neon 사용. Auth.js 팀이 2025-09 Better Auth에 합류하며 신규 프로젝트에 권장
 - 기각: NextAuth v4 유지 — 보안 패치만, audit critical / Auth.js v5 — 2026-07에도 beta, 유지보수 모드 / Lucia — npm deprecated
 - 출처: https://better-auth.com/blog/authjs-joins-better-auth, https://www.better-auth.com/docs/concepts/session-management, https://www.better-auth.com/docs/plugins/admin
+- **구현 결정 (2026-11-23, F08 — better-auth 1.7.27, `v2/src/server/auth.ts`)**: 사용자 선택은 네 가지 모두 추천안
+  - 세션 수명 **3일 + 하루마다 연장**(`expiresIn` 3d·`updateAge` 1d) — 기존 앱(NextAuth maxAge 3d·updateAge 1d)과 같다. FEATURES 근거 없이 바꾸지 않음. 기각: 기본값 7일
+  - `baseURL` 은 **`NEXT_PUBLIC_APP_URL` 하나** — `BETTER_AUTH_URL` 키 제거(env 스키마·.env.example). 두 URL 이 어긋나면 `redirect_uri_mismatch`. 기각: BETTER_AUTH_URL 별도 유지(origin 교차 검증 코드가 필요해진다)
+  - Google `prompt: 'select_account'` — 기존 NextAuth v4 기본값(`consent`, 매번 동의 화면)에서 계정 선택만으로(FEATURES F08 처분 "개선"). 기각: 매번 동의 화면
+  - `cookieCache` **끔** — 요청마다 DB 세션 조회. F32 "다른 기기 모두 로그아웃" 이 즉시 반영. 기각: 5분 캐시(로그아웃한 세션이 최대 5분 유효)
+  - 규약: `generateId: false`(db-migration M5) · admin 플러그인 포함(User.role 문자열·banned 등, F10·F33) · `nextCookies` 마지막 · 텔레메트리 끔 · Better Auth `logger` → `server/logger`(args 버림) · Prisma 어댑터는 `better-auth/adapters/prisma`(전이 의존, dependencies.md)
+  - security-reviewer 요구(2026-11-12) 반영: `BETTER_AUTH_SECRET` ≥32자, **production 이면 `NEXT_PUBLIC_APP_URL`·`R2_PUBLIC_BASE_URL` https 강제**(로컬 호스트 예외 — 운영 빌드 E2E·CI). origin 교차 검증은 URL 이 하나가 되어 불필요
+  - 로그인 상태 표시(Topbar AuthMenu)는 **클라이언트 `useSession`** — 서버에서 읽으면 root layout 이 요청마다 동적 렌더가 되어 공개 화면까지 DB 조회가 붙는다. 서버 세션은 `features/auth` getSession(쿠키 없으면 DB 안 감, 실패는 비로그인 + unexpected 기록) — F09·F10 이 쓴다
+  - 로그인 뒤 이동은 임시로 `/{locale}` — `/{locale}/wishlists` 는 F13 전까지 404 (migrator-todo 에 F13 때 변경 항목)
+  - 요청 빈도 제한 DB 저장(`rateLimit.storage: 'database'`)·rateLimit 테이블은 F12
 
 ### Prisma 7.10.0 (고정)
 - 이유: 스키마 문법 유지로 이식 비용 최소. 7부터 Rust-free `prisma-client` 생성기, driver adapter 필수, `prisma.config.ts` 필수, 생성 경로(`output`) 필수, ESM 전용, `.env` 자동 로드 없음
@@ -108,3 +118,4 @@
   - pnpm은 `packageManager: pnpm@10.34.5` 로 고정 (pnpm이 자동 전환)
   - 시크릿 스캔: gitleaks — pre-commit(`.githooks/pre-commit`, `core.hooksPath`) + CI(gitleaks-action v3). 의존성 추가 없음
 - 2026-11-14 ORM 어댑터 `@prisma/adapter-neon` → `@prisma/adapter-pg` 로 변경 (사용자: 추천안 — 로컬·CI·운영 한 어댑터. 기각: 환경별 분기 / 로컬 wsproxy)
+- 2026-11-23 Better Auth 구현 결정 4건 (사용자: 전부 추천안 — 세션 3일 유지·baseURL 하나·select_account·cookieCache 끔) + security-reviewer 요구 반영(시크릿 32자·운영 https)

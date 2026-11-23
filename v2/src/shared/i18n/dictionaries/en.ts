@@ -36,6 +36,17 @@ export const en = {
     title: 'Something went wrong',
     description: 'Please try again in a moment. If it keeps happening, let us know.',
   },
+  login: {
+    title: 'Welcome!',
+    description:
+      'Start in three seconds with your Google account. Your first wishlist takes about three minutes',
+    google: 'Continue with Google',
+    failed: "Sign-in didn't finish. Please try again",
+  },
+  auth: {
+    signIn: 'Sign in',
+    signOut: 'Sign out',
+  },
   metadata: {
     title: 'Linklet — Paste a link, build your wishlist',
     description:

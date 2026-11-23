@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 
+import { AuthMenu } from '@/features/auth'
 import { getDictionary, I18nProvider, isLocale, LOCALES } from '@/shared/i18n'
 import { MODE_SCRIPT } from '@/shared/ui/mode-script'
 import { Topbar } from '@/shared/ui/topbar'
@@ -52,7 +53,7 @@ export default async function LocaleLayout({ children, params }: LayoutProps<'/[
       <body className="bg-page text-fg text-body">
         {/* 클라이언트 컴포넌트의 useT()·useLocale() 공급 (i18n L6). 서버 컴포넌트는 같은 사전으로 createT */}
         <I18nProvider locale={locale} dictionary={dictionary}>
-          <Topbar locale={locale} />
+          <Topbar locale={locale} actions={<AuthMenu />} />
           <main>{children}</main>
         </I18nProvider>
       </body>

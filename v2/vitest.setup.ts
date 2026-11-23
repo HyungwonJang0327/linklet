@@ -26,4 +26,8 @@ Object.assign(process.env, {
   DATABASE_URL_UNPOOLED: testDbUrl,
   // env 스키마의 필수 키 — 테스트는 자기 호출을 하지 않으므로 더미 http URL
   NEXT_PUBLIC_APP_URL: 'http://linklet.test',
+  // 인증 필수 키(F08) — 더미. 테스트는 Google 에 가지 않는다(signIn.social 미호출). 시크릿 아님
+  BETTER_AUTH_SECRET: 'test-only-better-auth-secret-not-a-real-secret',
+  GOOGLE_CLIENT_ID: 'test-client-id.apps.googleusercontent.example',
+  GOOGLE_CLIENT_SECRET: 'test-only-google-client-secret',
 })

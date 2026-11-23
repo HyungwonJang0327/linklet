@@ -6,12 +6,15 @@ import { afterEach, beforeEach, describe, expect, it, type MockInstance, vi } fr
 // FEATURES F01 — 필수 키 누락 시 부팅(모듈 로드) 실패, 출력에 값 없음.
 // 모듈이 로드 시 1회 파싱하므로 케이스마다 vi.resetModules() 후 동적 import 로 새로 로드한다.
 
-const REQUIRED_KEYS = ['NEXT_PUBLIC_APP_URL', 'DATABASE_URL', 'DATABASE_URL_UNPOOLED'] as const
-const OPTIONAL_KEYS = [
+const REQUIRED_KEYS = [
+  'NEXT_PUBLIC_APP_URL',
+  'DATABASE_URL',
+  'DATABASE_URL_UNPOOLED',
   'BETTER_AUTH_SECRET',
-  'BETTER_AUTH_URL',
   'GOOGLE_CLIENT_ID',
   'GOOGLE_CLIENT_SECRET',
+] as const
+const OPTIONAL_KEYS = [
   'R2_ACCOUNT_ID',
   'R2_ACCESS_KEY_ID',
   'R2_SECRET_ACCESS_KEY',
@@ -30,6 +33,9 @@ function validValues(token: string) {
     NEXT_PUBLIC_APP_URL: `https://${token}.example`,
     DATABASE_URL: `postgresql://user:${token}@127.0.0.1:5433/db`,
     DATABASE_URL_UNPOOLED: `postgres://user:${token}@127.0.0.1:5433/db`,
+    BETTER_AUTH_SECRET: `secret-${token}`,
+    GOOGLE_CLIENT_ID: `${token}.apps.googleusercontent.example`,
+    GOOGLE_CLIENT_SECRET: `gsecret-${token}`,
   }
 }
 
@@ -78,14 +84,14 @@ describe('서버 환경변수 스키마 (env.ts)', () => {
   it('optional 키가 빈 문자열(`KEY=`)이면 undefined 로, 값이 있으면 그대로', async () => {
     stubAll({
       ...validValues(randomUUID()),
-      BETTER_AUTH_SECRET: '',
+      SENTRY_AUTH_TOKEN: '',
       R2_BUCKET: 'linklet-images',
       NEXT_PUBLIC_SENTRY_DSN: 'https://public@o0.ingest.sentry.example/1',
     })
 
     const { env } = await loadEnv()
 
-    expect(env.BETTER_AUTH_SECRET).toBeUndefined()
+    expect(env.SENTRY_AUTH_TOKEN).toBeUndefined()
     expect(env.R2_BUCKET).toBe('linklet-images')
     expect(env.NEXT_PUBLIC_SENTRY_DSN).toBe('https://public@o0.ingest.sentry.example/1')
   })
@@ -149,6 +155,63 @@ describe('서버 환경변수 스키마 (env.ts)', () => {
     vi.resetModules()
     stubAll({ ...validValues(randomUUID()), DATABASE_URL: ' \n ' })
     await expect(loadEnv()).rejects.toThrow('DATABASE_URL')
+  })
+
+  it('BETTER_AUTH_SECRET 은 32자 미만이면 부팅 실패 — 키 이름만 (security-reviewer 2026-11-12)', async () => {
+    stubAll({ ...validValues(randomUUID()), BETTER_AUTH_SECRET: 'short-secret-under-32' })
+
+    await expect(loadEnv()).rejects.toThrow(
+      'Invalid environment variables (server): BETTER_AUTH_SECRET',
+    )
+    expect(logLines(errorSpy).join('\n')).not.toContain('short-secret-under-32')
+  })
+
+  describe('운영이면 외부 URL 은 https (F08 — Better Auth Secure 쿠키)', () => {
+    it('production + http 외부 호스트 NEXT_PUBLIC_APP_URL → 실패, 키 이름만', async () => {
+      const token = randomUUID()
+      stubAll({
+        ...validValues(token),
+        NODE_ENV: 'production',
+        NEXT_PUBLIC_APP_URL: `http://${token}.example`,
+      })
+
+      await expect(loadEnv()).rejects.toThrow(
+        'Invalid environment variables (server): NEXT_PUBLIC_APP_URL',
+      )
+      expect(logLines(errorSpy).join('\n')).not.toContain(token)
+    })
+
+    it('production + http://localhost 는 통과 (로컬 운영 빌드 E2E·CI 빌드)', async () => {
+      stubAll({
+        ...validValues(randomUUID()),
+        NODE_ENV: 'production',
+        NEXT_PUBLIC_APP_URL: 'http://localhost:3002',
+      })
+      expect((await loadEnv()).env.NEXT_PUBLIC_APP_URL).toBe('http://localhost:3002')
+    })
+
+    it('production + https 는 통과, R2_PUBLIC_BASE_URL 이 http 면 실패', async () => {
+      stubAll({ ...validValues(randomUUID()), NODE_ENV: 'production' })
+      expect((await loadEnv()).env.NODE_ENV).toBe('production')
+
+      vi.resetModules()
+      stubAll({
+        ...validValues(randomUUID()),
+        NODE_ENV: 'production',
+        R2_PUBLIC_BASE_URL: 'http://cdn.example',
+      })
+      await expect(loadEnv()).rejects.toThrow('R2_PUBLIC_BASE_URL')
+    })
+
+    it('development 에서는 http 외부 호스트도 통과', async () => {
+      const token = randomUUID()
+      stubAll({
+        ...validValues(token),
+        NODE_ENV: 'development',
+        NEXT_PUBLIC_APP_URL: `http://${token}.example`,
+      })
+      expect((await loadEnv()).env.NEXT_PUBLIC_APP_URL).toBe(`http://${token}.example`)
+    })
   })
 
   it('NODE_ENV 는 development·test·production 만', async () => {
