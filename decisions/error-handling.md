@@ -111,4 +111,5 @@ type FieldError = { path: string; code: string }   // 검증 실패 시 필드�
 - 2026-11-12 E5 구현 규칙·종류 통제·알려진 한계 추가 (security-reviewer F01 검토)
 - 2026-11-15 E1 에 `UNAVAILABLE` 503 추가 — 헬스 체크 I01 실패 응답 (사용자: 503 신설. 기각: DB 예외를 그대로 throw 해 `500 INTERNAL` — 코드 추가 없이 끝나지만 HTTP 의미론상 503 이 정확)
 - 2026-11-19 E4 F06 구현 결정 — `globalNotFound` 실험 플래그(사용자: 플래그 켜기. 기각: Next 기본 404 유지 — 추천안), 렌더 에러 E2E 는 env 가드 테스트 전용 라우트(사용자: 추천안)
+- 2026-11-23 E4 에 **401·403 화면** 추가(F09) — `[locale]/unauthorized.tsx`(비로그인, 제자리 로그인 안내)·`[locale]/forbidden.tsx`(비관리자). `experimental.authInterrupts`. 규칙은 `authorization.md` P7. 사용자 질문 "에러 경계에 왜 404·500 뿐인가, 401·503 도" → 401·403 은 F09 에서 추가. **503 페이지(점검 화면)는 결정된 적 없음** — 2026-11-15 의 503 은 `/api/health` 응답 코드. 페이지 렌더 중 DB 실패는 E1 대로 500 경계. 점검 화면이 필요하면 Phase 5 첫 배포 전에 결정(todo/mvp-todo). 네트워크 실패(응답 없음)와 서버 5xx 를 구분하는 문구는 fetch 클라이언트가 생길 때 클라이언트 전용 코드 `NETWORK` 로(todo/migrator-todo Phase 3)
 - 2026-11-23 E5 Sentry 구현 메모 — dataCollection(sendDefaultPii 대체)·통합 제거·스크럽 2겹·전송 지점 3곳. **트레이싱 끔(결정 변경)**·DSN optional 유지 — 사용자: 추천안대로 확정. 수신 확인: 로컬 운영 빌드의 `e2e: intentional render error` 가 Sentry Issues 에 도착(알림 수신)

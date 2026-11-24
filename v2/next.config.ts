@@ -7,6 +7,9 @@ const nextConfig: NextConfig = {
     // 16.3 실험 플래그. Next 업그레이드 때 플래그 이름·안정화 여부를 확인한다(decisions/dependencies.md 갱신 절차).
     // 2026-11-19 실측: 16.3.6 Turbopack 은 플래그 없이도 파일을 쓴다 — 문서 규약대로 켜 둔다
     globalNotFound: true,
+    // 401·403 화면 — unauthorized()/forbidden() + [locale]/unauthorized.tsx·forbidden.tsx (FEATURES F09, authorization.md P7,
+    // 사용자 결정 2026-11-23). 16.3 실험 플래그(authInterrupts.md). 레이아웃이 직접 그리면 상태가 200 이라 플래그를 켠다
+    authInterrupts: true,
   },
 }
 
