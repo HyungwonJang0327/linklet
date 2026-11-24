@@ -66,8 +66,8 @@
 - [x] F08 Better Auth + Prisma 어댑터, Google 로그인·로그아웃, 인증 테이블 마이그레이션 (2026-11-23 동등성 확인 — `migrator-todo.md` Phase 2, 사용자 로컬 Google 로그인·로그아웃 확인)
   - env·로그 요구(security-reviewer 2026-11-12): `BETTER_AUTH_SECRET` minLength 32, `BETTER_AUTH_URL` origin == `NEXT_PUBLIC_APP_URL` origin 교차 검증, **production 이면 `NEXT_PUBLIC_APP_URL`·`BETTER_AUTH_URL`·`R2_PUBLIC_BASE_URL` https 강제**(Better Auth 는 https 일 때만 Secure 쿠키), Better Auth `logger` 옵션을 우리 `logger` 로 연결(기본 로거가 에러 객체·요청 정보를 찍는지 확인), `generateId: false`(db-migration M5)
 - [x] F10 권한 판정 계층 (2026-11-23 동등성 확인 — 판정표 단위 24건, `decisions/authorization.md`. 관리자 콘텐츠 제재 화면·API 는 F40 후보로 migrator-todo)
-- [x] F09 라우트 보호 (2026-11-23 이식 완료 — 구간 layout 서버 판정, 제자리 401·403, `authInterrupts`. 세션 주입 뒤 403·`/login` 리다이렉트 E2E → 동등성 확인)
-- [ ] E2E 세션 주입 헬퍼 (시드 사용자·세션 — 일반 사용자·관리자 2종. F09 403·`/login` 리다이렉트 E2E 가 기다린다)
+- [x] F09 라우트 보호 (2026-11-23 이식 완료 — 구간 layout 서버 판정, 제자리 401·403, `authInterrupts`. 2026-11-25 동등성 확인 — 세션 주입 E2E 6건 `5e0bf53`)
+- [x] E2E 세션 주입 헬퍼 (2026-11-25, tester `fd93e39`~`c20bd32` — testing T13: E2E 서버를 통합 테스트 DB 에 연결, globalSetup 시드(user·admin), `signInAs` 서명 쿠키, F08·F09 E2E +9, CI e2e 잡 service container. 전제 `affa4e8` TLS 가드 로컬 예외)
 - [ ] security-reviewer 검토
 
 ## Phase 3 — 링크 미리보기 (F11, F12, F18)
