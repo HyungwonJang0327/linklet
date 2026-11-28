@@ -56,6 +56,23 @@ describe('assertTlsInProduction', () => {
     expect(assertTlsInProduction(ok, 'production')).toBe(ok)
   })
 
+  // 사용자 결정 2026-11-24 (testing T13): 로컬 Docker 테스트 DB 에 운영 빌드(E2E)를 붙인다
+  it.each(['127.0.0.1', 'localhost', '[::1]'])(
+    'production — 로컬 호스트(%s)는 sslmode 없어도 통과 (E2E 운영 빌드 → 로컬 테스트 DB)',
+    (host) => {
+      const url = `postgresql://linklet:linklet@${host}:5434/linklet_test`
+      expect(assertTlsInProduction(url, 'production')).toBe(url)
+    },
+  )
+
+  it.each(['?host=ep-remote.neon.tech', '?hostaddr=203.0.113.9', '?port=5432'])(
+    'production — URL 호스트가 로컬이어도 접속 대상 덮어쓰기(%s)가 있으면 TLS 요구',
+    (query) => {
+      const url = `postgresql://linklet:linklet@127.0.0.1:5434/linklet_test${query}`
+      expect(() => assertTlsInProduction(url, 'production')).toThrow('sslmode=verify-full')
+    },
+  )
+
   it('production — URL 로 해석되지 않으면 throw, 메시지에 입력 없음', () => {
     const junk = `not a url ${hex(6)}`
     expect(() => assertTlsInProduction(junk, 'production')).toThrow('valid postgresql:// URL')

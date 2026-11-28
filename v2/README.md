@@ -32,6 +32,20 @@ pnpm db:test:down     # 테스트 DB 만 정리 (tmpfs 라 데이터도 사라�
 - Prisma CLI(`prisma.config.ts`)는 `.env` 를 자동 로드하지 않아 `.env.local` → `.env` 순서로 직접 읽는다(셸 값 우선). 생성 클라이언트 `src/generated/prisma` 는 커밋하지 않고 `pnpm db:generate`(install 뒤 `postinstall` 포함)로 만든다
 - "테스트마다 깨끗한 DB"(T5)는 컨테이너가 아니라 테스트 setup 의 책임이다 (마이그레이션 적용 후 테이블 비우기 — F02 통합 테스트에서 확정)
 
+## E2E (`pnpm test:e2e`)
+
+근거: `decisions/testing.md` T12(CI 별도 잡)·T13(E2E 서버 DB = 통합 테스트 DB 재사용, 사용자 결정 2026-11-24). Playwright 가 `pnpm build && pnpm start -p 3002` 로 production 빌드를 띄우고(`playwright.config.ts` webServer), 서버는 **통합 테스트와 같은 로컬 Docker 테스트 DB**(`127.0.0.1:5434/linklet_test`)에 붙는다.
+
+```bash
+pnpm db:test:up && pnpm test:e2e   # 테스트 DB 선행 — 닿지 않으면 globalSetup 이 실패한다(skip 없음)
+```
+
+- **`pnpm test` 와 동시에 돌리지 않는다** — 통합 테스트는 `beforeEach` 에서 같은 DB 를 TRUNCATE 하므로 E2E 시드 행이 사라진다. 차례로 돌린다
+- `e2e/global-setup.ts` 가 테스트 전 1회: 로컬 가드 → TCP 프로브 → `prisma migrate deploy`(`prisma/lib/test-db-migrate.mts`, Vitest 와 공유) → E2E 사용자 2명·세션 2개 upsert(`e2e/seed-e2e-users.mts`, 고정 UUID 라 멱등). 접속 문자열은 출력하지 않는다
+- **로그인 상태 만들기**: 테스트에서 `await signInAs(context, 'user' | 'admin')`(`e2e/helpers/session.ts`) 을 `page.goto` 전에 부른다 — 시드 세션 토큰으로 서명 쿠키를 계산해 컨텍스트에 넣는다. Google 로그인은 자동화하지 않는다. `request` fixture 는 컨텍스트 쿠키를 공유하지 않으므로 API 는 `context.request` 로 부른다
+- 서버 env(더미 인증 키·`LINKLET_E2E=1`·테스트 DB)는 config 에 고정 — 세션 쿠키 서명에 쓰는 `BETTER_AUTH_SECRET` 은 `e2e/helpers/e2e-env.ts` 하나를 config 와 헬퍼가 함께 import 한다. production 빌드가 TLS 없는 로컬 DB 에 붙는 것은 `server/db-config.ts` 의 로컬 호스트 예외
+- CI 는 `e2e` 잡에 quality 와 같은 Postgres service container 를 둔다(러너가 달라 컨테이너를 공유하지 않는다). 기준선 E2E(`pnpm test:e2e:baseline`)는 자기 컨테이너를 쓰고 이 globalSetup 을 돌리지 않는다(`e2e/baseline/README.md`)
+
 ## 마이그레이션 (`pnpm db:migrate`)
 
 근거: `decisions/db-migration.md` M1(생성은 `migrate dev` 로만)·M2(`down.sql` 동봉)·M3(운영 적용은 사용자 직접). 스크립트는 `scripts/db-migrate.mts` — Node 24 가 `.mts` 를 직접 실행한다(타입 스트리핑, 새 의존성 없음).

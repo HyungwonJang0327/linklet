@@ -1,8 +1,6 @@
-import { spawnSync } from 'node:child_process'
-import { join } from 'node:path'
-
 import { assertLocalDatabaseUrl } from './prisma/lib/local-db.mts'
 import { canConnect } from './prisma/lib/tcp-probe.mts'
+import { applyTestDatabaseMigrations } from './prisma/lib/test-db-migrate.mts'
 import { testDatabaseTarget, testDatabaseUrl } from './prisma/lib/test-db-url.mts'
 
 // Vitest globalSetup — 테스트 실행 전 메인 프로세스에서 1회. 테스트 DB 에 `prisma migrate deploy` 를 자동 적용한다.
@@ -15,12 +13,10 @@ import { testDatabaseTarget, testDatabaseUrl } from './prisma/lib/test-db-url.mt
 //   Docker 가 꺼져 있는 로컬의 경우 — 통합 테스트 파일은 스스로 skip 한다
 // - `LINKLET_REQUIRE_TEST_DB=1` 이면 닿지 않을 때 안내 대신 throw 한다. CI(service container, .github/workflows/v2-ci.yml)가 켠다 —
 //   컨테이너 설정이 깨졌을 때 통합 테스트가 조용히 skip 되어 PR 이 통과하는 일을 막는다
-// - 닿으면 `node node_modules/prisma/build/index.js migrate deploy` 를 DATABASE_URL_UNPOOLED=테스트 DB 로 실행(scripts/db-migrate.mts 와 같은 호출 방식).
-//   prisma.config.ts 의 M6 로컬 가드도 함께 거친다(127.0.0.1 이라 통과). 접속 값은 compose 더미 고정값 — 시크릿 아님
+// - 닿으면 `prisma migrate deploy` 를 테스트 DB 로 실행 — prisma/lib/test-db-migrate.mts(e2e/global-setup.ts 와 공유). 접속 값은 compose 더미 고정값 — 시크릿 아님
 // - 출력: 성공 시 한 줄, 실패 시 prisma 출력 + throw(테스트 전체 중단 — 스키마 없는 DB 로 통합 테스트가 애매하게 실패하는 것보다 낫다)
 
 const ROOT = import.meta.dirname
-const PRISMA_CLI = join(ROOT, 'node_modules', 'prisma', 'build', 'index.js')
 const DB_URL_KEYS = ['DATABASE_URL', 'DATABASE_URL_UNPOOLED'] as const
 
 function log(message: string): void {
@@ -49,24 +45,11 @@ export default async function setup(): Promise<void> {
     return
   }
 
-  const result = spawnSync(process.execPath, [PRISMA_CLI, 'migrate', 'deploy'], {
-    cwd: ROOT,
-    encoding: 'utf8',
-    stdio: ['ignore', 'pipe', 'pipe'],
-    env: { ...process.env, DATABASE_URL_UNPOOLED: testDatabaseUrl(rawPort) },
+  applyTestDatabaseMigrations({
+    root: ROOT,
+    databaseUrl: testDatabaseUrl(rawPort),
+    baseEnv: process.env,
   })
-
-  if (result.error) {
-    throw new Error(`failed to run prisma migrate deploy on the test DB: ${result.error.message}`)
-  }
-  if (result.status !== 0) {
-    // prisma 의 출력에는 로컬 테스트 DB 의 host:port·DB 명만 들어간다(compose 더미 값)
-    process.stderr.write(result.stdout)
-    process.stderr.write(result.stderr)
-    throw new Error(
-      `prisma migrate deploy failed on the test DB (exit ${result.status ?? 'unknown'}). See output above.`,
-    )
-  }
 
   log(`test DB at ${target.host}:${target.port} — migrations applied (prisma migrate deploy)`)
 }

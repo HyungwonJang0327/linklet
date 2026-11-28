@@ -2,10 +2,13 @@ import { expect, test } from '@playwright/test'
 
 import { getDictionary, LOCALES } from '@/shared/i18n'
 
-// F08 로그인 화면·Better Auth 라우트 — audit/FEATURES.md "E2E: 테스트용 세션 주입 후 로그인 상태 화면" 의 앞부분.
+import { E2E_USERS } from './helpers/e2e-env'
+import { signInAs } from './helpers/session'
+
+// F08 로그인 화면·Better Auth 라우트 — audit/FEATURES.md "E2E: 테스트용 세션 주입 후 로그인 상태 화면".
 // 실제 Google 로그인은 자동화하지 않는다(decisions/testing.md) — 버튼을 누르면 Google 로 떠나므로 누르지 않는다.
-// 세션 주입(테스트 DB 시드 사용자·세션)은 다음 항목(mvp-todo "E2E 세션 주입 헬퍼")에서 붙인다. 이 서버의 DB 는 닫힌 포트라
-// 쿠키 없는 요청만 확인한다 — 쿠키가 없으면 SDK 가 DB 에 가지 않는다.
+// 로그인 상태는 테스트 DB 의 시드 사용자·세션(e2e/global-setup.ts) + 서명 쿠키 주입(e2e/helpers/session.ts)으로 만든다.
+// 쿠키가 없으면 SDK 가 DB 에 가지 않고 null — 비로그인 케이스는 DB 와 무관하게 같은 결과다.
 
 test.describe('로그인 페이지 /{locale}/login', () => {
   for (const locale of LOCALES) {
@@ -50,6 +53,17 @@ test.describe('Topbar 로그인 상태 (비로그인)', () => {
   })
 })
 
+test.describe('Topbar 로그인 상태 (세션 주입)', () => {
+  test('/ko 에 로그아웃 버튼이 보이고 로그인 링크는 없다', async ({ page, context }) => {
+    await signInAs(context, 'user')
+    const dictionary = await getDictionary('ko')
+    await page.goto('/ko')
+    const header = page.locator('header')
+    await expect(header.getByRole('button', { name: dictionary.auth.signOut })).toBeVisible()
+    await expect(header.getByRole('link', { name: dictionary.auth.signIn })).toHaveCount(0)
+  })
+})
+
 test.describe('Better Auth 라우트 /api/auth', () => {
   test('GET /api/auth/ok 는 200', async ({ request }) => {
     const response = await request.get('/api/auth/ok')
@@ -59,6 +73,33 @@ test.describe('Better Auth 라우트 /api/auth', () => {
 
   test('쿠키 없는 GET /api/auth/get-session 은 200 null (DB 없이)', async ({ request }) => {
     const response = await request.get('/api/auth/get-session')
+    expect(response.status()).toBe(200)
+    expect(await response.json()).toBeNull()
+  })
+
+  test('세션 쿠키가 있는 GET /api/auth/get-session 은 200 + 시드 사용자 id', async ({
+    context,
+  }) => {
+    await signInAs(context, 'user')
+    // `request` fixture 는 컨텍스트 쿠키를 공유하지 않는다 → context.request
+    const response = await context.request.get('/api/auth/get-session')
+    expect(response.status()).toBe(200)
+    const body = (await response.json()) as { user: { id: string; role: string } } | null
+    // 응답에 이메일 등 다른 필드가 함께 들어 있어도 여기서는 id·role 만 본다(출력·단언하지 않는다)
+    expect(body?.user.id).toBe(E2E_USERS.user.id)
+    expect(body?.user.role).toBe('user')
+  })
+
+  test('위조 쿠키(서명 없음) GET /api/auth/get-session 은 200 null', async ({ context }) => {
+    await context.addCookies([
+      {
+        name: 'better-auth.session_token',
+        value: 'e2e-forged-token-not-a-real-session',
+        domain: 'localhost',
+        path: '/',
+      },
+    ])
+    const response = await context.request.get('/api/auth/get-session')
     expect(response.status()).toBe(200)
     expect(await response.json()).toBeNull()
   })

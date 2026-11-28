@@ -2,6 +2,8 @@ import 'server-only'
 
 import type { LogMeta } from '@/shared/lib/log-format'
 
+import { isLocalDatabaseUrl } from '../../prisma/lib/local-db.mts'
+
 // DB 클라이언트의 순수 보조 함수 — server/db.ts 가 쓴다. Prisma·pg 를 import 하지 않아 단위 테스트가 DB 없이 돈다.
 // 근거: decisions/tech-stack.md(어댑터 @prisma/adapter-pg 하나, 2026-11-14), CLAUDE.md §4-2 로그 규약, FEATURES F02
 
@@ -22,9 +24,15 @@ export const PRODUCTION_SSLMODES: ReadonlySet<string> = new Set([
  * production 이면 접속 문자열에 TLS(sslmode) 가 있어야 한다. 없으면 throw → 부팅 실패.
  * 메시지에는 키 이름·요구 조건만 들어가고 값(호스트·비밀번호)은 절대 들어가지 않는다.
  * development·test 는 로컬 Docker(TLS 없음)라 그대로 돌려준다.
+ *
+ * 예외 — 로컬 호스트(127.0.0.1·localhost·[::1], `?host=`·`?hostaddr=`·`?port=` 덮어쓰기 없음)는 production 이어도 TLS 없이 허용한다
+ * (사용자 결정 2026-11-24, decisions/testing.md T13): E2E 는 운영 빌드(`next start` = NODE_ENV production)를 로컬 Docker 테스트 DB 에
+ * 붙여 세션을 주입한다. 운영(Neon)·dev 접속 문자열은 로컬 호스트일 수 없으므로 운영 동작은 변하지 않는다. 판정은 prisma/lib/local-db.mts
+ * 와 같은 함수 — 드라이버가 쿼리 파라미터로 다른 호스트에 붙는 길(security-reviewer 2026-11-15)도 같은 기준으로 막힌다
  */
 export function assertTlsInProduction(connectionString: string, nodeEnv: NodeEnv): string {
   if (nodeEnv !== 'production') return connectionString
+  if (isLocalDatabaseUrl(connectionString)) return connectionString
 
   let params: URLSearchParams
   try {

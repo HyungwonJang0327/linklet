@@ -40,16 +40,14 @@ test.describe('언어별 root layout', () => {
 })
 
 test.describe('root layout 밖의 라우트', () => {
-  test('/api/health 는 layout 없이도 응답 규약을 지킨다 (200 ok 또는 DB 없음 503)', async ({
+  // E2E 서버는 로컬 테스트 DB 에 붙는다(playwright.config.ts·e2e/global-setup.ts, testing T13) → 헬스 체크는 항상 200 이어야 한다.
+  // 503 분기(DB 없음)는 src/app/api/health/route.test.ts(DB 실패 모킹)가 다룬다
+  test('/api/health 는 layout 없이도 200 { data: { status: ok } } 를 돌려준다', async ({
     request,
   }) => {
     const response = await request.get('/api/health')
-    const status = response.status()
-    expect([200, 503]).toContain(status)
+    expect(response.status()).toBe(200)
     expect(response.headers()['content-type']).toContain('application/json')
-
-    const body: unknown = await response.json()
-    if (status === 200) expect(body).toEqual({ data: { status: 'ok' } })
-    else expect(body).toMatchObject({ error: { code: 'UNAVAILABLE', message: expect.any(String) } })
+    expect(await response.json()).toEqual({ data: { status: 'ok' } })
   })
 })
